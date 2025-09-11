@@ -64,7 +64,7 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import swingset.TextAndMnemonicUtils;
 
-//import swingset.AbstractDemo;
+import swingset.AbstractDemo;
 
 /**
  * A demo for the {@code JXMapKit}.
@@ -72,89 +72,89 @@ import swingset.TextAndMnemonicUtils;
  * @author Martin Steiger
  * @author EUG https://github.com/homebeaver (integrate to SwingSet3)
  */
-public class MapKitDemo extends JXPanel { //extends AbstractDemo {
+public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
 	
 	private static final long serialVersionUID = 1811042967620854708L;
 	private static final Logger LOG = Logger.getLogger(MapKitDemo.class.getName());
 	private static final String DESCRIPTION = "Demonstrates JXMapKit that shows a map with zoom slider and a mini-map";
 
 	// >>> aus AbstractDemo
-	protected static final boolean exitOnClose = true; // used in JXFrame of the demo
-	// The preferred size of the demo
-    static int PREFERRED_WIDTH = 680;
-    static int PREFERRED_HEIGHT = 600;
-    public static final Dimension PREFERRED_SIZE = new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);
-    private ResourceBundle bundle; 
-    private static final String SWINGSET2_PACKAGE_NAME = "swingset";
-    private static final String SWINGSET2_RESOURCEBUNDLE_BASENAME = SWINGSET2_PACKAGE_NAME+".swingset";
-    /** convenience dimension for horizontal gap */
-    public static Dimension HGAP15 = new Dimension(15,1);
-    /** convenience dimension for vertical gap */
-    public static Dimension VGAP15 = new Dimension(1,15);
-    /**
-     * get a String property
-     * @param key property name
-     * @return property value
-     */
-    protected String getBundleString(String key) {
-    	if(SWINGSET2_PACKAGE_NAME.equals(getClass().getPackage().getName())) {
-    		// die Props haben prefix "class SimpleName."
-    		return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(getClass().getSimpleName()+"."+key, key));
-    	}
-    	return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(key, key));
-    }
-    /**
-     * get a String property
-     * @param key property name
-     * @param fallback String
-     * @return property value
-     */
-    protected String getBundleString(String key, String fallback) {
-        String value = fallback;
-        if (bundle == null) {
-        	/* bundleName
-        	 * in SwingSet2: bundleName :== <package name>.swingset // one ResourceBundle for all classes
-        	 * in SwingSet3: bundleName :== <package name>.resources.<class SimpleName> // one ResourceBundle per class
-        	 */
-//        	bundle = ResourceBundle.getBundle(SWINGSET2_RESOURCEBUNDLE_BASENAME);
-        	String bundleName = null;
-        	try {
-            	// in SwingSet3: bundleName :== <package name>.resources.<class SimpleName>
-                bundleName = getClass().getPackage().getName()+".resources."+getClass().getSimpleName();
-                bundle = ResourceBundle.getBundle(bundleName, JComponent.getDefaultLocale());
-                //Throws:NullPointerException,, MissingResourceException
-                
-                Logger.getAnonymousLogger().config("this.getLocale()=" + this.getLocale() 
-    	            + "; getDefaultLocale()" +JComponent.getDefaultLocale() 
-    	            + " bundle.Locale:"+bundle.getLocale()
-    	            );
-                if(bundle.getLocale()!=JComponent.getDefaultLocale()) {
-                	if(bundle.getLocale().toString().length()>=2 && bundle.getLocale().getDisplayLanguage().substring(0, 2).
-                			equals(JComponent.getDefaultLocale().getDisplayLanguage().substring(0, 2))) {
-                		// de_CH soll auch mit de_XX zufrieden sein!
-                	} else {
-                    	// fallback:
-                    	//bundle = ResourceBundle.getBundle(bundleName, (Locale)null);
-                    	// liefert NPE at java.base/java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:1612)
-                    	bundle = ResourceBundle.getBundle(bundleName);
-                	}
-                }
-            } catch (MissingResourceException e) {
-                Logger.getAnonymousLogger().warning("missing resource "+key + " - " 
-                		+ (bundle==null ? e.getMessage() : " will use bundle for "+SWINGSET2_RESOURCEBUNDLE_BASENAME)
-                		+ (fallback==null ? "" : " - there is a fallback:"+fallback)
-                		);
-        	}
-        }
-        try {
-            value = bundle != null ? bundle.getString(key) : fallback;
-        
-        } catch (MissingResourceException e) {
-            Logger.getAnonymousLogger().warning("missing String resource " + key + "; using fallback \"" +fallback + "\"");
-        }
-        return value;
-    } 
-
+//	protected static final boolean exitOnClose = true; // used in JXFrame of the demo
+//	// The preferred size of the demo
+//    static int PREFERRED_WIDTH = 680;
+//    static int PREFERRED_HEIGHT = 600;
+//    public static final Dimension PREFERRED_SIZE = new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+//    private ResourceBundle bundle; 
+//    private static final String SWINGSET2_PACKAGE_NAME = "swingset";
+//    private static final String SWINGSET2_RESOURCEBUNDLE_BASENAME = SWINGSET2_PACKAGE_NAME+".swingset";
+//    /** convenience dimension for horizontal gap */
+//    public static Dimension HGAP15 = new Dimension(15,1);
+//    /** convenience dimension for vertical gap */
+//    public static Dimension VGAP15 = new Dimension(1,15);
+//    /**
+//     * get a String property
+//     * @param key property name
+//     * @return property value
+//     */
+//    protected String getBundleString(String key) {
+//    	if(SWINGSET2_PACKAGE_NAME.equals(getClass().getPackage().getName())) {
+//    		// die Props haben prefix "class SimpleName."
+//    		return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(getClass().getSimpleName()+"."+key, key));
+//    	}
+//    	return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(key, key));
+//    }
+//    /**
+//     * get a String property
+//     * @param key property name
+//     * @param fallback String
+//     * @return property value
+//     */
+//    protected String getBundleString(String key, String fallback) {
+//        String value = fallback;
+//        if (bundle == null) {
+//        	/* bundleName
+//        	 * in SwingSet2: bundleName :== <package name>.swingset // one ResourceBundle for all classes
+//        	 * in SwingSet3: bundleName :== <package name>.resources.<class SimpleName> // one ResourceBundle per class
+//        	 */
+////        	bundle = ResourceBundle.getBundle(SWINGSET2_RESOURCEBUNDLE_BASENAME);
+//        	String bundleName = null;
+//        	try {
+//            	// in SwingSet3: bundleName :== <package name>.resources.<class SimpleName>
+//                bundleName = getClass().getPackage().getName()+".resources."+getClass().getSimpleName();
+//                bundle = ResourceBundle.getBundle(bundleName, JComponent.getDefaultLocale());
+//                //Throws:NullPointerException,, MissingResourceException
+//                
+//                Logger.getAnonymousLogger().config("this.getLocale()=" + this.getLocale() 
+//    	            + "; getDefaultLocale()" +JComponent.getDefaultLocale() 
+//    	            + " bundle.Locale:"+bundle.getLocale()
+//    	            );
+//                if(bundle.getLocale()!=JComponent.getDefaultLocale()) {
+//                	if(bundle.getLocale().toString().length()>=2 && bundle.getLocale().getDisplayLanguage().substring(0, 2).
+//                			equals(JComponent.getDefaultLocale().getDisplayLanguage().substring(0, 2))) {
+//                		// de_CH soll auch mit de_XX zufrieden sein!
+//                	} else {
+//                    	// fallback:
+//                    	//bundle = ResourceBundle.getBundle(bundleName, (Locale)null);
+//                    	// liefert NPE at java.base/java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:1612)
+//                    	bundle = ResourceBundle.getBundle(bundleName);
+//                	}
+//                }
+//            } catch (MissingResourceException e) {
+//                Logger.getAnonymousLogger().warning("missing resource "+key + " - " 
+//                		+ (bundle==null ? e.getMessage() : " will use bundle for "+SWINGSET2_RESOURCEBUNDLE_BASENAME)
+//                		+ (fallback==null ? "" : " - there is a fallback:"+fallback)
+//                		);
+//        	}
+//        }
+//        try {
+//            value = bundle != null ? bundle.getString(key) : fallback;
+//        
+//        } catch (MissingResourceException e) {
+//            Logger.getAnonymousLogger().warning("missing String resource " + key + "; using fallback \"" +fallback + "\"");
+//        }
+//        return value;
+//    } 
+//
 	// <<<
 	
     /**
@@ -164,22 +164,21 @@ public class MapKitDemo extends JXPanel { //extends AbstractDemo {
     public static void main(String[] args) {
         SwingUtilities.invokeLater( () -> {
 			JXFrame controller = new JXFrame("controller", exitOnClose);
-			JXPanel demo = new MapKitDemo(controller);
+			AbstractDemo demo = new MapKitDemo(controller);
 			JXFrame frame = new JXFrame(DESCRIPTION, exitOnClose);
 			frame.setStartPosition(StartPosition.CenterInScreen);
         	frame.getContentPane().add(demo);
         	frame.pack();
         	frame.setVisible(true);
 			
-        	// AbstractDemo hier JXPanel demo ist static
-//			controller.getContentPane().add(demo.getControlPane());
+			controller.getContentPane().add(demo.getControlPane());
 			controller.pack();
 			controller.setVisible(true);
     	});
     }
 
-	private static final int DEFAULT_ZOOM = 9; // OSM MAX_ZOOM is 19;
-	private static final String DEFAULT_POS = "København";
+	private static final int DEFAULT_ZOOM = 10; // OSM MAX_ZOOM is 19;
+	private static final String DEFAULT_POS = "København - Øresund";
 	private TileFactoryInfo info;
 	private JXMapKit mapKit;
 //    private RoutePainter routePainter = new RoutePainter(Color.RED);
@@ -252,7 +251,7 @@ public class MapKitDemo extends JXPanel { //extends AbstractDemo {
         // Use 8 threads in parallel to load the tiles
         tileFactory.setThreadPoolSize(8);
 
-        // Set the zoom and focus to Merapi, Java - the island
+        // Set the zoom and focus to DEFAULT_POS / Oeresund
         mapKit.setZoom(DEFAULT_ZOOM);
         mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_POS));
 //        mapKit.getMainMap().setRestrictOutsidePanning(true); // ???
@@ -288,7 +287,7 @@ public class MapKitDemo extends JXPanel { //extends AbstractDemo {
         add(mapKit);
         
         mapKit.getMainMap().addPropertyChangeListener("zoom", pce -> {
-        	LOG.info("---------------------pce:"+pce);
+//        	LOG.info("---------------------pce:"+pce);
         	getPosAndZoom();
         });
         mapKit.getMainMap().addPropertyChangeListener("center", pce -> {
@@ -297,7 +296,13 @@ public class MapKitDemo extends JXPanel { //extends AbstractDemo {
         });
         getPosAndZoom();
         
-//        createAnimation(4500, 0.5f); // 4,5sec , stop at 100% 
+//        mapKit.getMainMap().addMouseListener(new AddNavigationIcon(mapKit.getMainMap()));
+/* TODO zum Herausfinden der Ecken:
+NW: GeoPosition:[56.15625856755953, 11.612548828125] (56 09.376N, 011 36.753E)
+NE: GeoPosition:[56.15625856755953, 13.458251953125] (56 09.376N, 013 27.495E)
+SW: GeoPosition:[55.24311788040884, 11.612548828125] (55 14.587N, 011 36.753E)
+mit NE + SW kann man die AIS Positionsmeldungen abfragen
+ */
     }
  
 //    public void createAnimation(long duration, float to) {
@@ -337,7 +342,7 @@ public class MapKitDemo extends JXPanel { //extends AbstractDemo {
         return new GeoPosition(lat, lon);
     }
 
-    //@Override
+    @Override
 	public JXPanel getControlPane() {
 		@SuppressWarnings("serial")
 		JXPanel controls = new JXPanel() {
