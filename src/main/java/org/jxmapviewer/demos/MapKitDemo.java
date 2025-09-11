@@ -1,0 +1,540 @@
+/* created from jxmapviewer sample6_mapkit
+*/ 
+package org.jxmapviewer.demos;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.MutableComboBoxModel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.MouseInputListener;
+
+import org.jdesktop.swingx.JXFrame;
+import org.jdesktop.swingx.JXFrame.StartPosition;
+import org.jdesktop.swingx.JXLabel;
+import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.binding.DisplayInfo;
+import org.jdesktop.swingx.demos.svg.FeatheRflag;
+import org.jdesktop.swingx.icon.ChevronIcon;
+//import org.jdesktop.swingx.icon.PlayIcon;
+import org.jdesktop.swingx.icon.RadianceIcon;
+import org.jdesktop.swingx.icon.SizingConstants;
+import org.jdesktop.swingx.painter.CompoundPainter;
+import org.jxmapviewer.JXMapKit;
+import org.jxmapviewer.JXMapViewer;
+import org.jxmapviewer.OSMTileFactoryInfo;
+import org.jxmapviewer.cache.FileBasedLocalCache;
+import org.jxmapviewer.input.CenterMapListener;
+import org.jxmapviewer.input.PanKeyListener;
+import org.jxmapviewer.input.PanMouseInputListener;
+import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
+import org.jxmapviewer.viewer.DefaultTileFactory;
+import org.jxmapviewer.viewer.DefaultWaypoint;
+import org.jxmapviewer.viewer.DefaultWaypointRenderer;
+import org.jxmapviewer.viewer.GeoPosition;
+import org.jxmapviewer.viewer.TileFactoryInfo;
+import org.jxmapviewer.viewer.Waypoint;
+import org.jxmapviewer.viewer.WaypointPainter;
+//import org.pushingpixels.trident.api.Timeline;
+
+import swingset.TextAndMnemonicUtils;
+
+//import swingset.AbstractDemo;
+
+/**
+ * A demo for the {@code JXMapKit}.
+ *
+ * @author Martin Steiger
+ * @author EUG https://github.com/homebeaver (integrate to SwingSet3)
+ */
+public class MapKitDemo extends JXPanel { //extends AbstractDemo {
+	
+	private static final long serialVersionUID = 1811042967620854708L;
+	private static final Logger LOG = Logger.getLogger(MapKitDemo.class.getName());
+	private static final String DESCRIPTION = "Demonstrates JXMapKit that shows a map with zoom slider and a mini-map";
+
+	// >>> aus AbstractDemo
+	protected static final boolean exitOnClose = true; // used in JXFrame of the demo
+	// The preferred size of the demo
+    static int PREFERRED_WIDTH = 680;
+    static int PREFERRED_HEIGHT = 600;
+    public static final Dimension PREFERRED_SIZE = new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+    private ResourceBundle bundle; 
+    private static final String SWINGSET2_PACKAGE_NAME = "swingset";
+    private static final String SWINGSET2_RESOURCEBUNDLE_BASENAME = SWINGSET2_PACKAGE_NAME+".swingset";
+    /** convenience dimension for horizontal gap */
+    public static Dimension HGAP15 = new Dimension(15,1);
+    /** convenience dimension for vertical gap */
+    public static Dimension VGAP15 = new Dimension(1,15);
+    /**
+     * get a String property
+     * @param key property name
+     * @return property value
+     */
+    protected String getBundleString(String key) {
+    	if(SWINGSET2_PACKAGE_NAME.equals(getClass().getPackage().getName())) {
+    		// die Props haben prefix "class SimpleName."
+    		return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(getClass().getSimpleName()+"."+key, key));
+    	}
+    	return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(key, key));
+    }
+    /**
+     * get a String property
+     * @param key property name
+     * @param fallback String
+     * @return property value
+     */
+    protected String getBundleString(String key, String fallback) {
+        String value = fallback;
+        if (bundle == null) {
+        	/* bundleName
+        	 * in SwingSet2: bundleName :== <package name>.swingset // one ResourceBundle for all classes
+        	 * in SwingSet3: bundleName :== <package name>.resources.<class SimpleName> // one ResourceBundle per class
+        	 */
+//        	bundle = ResourceBundle.getBundle(SWINGSET2_RESOURCEBUNDLE_BASENAME);
+        	String bundleName = null;
+        	try {
+            	// in SwingSet3: bundleName :== <package name>.resources.<class SimpleName>
+                bundleName = getClass().getPackage().getName()+".resources."+getClass().getSimpleName();
+                bundle = ResourceBundle.getBundle(bundleName, JComponent.getDefaultLocale());
+                //Throws:NullPointerException,, MissingResourceException
+                
+                Logger.getAnonymousLogger().config("this.getLocale()=" + this.getLocale() 
+    	            + "; getDefaultLocale()" +JComponent.getDefaultLocale() 
+    	            + " bundle.Locale:"+bundle.getLocale()
+    	            );
+                if(bundle.getLocale()!=JComponent.getDefaultLocale()) {
+                	if(bundle.getLocale().toString().length()>=2 && bundle.getLocale().getDisplayLanguage().substring(0, 2).
+                			equals(JComponent.getDefaultLocale().getDisplayLanguage().substring(0, 2))) {
+                		// de_CH soll auch mit de_XX zufrieden sein!
+                	} else {
+                    	// fallback:
+                    	//bundle = ResourceBundle.getBundle(bundleName, (Locale)null);
+                    	// liefert NPE at java.base/java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:1612)
+                    	bundle = ResourceBundle.getBundle(bundleName);
+                	}
+                }
+            } catch (MissingResourceException e) {
+                Logger.getAnonymousLogger().warning("missing resource "+key + " - " 
+                		+ (bundle==null ? e.getMessage() : " will use bundle for "+SWINGSET2_RESOURCEBUNDLE_BASENAME)
+                		+ (fallback==null ? "" : " - there is a fallback:"+fallback)
+                		);
+        	}
+        }
+        try {
+            value = bundle != null ? bundle.getString(key) : fallback;
+        
+        } catch (MissingResourceException e) {
+            Logger.getAnonymousLogger().warning("missing String resource " + key + "; using fallback \"" +fallback + "\"");
+        }
+        return value;
+    } 
+
+	// <<<
+	
+    /**
+     * main method allows us to run as a standalone demo.
+     * @param args params
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater( () -> {
+			JXFrame controller = new JXFrame("controller", exitOnClose);
+			JXPanel demo = new MapKitDemo(controller);
+			JXFrame frame = new JXFrame(DESCRIPTION, exitOnClose);
+			frame.setStartPosition(StartPosition.CenterInScreen);
+        	frame.getContentPane().add(demo);
+        	frame.pack();
+        	frame.setVisible(true);
+			
+        	// AbstractDemo hier JXPanel demo ist static
+//			controller.getContentPane().add(demo.getControlPane());
+			controller.pack();
+			controller.setVisible(true);
+    	});
+    }
+
+	private static final int DEFAULT_ZOOM = 9; // OSM MAX_ZOOM is 19;
+	private static final String DEFAULT_POS = "København";
+	private TileFactoryInfo info;
+	private JXMapKit mapKit;
+//    private RoutePainter routePainter = new RoutePainter(Color.RED);
+
+    // controller:
+    private JComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
+    private JCheckBox drawTileBorder;
+    private JCheckBox miniMapVisible;
+    private JSlider zoomSlider; // JSlider extends JComponent
+    // controller prop name
+//	private static final String SLIDER = "zoomSlider";
+    private JButton zoomOut;
+    private JButton zoomIn;
+//    private JSlider trackSlider;
+    // Animation
+//    private JButton animation;
+//    Timeline timeline;
+//    public void setTrackProp(float newValue) {
+//    	trackSlider.setValue((int)(newValue*routePainter.getTrackSize()+0.5));
+//    }
+
+    /**
+     * Demo Constructor
+     * 
+     * @param frame controller Frame
+     */
+    public MapKitDemo(Frame frame) {
+    	super(new BorderLayout());
+    	frame.setTitle(getBundleString("frame.title", DESCRIPTION));
+    	super.setPreferredSize(PREFERRED_SIZE);
+    	super.setBorder(new BevelBorder(BevelBorder.LOWERED));
+
+        // Create a TileFactoryInfo for OpenStreetMap
+        info = new OSMTileFactoryInfo();
+        DefaultTileFactory tileFactory = new DefaultTileFactory(info);
+
+        // Setup local file cache
+        File cacheDir = new File(System.getProperty("user.home") + File.separator + ".jxmapviewer2");
+        tileFactory.setLocalCache(new FileBasedLocalCache(cacheDir, false));
+
+        // Setup JXMapKit
+        mapKit = new JXMapKit() {
+            protected Icon setZoomOutIcon() {
+//            	return FeatheRminus.of(SizingConstants.XS, SizingConstants.XS);
+            	// use "v" instead of "-" 
+            	return ChevronIcon.of(RadianceIcon.XS, RadianceIcon.XS);
+            }
+            protected Icon setZoomInIcon() {
+            	RadianceIcon icon = ChevronIcon.of(RadianceIcon.XS, RadianceIcon.XS);
+            	icon.setRotation(RadianceIcon.SOUTH);
+            	return icon;
+//            	return FeatheRplus.of(SizingConstants.XS, SizingConstants.XS);
+            }
+        };
+        
+        // sync zoomSlider:
+        mapKit.getZoomSlider().addChangeListener(changeEvent -> {
+        	if(zoomSlider!=null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+        mapKit.getZoomOutButton().addChangeListener(changeEvent -> {
+        	if(zoomSlider!=null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+        mapKit.getZoomInButton().addChangeListener(changeEvent -> {
+        	if(zoomSlider!=null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+        
+        mapKit.setName("mapKit");
+        mapKit.setTileFactory(tileFactory);
+
+        // Use 8 threads in parallel to load the tiles
+        tileFactory.setThreadPoolSize(8);
+
+        // Set the zoom and focus to Merapi, Java - the island
+        mapKit.setZoom(DEFAULT_ZOOM);
+        mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_POS));
+//        mapKit.getMainMap().setRestrictOutsidePanning(true); // ???
+//        mapKit.getMainMap().setHorizontalWrapped(false);
+
+        // Add interactions / verschieben , zoomen , select
+// "Use left mouse button to pan, mouse wheel to zoom and right mouse to select";
+//        mapKit.getMainMap().addMouseMotionListener(new MouseMotionListener() {
+        MouseInputListener mia = new PanMouseInputListener(mapKit.getMainMap());
+        mapKit.addMouseListener(mia);
+        mapKit.addMouseMotionListener(mia);
+
+        mapKit.addMouseListener(new CenterMapListener(mapKit.getMainMap()));
+
+        mapKit.addMouseWheelListener(new ZoomMouseWheelListenerCursor(mapKit.getMainMap()));
+
+        mapKit.addKeyListener(new PanKeyListener(mapKit.getMainMap()));
+
+        // Add painter
+        SelectionAdapter sa = new SelectionAdapter(mapKit.getMainMap());
+        SelectionPainter selectionPainter = new SelectionPainter(sa);
+        mapKit.getMainMap().addMouseListener(sa);
+        mapKit.getMainMap().addMouseMotionListener(sa);
+        CompoundPainter<JXMapViewer> cp = new CompoundPainter<JXMapViewer>();
+        cp.setCacheable(false);
+        cp.setPainters(addressLocationPainter, selectionPainter /*, routePainter*/);
+        addressLocationPainter.setRenderer(new DefaultWaypointRenderer(4*SizingConstants.M/SizingConstants.M, SizingConstants.M
+        		, FeatheRflag.of(SizingConstants.M, SizingConstants.M)));
+        mapKit.getMainMap().setOverlayPainter(cp);
+
+        LOG.info("isAddressLocationShown():"+mapKit.isAddressLocationShown());
+        
+        add(mapKit);
+        
+        mapKit.getMainMap().addPropertyChangeListener("zoom", pce -> {
+        	LOG.info("---------------------pce:"+pce);
+        	getPosAndZoom();
+        });
+        mapKit.getMainMap().addPropertyChangeListener("center", pce -> {
+        	GeoPosition pos = getPosAndZoom();
+        	mapKit.setCenterPosition(pos);
+        });
+        getPosAndZoom();
+        
+//        createAnimation(4500, 0.5f); // 4,5sec , stop at 100% 
+    }
+ 
+//    public void createAnimation(long duration, float to) {
+//    	Timeline.builder(this)
+//			.addPropertyToInterpolate("trackProp", 0.0f, to)
+//			.setDuration(duration)
+//			.play(); // show track animated
+//    	
+//    	timeline = Timeline.builder(this)
+//			.addPropertyToInterpolate("trackProp", 0.0f, 1.0f)
+//			.setDuration(duration)
+//			.build();
+//    	LOG.info("Animation Duration = " + timeline.getDuration());
+//    }
+
+    // from JXMapKit
+	private WaypointPainter<Waypoint> addressLocationPainter = new WaypointPainter<Waypoint>() {
+		@Override
+		public Set<Waypoint> getWaypoints() {
+			Set<Waypoint> set = new HashSet<Waypoint>();
+			if (mapKit.getMainMap().getAddressLocation() != null) {
+				set.add(new DefaultWaypoint(mapKit.getMainMap().getAddressLocation()));
+			} else {
+				set.add(new DefaultWaypoint(0, 0));
+			}
+			return set;
+		}
+	};
+
+    private GeoPosition getPosAndZoom() {
+        double lat = mapKit.getCenterPosition().getLatitude();
+        double lon = mapKit.getCenterPosition().getLongitude();
+        int zoom = mapKit.getZoomSlider().getValue();
+        if(zoomSlider!=null) zoomSlider.setValue(zoom);
+
+        LOG.info(String.format("Lat/Lon=(%.2f / %.2f) - Zoom: %d", lat, lon, zoom));
+        return new GeoPosition(lat, lon);
+    }
+
+    //@Override
+	public JXPanel getControlPane() {
+		@SuppressWarnings("serial")
+		JXPanel controls = new JXPanel() {
+			public Dimension getMaximumSize() {
+				return new Dimension(getPreferredSize().width, super.getMaximumSize().height);
+			}
+		};
+		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+
+		JXLabel selectLabel = new JXLabel("select another location:");
+		selectLabel.setName("selectLabel");
+		selectLabel.setText(getBundleString("selectLabel.text"));
+		selectLabel.setAlignmentX(JXLabel.LEFT_ALIGNMENT);
+		controls.add(selectLabel);
+
+        // Create the combo chooser box:
+		positionChooserCombo = new JComboBox<DisplayInfo<GeoPosition>>();
+		positionChooserCombo.setName("positionChooserCombo");
+		positionChooserCombo.setModel(createCBM());
+//		positionChooserCombo.setAlignmentX(JXComboBox.LEFT_ALIGNMENT);
+//        ComboBoxRenderer renderer = new ComboBoxRenderer(); wie in MirroringIconDemo mit Flagge TODO
+		
+		positionChooserCombo.addActionListener(ae -> {
+			int index = positionChooserCombo.getSelectedIndex();
+			DisplayInfo<GeoPosition> item = (DisplayInfo<GeoPosition>)positionChooserCombo.getSelectedItem();
+			LOG.info("Combo.SelectedItem=" + item.getDescription());
+			mapKit.setAddressLocation(item.getValue());
+			mapKit.setZoom(DEFAULT_ZOOM);
+	        zoomSlider.setValue(DEFAULT_ZOOM);
+			positionChooserCombo.setSelectedIndex(index);
+		});
+		controls.add(positionChooserCombo);
+		selectLabel.setLabelFor(positionChooserCombo);
+		controls.add(Box.createRigidArea(VGAP15));
+
+        drawTileBorder = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+        drawTileBorder.setSelected(true);
+        mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+        drawTileBorder.setName("drawTileBorder");
+        drawTileBorder.setText(getBundleString("drawTileBorder.text"));
+        drawTileBorder.addActionListener( ae -> {
+        	mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+        });
+        controls.add(drawTileBorder);
+
+        miniMapVisible = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+        miniMapVisible.setSelected(true);       
+        mapKit.setMiniMapVisible(miniMapVisible.isSelected());
+        miniMapVisible.setName("miniMapVisible");
+        miniMapVisible.setText(getBundleString("miniMapVisible.text"));
+        miniMapVisible.addActionListener( ae -> {
+            mapKit.setMiniMapVisible(miniMapVisible.isSelected());
+        });
+        controls.add(miniMapVisible);
+
+        // to fill up the remaining space
+		JPanel fill = new JPanel();
+		fill.setOpaque(false);
+		fill.setLayout(new GridBagLayout());
+
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+		fill.add(makeZoomSlider(), gridBagConstraints);		
+		
+		gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
+        zoomOut = new JButton();
+        zoomOut.setName("zoomOut");
+        zoomOut.setText(getBundleString("zoomOut.text"));
+        zoomOut.setIcon(ChevronIcon.of(RadianceIcon.XS, RadianceIcon.XS));
+        zoomOut.addActionListener( ae -> {
+	    	mapKit.setZoom(zoomSlider.getValue()+1);
+		    zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+    	fill.add(zoomOut, gridBagConstraints);
+
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+    	zoomIn = new JButton();
+    	zoomIn.setName("zoomIn");
+    	zoomIn.setText(getBundleString("zoomIn.text"));
+    	zoomIn.setHorizontalTextPosition(SwingConstants.LEFT);
+    	RadianceIcon icon = ChevronIcon.of(RadianceIcon.XS, RadianceIcon.XS);
+    	icon.setRotation(RadianceIcon.SOUTH);
+    	zoomIn.setIcon(icon);
+    	zoomIn.addActionListener( ae -> {
+	    	mapKit.setZoom(zoomSlider.getValue()-1);
+		    zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+    	fill.add(zoomIn, gridBagConstraints);
+
+		controls.add(fill, gridBagConstraints);
+
+		gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+		JXLabel trackLabel = new JXLabel("show track:");
+		trackLabel.setName("trackLabel");
+		trackLabel.setText(getBundleString("trackLabel.text"));
+		fill.add(trackLabel, gridBagConstraints);		
+
+		gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+//		fill.add(makeTrackSlider(), gridBagConstraints);
+		
+		gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
+//        animation = new JButton();
+//        animation.setName("animation");
+//        animation.setText(getBundleString("animation.text"));
+//        animation.setIcon(PlayIcon.of(RadianceIcon.XS, RadianceIcon.XS));
+//        animation.addActionListener( ae -> {
+//        	setTrackProp(0f);
+//        	timeline.play(); // show track animated
+//        });
+//    	fill.add(animation, gridBagConstraints);
+
+		return controls;
+	}
+
+//    private JComponent makeTrackSlider() {  	
+//    	if(trackSlider!=null) {
+//    		LOG.warning("already instantiated "+trackSlider);
+//    		return trackSlider;
+//    	}
+//    	trackSlider = new JSlider();
+//    	trackSlider.setName("trackSlider");
+//    	trackSlider.setOpaque(false);
+//	    //zoomSlider.setPaintLabels(true);
+//    	trackSlider.setMinimum(0);
+//    	trackSlider.setMaximum(routePainter.getTrackSize());
+//    	trackSlider.setValue(trackSlider.getMaximum()/2);
+//    	trackSlider.addChangeListener(changeEvent -> {
+//    		routePainter.setMaxSize(trackSlider.getValue());
+//    		repaint();
+//	    });
+//    	trackSlider.setPaintTicks(false);
+////    	trackSlider.setMajorTickSpacing(1);
+//		return trackSlider;
+//    }
+
+    private JComponent makeZoomSlider() {  	
+    	if(zoomSlider!=null) {
+    		LOG.warning("already instantiated "+zoomSlider);
+    		return zoomSlider;
+    	}
+//	    LOG.info("min/max/zoom:"+info.getMinimumZoomLevel()+" "+info.getMaximumZoomLevel()+" "+mapViewer.getZoom());
+//	    zoomSlider = new JSlider(JSlider.HORIZONTAL, info.getMinimumZoomLevel(), info.getMaximumZoomLevel(), mapKit.getZoomSlider().getValue());
+	    zoomSlider = new JSlider();
+	    zoomSlider.setName("zoomSlider");
+	    zoomSlider.setOpaque(false);
+	    //zoomSlider.setPaintLabels(true);
+	    zoomSlider.setMinimum(info.getMinimumZoomLevel());
+	    zoomSlider.setMaximum(info.getMaximumZoomLevel());
+	    zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+	    zoomSlider.addChangeListener(changeEvent -> {
+	    	mapKit.setZoom(zoomSlider.getValue());
+	    });
+	    zoomSlider.setPaintTicks(true);
+	    zoomSlider.setMajorTickSpacing(1);
+		return zoomSlider;
+    }
+    
+    private ComboBoxModel<DisplayInfo<GeoPosition>> createCBM() {
+        MutableComboBoxModel<DisplayInfo<GeoPosition>> model = new DefaultComboBoxModel<DisplayInfo<GeoPosition>>();
+        nameToGeoPosition.forEach((k,v) -> {
+        	model.addElement(new DisplayInfo<GeoPosition>(k, v));
+        });
+        return model;
+    }
+
+    @SuppressWarnings("serial")
+	private static final Map<String, GeoPosition> nameToGeoPosition = new HashMap<>(){
+        { // oordinaten: 	♁55° 41′ N, 12° 35′ OKoordinaten: 55° 41′ N, 12° 35′ O | | OSM
+            put("Berlin",            new GeoPosition(52,31,0, 13,24,0));
+            put("Darmstadt",         new GeoPosition(49,52,0,  8,39,0));
+            put("Frankfurt am Main", new GeoPosition(50.11, 8.68));
+            put("Java, Mt.Merapi",   new GeoPosition(-7.541389, 110.446111));
+            put("Eugene Oregon",     new GeoPosition(44.058333, -123.068611));
+            put("London",            new GeoPosition(51.5, 0));
+            put("Madeira (Trail)",   new GeoPosition(32.81, -17.141)); // with track
+            put(DEFAULT_POS,         new GeoPosition(55.70, 12.54)); // København
+        }
+    };
+
+}
