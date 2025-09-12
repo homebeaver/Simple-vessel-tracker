@@ -3,17 +3,16 @@
 package org.jxmapviewer.demos;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -29,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.MutableComboBoxModel;
+import javax.swing.Painter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
@@ -62,8 +62,6 @@ import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 //import org.pushingpixels.trident.api.Timeline;
 
-import swingset.TextAndMnemonicUtils;
-
 import swingset.AbstractDemo;
 
 /**
@@ -78,85 +76,6 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
 	private static final Logger LOG = Logger.getLogger(MapKitDemo.class.getName());
 	private static final String DESCRIPTION = "Demonstrates JXMapKit that shows a map with zoom slider and a mini-map";
 
-	// >>> aus AbstractDemo
-//	protected static final boolean exitOnClose = true; // used in JXFrame of the demo
-//	// The preferred size of the demo
-//    static int PREFERRED_WIDTH = 680;
-//    static int PREFERRED_HEIGHT = 600;
-//    public static final Dimension PREFERRED_SIZE = new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);
-//    private ResourceBundle bundle; 
-//    private static final String SWINGSET2_PACKAGE_NAME = "swingset";
-//    private static final String SWINGSET2_RESOURCEBUNDLE_BASENAME = SWINGSET2_PACKAGE_NAME+".swingset";
-//    /** convenience dimension for horizontal gap */
-//    public static Dimension HGAP15 = new Dimension(15,1);
-//    /** convenience dimension for vertical gap */
-//    public static Dimension VGAP15 = new Dimension(1,15);
-//    /**
-//     * get a String property
-//     * @param key property name
-//     * @return property value
-//     */
-//    protected String getBundleString(String key) {
-//    	if(SWINGSET2_PACKAGE_NAME.equals(getClass().getPackage().getName())) {
-//    		// die Props haben prefix "class SimpleName."
-//    		return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(getClass().getSimpleName()+"."+key, key));
-//    	}
-//    	return TextAndMnemonicUtils.getTextFromTextAndMnemonic(getBundleString(key, key));
-//    }
-//    /**
-//     * get a String property
-//     * @param key property name
-//     * @param fallback String
-//     * @return property value
-//     */
-//    protected String getBundleString(String key, String fallback) {
-//        String value = fallback;
-//        if (bundle == null) {
-//        	/* bundleName
-//        	 * in SwingSet2: bundleName :== <package name>.swingset // one ResourceBundle for all classes
-//        	 * in SwingSet3: bundleName :== <package name>.resources.<class SimpleName> // one ResourceBundle per class
-//        	 */
-////        	bundle = ResourceBundle.getBundle(SWINGSET2_RESOURCEBUNDLE_BASENAME);
-//        	String bundleName = null;
-//        	try {
-//            	// in SwingSet3: bundleName :== <package name>.resources.<class SimpleName>
-//                bundleName = getClass().getPackage().getName()+".resources."+getClass().getSimpleName();
-//                bundle = ResourceBundle.getBundle(bundleName, JComponent.getDefaultLocale());
-//                //Throws:NullPointerException,, MissingResourceException
-//                
-//                Logger.getAnonymousLogger().config("this.getLocale()=" + this.getLocale() 
-//    	            + "; getDefaultLocale()" +JComponent.getDefaultLocale() 
-//    	            + " bundle.Locale:"+bundle.getLocale()
-//    	            );
-//                if(bundle.getLocale()!=JComponent.getDefaultLocale()) {
-//                	if(bundle.getLocale().toString().length()>=2 && bundle.getLocale().getDisplayLanguage().substring(0, 2).
-//                			equals(JComponent.getDefaultLocale().getDisplayLanguage().substring(0, 2))) {
-//                		// de_CH soll auch mit de_XX zufrieden sein!
-//                	} else {
-//                    	// fallback:
-//                    	//bundle = ResourceBundle.getBundle(bundleName, (Locale)null);
-//                    	// liefert NPE at java.base/java.util.ResourceBundle.getBundleImpl(ResourceBundle.java:1612)
-//                    	bundle = ResourceBundle.getBundle(bundleName);
-//                	}
-//                }
-//            } catch (MissingResourceException e) {
-//                Logger.getAnonymousLogger().warning("missing resource "+key + " - " 
-//                		+ (bundle==null ? e.getMessage() : " will use bundle for "+SWINGSET2_RESOURCEBUNDLE_BASENAME)
-//                		+ (fallback==null ? "" : " - there is a fallback:"+fallback)
-//                		);
-//        	}
-//        }
-//        try {
-//            value = bundle != null ? bundle.getString(key) : fallback;
-//        
-//        } catch (MissingResourceException e) {
-//            Logger.getAnonymousLogger().warning("missing String resource " + key + "; using fallback \"" +fallback + "\"");
-//        }
-//        return value;
-//    } 
-//
-	// <<<
-	
     /**
      * main method allows us to run as a standalone demo.
      * @param args params
@@ -181,7 +100,11 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
 	private static final String DEFAULT_POS = "København - Øresund";
 	private TileFactoryInfo info;
 	private JXMapKit mapKit;
+	private SelectionAdapter selectionAdapter;
 //    private RoutePainter routePainter = new RoutePainter(Color.RED);
+	private SelectionPainter selectionPainter;
+	private List painters;
+	private CompoundPainter<JXMapViewer> overlayPainter;
 
     // controller:
     private JComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
@@ -270,17 +193,23 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
 
         mapKit.addKeyListener(new PanKeyListener(mapKit.getMainMap()));
 
+        selectionAdapter = new SelectionAdapter(mapKit.getMainMap());
         // Add painter
-        SelectionAdapter sa = new SelectionAdapter(mapKit.getMainMap());
-        SelectionPainter selectionPainter = new SelectionPainter(sa);
-        mapKit.getMainMap().addMouseListener(sa);
-        mapKit.getMainMap().addMouseMotionListener(sa);
-        CompoundPainter<JXMapViewer> cp = new CompoundPainter<JXMapViewer>();
-        cp.setCacheable(false);
-        cp.setPainters(addressLocationPainter, selectionPainter /*, routePainter*/);
+        mapKit.getMainMap().addMouseListener(selectionAdapter);
+        mapKit.getMainMap().addMouseMotionListener(selectionAdapter);
+        selectionPainter = new SelectionPainter(selectionAdapter);
         addressLocationPainter.setRenderer(new DefaultWaypointRenderer(4*SizingConstants.M/SizingConstants.M, SizingConstants.M
         		, FeatheRflag.of(SizingConstants.M, SizingConstants.M)));
-        mapKit.getMainMap().setOverlayPainter(cp);
+        painters = new ArrayList<>(); // besser LinkedList
+        painters.add(addressLocationPainter);
+        painters.add(selectionPainter);
+        //CompoundPainter<JXMapViewer> 
+        overlayPainter = new CompoundPainter<JXMapViewer>();
+        overlayPainter.setCacheable(false);
+//        overlayPainter.setPainters(addressLocationPainter, selectionPainter);
+        overlayPainter.setPainters(painters);
+        //public void setPainters(List<? extends Painter<T>> painters) {
+        mapKit.getMainMap().setOverlayPainter(overlayPainter);
 
         LOG.info("isAddressLocationShown():"+mapKit.isAddressLocationShown());
         
@@ -296,7 +225,7 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
         });
         getPosAndZoom();
         
-//        mapKit.getMainMap().addMouseListener(new AddNavigationIcon(mapKit.getMainMap()));
+        mapKit.getMainMap().addMouseListener(new AddNavigationIcon(mapKit.getMainMap(), painters));
 /* TODO zum Herausfinden der Ecken:
 NW: GeoPosition:[56.15625856755953, 11.612548828125] (56 09.376N, 011 36.753E)
 NE: GeoPosition:[56.15625856755953, 13.458251953125] (56 09.376N, 013 27.495E)
@@ -304,7 +233,7 @@ SW: GeoPosition:[55.24311788040884, 11.612548828125] (55 14.587N, 011 36.753E)
 mit NE + SW kann man die AIS Positionsmeldungen abfragen
  */
     }
- 
+
 //    public void createAnimation(long duration, float to) {
 //    	Timeline.builder(this)
 //			.addPropertyToInterpolate("trackProp", 0.0f, to)

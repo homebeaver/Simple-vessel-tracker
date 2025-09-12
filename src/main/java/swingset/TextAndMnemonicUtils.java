@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -80,11 +81,15 @@ public class TextAndMnemonicUtils {
 
     static { // clinit
     	Locale locale = JComponent.getDefaultLocale();
-    	LOG.config("ResourceBundle.getBundle(\""+RESOURCEBUNDLE_BASENAME+"\") ... Locale:"+locale);
+    	LOG.info("ResourceBundle.getBundle(\""+RESOURCEBUNDLE_BASENAME+"\") ... Locale:"+locale);
     	// Parameter: baseName the base name of the resource bundle, a fully qualified class name
     	// es gibt noch die Methode mit Locale:
         //public static final ResourceBundle getBundle(String baseName, Locale locale)
-        bundle = ResourceBundle.getBundle(RESOURCEBUNDLE_BASENAME, locale);
+    	try {
+            bundle = ResourceBundle.getBundle(RESOURCEBUNDLE_BASENAME, locale);
+    	} catch (MissingResourceException ex) {
+    		LOG.warning(ex.getMessage());
+    	}
         LOG.config("bundle:"+bundle);
 /*
 Throws:java.lang.NullPointerException - if baseName is null
@@ -99,6 +104,9 @@ MissingResourceException - if no resource bundle for the specified base name can
             } catch (IOException ex) {
             	LOG.warning("------------------>"+ex.getMessage());
                 System.out.println("java.io.IOException: Couldn't load swingset.properties");
+            } catch (Exception ex) {
+            	LOG.warning("------------------>"+ex.getMessage());
+                System.out.println("Exception: Couldn't load swingset.properties");
             }
         } else {
         	LOG.info("bundle.BaseBundleName:"+bundle.getBaseBundleName()+"<<<<");

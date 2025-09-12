@@ -175,7 +175,7 @@ public abstract class AbstractDemo extends JXPanel {
         	 * in SwingSet2: bundleName :== <package name>.swingset // one ResourceBundle for all classes
         	 * in SwingSet3: bundleName :== <package name>.resources.<class SimpleName> // one ResourceBundle per class
         	 */
-        	bundle = ResourceBundle.getBundle(SWINGSET2_RESOURCEBUNDLE_BASENAME);
+//        	bundle = ResourceBundle.getBundle(SWINGSET2_RESOURCEBUNDLE_BASENAME);
         	String bundleName = null;
         	try {
             	// in SwingSet3: bundleName :== <package name>.resources.<class SimpleName>

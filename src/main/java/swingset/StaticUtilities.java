@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+//import java.lang.NullPointerException; // Wieso fehlt es in JSE-17 ??? XXX
 
 import javax.swing.ImageIcon;
 
@@ -152,10 +153,10 @@ public class StaticUtilities {
 				LOG.info("found:"+file);
 	        	fis = new FileInputStream(file);
 	        }
-		} catch (NullPointerException e) {
-			throw e;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+		} catch (Exception e) {
+			throw e;
 		}
 		return fis;
 	}
