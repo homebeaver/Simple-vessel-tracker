@@ -10,10 +10,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,18 +41,6 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.SwingXUtilities;
 import org.jdesktop.swingx.action.AbstractActionExt;
-//import org.jdesktop.swingx.demos.svg.FlagBR;
-//import org.jdesktop.swingx.demos.svg.FlagCH;
-//import org.jdesktop.swingx.demos.svg.FlagCS;
-//import org.jdesktop.swingx.demos.svg.FlagDE;
-//import org.jdesktop.swingx.demos.svg.FlagES;
-//import org.jdesktop.swingx.demos.svg.FlagFR;
-//import org.jdesktop.swingx.demos.svg.FlagIT;
-//import org.jdesktop.swingx.demos.svg.FlagNL;
-//import org.jdesktop.swingx.demos.svg.FlagPL;
-//import org.jdesktop.swingx.demos.svg.FlagSE;
-//import org.jdesktop.swingx.demos.svg.FlagUK;
-import org.jdesktop.swingx.icon.SizingConstants;
 
 import swingset.TextAndMnemonicUtils;
 
@@ -432,11 +417,6 @@ aus super:
      */
     protected JMenu createThemeMenu(Window target) {
     	String[] themeInfo = { OCEAN , STEEL
-    		, "swingset.plaf.AquaTheme"
-    		, "swingset.plaf.CharcoalTheme"
-    		, "swingset.plaf.ContrastTheme"
-    		, "swingset.plaf.EmeraldTheme"
-    		, "swingset.plaf.RubyTheme"
     		};
     	String memuLabel = null; // the text for the menu label
     	try {
@@ -623,30 +603,5 @@ class OceanTheme extends DefaultMetalTheme
     	
     }
 
-    private static class SetLanguageAction extends AbstractAction {
-    	
-    	private DisplayLocale dl;
-        private Window toplevel;
-
-        public SetLanguageAction(DisplayLocale dl, Window toplevel) {
-            super(dl.getLocale().toString());
-            this.dl = dl;
-            this.toplevel = toplevel;
-        }
-        
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (toplevel != null) {
-				LOG.info("Locale selected:"+dl + ", do setComponentTreeLocale for "+toplevel);
-				SwingXUtilities.setComponentTreeLocale(toplevel, dl.getLocale());
-                if(toplevel instanceof MainJXframe) {
-                	MainJXframe rf = (MainJXframe)toplevel;
-                	Window w = rf.currentDemoFrame;
-                	if (w != null) SwingXUtilities.setComponentTreeLocale(w, dl.getLocale());
-                }
-			}
-		}
-    	
-    }
 
 }

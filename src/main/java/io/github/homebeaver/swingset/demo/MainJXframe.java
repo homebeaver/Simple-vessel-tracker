@@ -62,12 +62,6 @@ in SwingSet3:
 @SuppressWarnings("serial")
 public class MainJXframe extends DemoJXFrame {
 
-	static private enum DemoSelectorStyle {
-		USE_JXTREE,
-		USE_JXTASKS
-	}
-	static DemoSelectorStyle demoSelectorStyle = DemoSelectorStyle.USE_JXTASKS;
-	
 	/**
 	 * starts swingset demo application
 	 */
@@ -141,11 +135,9 @@ Alternative 3: DemoJXTasks statt demoTree
  */
     	content = new JXPanel(new BorderLayout());
     	
-    	if(demoSelectorStyle==DemoSelectorStyle.USE_JXTASKS) {
-    		JComponent tpc = DemoJXTasks.getTaskPaneContainer();
-    		tpc.setBackground(getBackground());
-        	content.add(new JScrollPane(tpc), BorderLayout.WEST);
-    	}
+		JComponent tpc = DemoJXTasks.getTaskPaneContainer();
+		tpc.setBackground(getBackground());
+    	content.add(new JScrollPane(tpc), BorderLayout.WEST);
 
     	tabbedpane = new JTabbedPane();
     	tabbedpane.add("source", new JXLabel("TODO enpty")); // TODO
@@ -256,9 +248,6 @@ Alternative 3: DemoJXTasks statt demoTree
 		
 		demoTree.setCellRenderer(treeRenderer);
 		
-    	if(demoSelectorStyle==DemoSelectorStyle.USE_JXTREE) {
-    		content.add(new JScrollPane(demoTree), BorderLayout.WEST);
-    	}
 		return menu;
     }
 
