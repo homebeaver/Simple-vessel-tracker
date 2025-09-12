@@ -11,7 +11,7 @@
  */
 
 
-package org.openapitools.client.model;
+package io.github.homebeaver.aismodel;
 
 import java.util.Objects;
 import java.util.Arrays;

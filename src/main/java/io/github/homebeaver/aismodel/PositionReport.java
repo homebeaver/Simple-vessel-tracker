@@ -11,7 +11,7 @@
  */
 
 
-package org.openapitools.client.model;
+package io.github.homebeaver.aismodel;
 
 import java.io.IOException;
 import java.util.HashSet;

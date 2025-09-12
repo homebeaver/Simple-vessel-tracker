@@ -1,4 +1,4 @@
-package org.openapitools.client.model;
+package io.github.homebeaver.aismodel;
 
 import org.json.JSONException;
 import org.json.JSONObject;
