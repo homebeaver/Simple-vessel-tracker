@@ -14,8 +14,7 @@ public class MetaData {
 	public static final String LONGITUDE = "longitude";
 	public static final String TIME_UTC = "time_utc";
 
-//	private Double mmsi; // oderso:
-	private long mmsi;
+	private int mmsi;
 	private String mmsi_string;
 	private String shipName;
 	private Position position; // type aus dk.dma.enav.model.geometry.Position
@@ -25,7 +24,7 @@ public class MetaData {
 		MetaData res = new MetaData();
 		// Extract individual fields from JSONObject
 		try {
-			res = res.mmsi(jo.getLong(MMSI))
+			res = res.mmsi(jo.getInt(MMSI))
 					.mmsi_string(String.valueOf(jo.getLong(MMSI_STRING))) // long => String
 					.shipName(jo.getString(SHIPNAME).trim())
 					.position(getPosition(jo))
@@ -39,7 +38,17 @@ public class MetaData {
 
 	private MetaData() {}
 
-	public MetaData mmsi(long mmsi) {
+	public int getMMSI() {
+		return mmsi;
+	}
+	public String getShipName() {
+		return shipName;
+	}
+	public Position getPosition() {
+		return position;
+	}
+
+	public MetaData mmsi(int mmsi) {
 		this.mmsi = mmsi;
 		return this;
 	}
