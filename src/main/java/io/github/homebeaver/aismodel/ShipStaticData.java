@@ -32,7 +32,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import dk.dma.ais.message.NavigationalStatus;
 import dk.dma.ais.message.ShipTypeCargo;
 import dk.dma.ais.message.ShipTypeColor;
 import io.swagger.annotations.ApiModelProperty;
@@ -44,24 +43,24 @@ import io.swagger.annotations.ApiModelProperty;
  * Message 5: Ship static and voyage related data
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
-public class ShipStaticData {
-  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-  // AisMessage5
-  private Integer messageID;
-
-  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-  private Integer repeatIndicator;
-
-  // aka MMSI
-  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-  @SerializedName(SERIALIZED_NAME_USER_I_D)
-  private Integer userID;
-
-  public static final String SERIALIZED_NAME_VALID = "Valid";
-  @SerializedName(SERIALIZED_NAME_VALID)
-  private Boolean valid;
+public class ShipStaticData extends AisMessage {
+//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
+//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
+//  // AisMessage5
+//  private Integer messageID;
+//
+//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
+//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
+//  private Integer repeatIndicator;
+//
+//  // aka MMSI
+//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
+//  @SerializedName(SERIALIZED_NAME_USER_I_D)
+//  private Integer userID;
+//
+//  public static final String SERIALIZED_NAME_VALID = "Valid";
+//  @SerializedName(SERIALIZED_NAME_VALID)
+//  private Boolean valid;
 
   /**
    * AIS version indicator: 
@@ -272,98 +271,99 @@ Type Code 	Description
   private Boolean spare;
 
   public ShipStaticData() { 
+	  super();
   }
 
-  public ShipStaticData messageID(Integer messageID) {
-    
-    this.messageID = messageID;
-    return this;
-  }
-
-   /**
-   * Get messageID
-   * @return messageID
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getMessageID() {
-    return messageID;
-  }
-
-
-  public void setMessageID(Integer messageID) {
-    this.messageID = messageID;
-  }
-
-
-  public ShipStaticData repeatIndicator(Integer repeatIndicator) {
-    
-    this.repeatIndicator = repeatIndicator;
-    return this;
-  }
-
-   /**
-   * Get repeatIndicator
-   * @return repeatIndicator
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getRepeatIndicator() {
-    return repeatIndicator;
-  }
-
-
-  public void setRepeatIndicator(Integer repeatIndicator) {
-    this.repeatIndicator = repeatIndicator;
-  }
-
-
-  public ShipStaticData userID(Integer userID) {
-    
-    this.userID = userID;
-    return this;
-  }
-
-   /**
-   * Get userID
-   * @return userID
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getUserID() {
-    return userID;
-  }
-
-
-  public void setUserID(Integer userID) {
-    this.userID = userID;
-  }
-
-
-  public ShipStaticData valid(Boolean valid) {
-    
-    this.valid = valid;
-    return this;
-  }
-
-   /**
-   * Get valid
-   * @return valid
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Boolean getValid() {
-    return valid;
-  }
-
-
-  public void setValid(Boolean valid) {
-    this.valid = valid;
-  }
+//  public ShipStaticData messageID(Integer messageID) {
+//    
+//    this.messageID = messageID;
+//    return this;
+//  }
+//
+//   /**
+//   * Get messageID
+//   * @return messageID
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getMessageID() {
+//    return messageID;
+//  }
+//
+//
+//  public void setMessageID(Integer messageID) {
+//    this.messageID = messageID;
+//  }
+//
+//
+//  public ShipStaticData repeatIndicator(Integer repeatIndicator) {
+//    
+//    this.repeatIndicator = repeatIndicator;
+//    return this;
+//  }
+//
+//   /**
+//   * Get repeatIndicator
+//   * @return repeatIndicator
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getRepeatIndicator() {
+//    return repeatIndicator;
+//  }
+//
+//
+//  public void setRepeatIndicator(Integer repeatIndicator) {
+//    this.repeatIndicator = repeatIndicator;
+//  }
+//
+//
+//  public ShipStaticData userID(Integer userID) {
+//    
+//    this.userID = userID;
+//    return this;
+//  }
+//
+//   /**
+//   * Get userID
+//   * @return userID
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getUserID() {
+//    return userID;
+//  }
+//
+//
+//  public void setUserID(Integer userID) {
+//    this.userID = userID;
+//  }
+//
+//
+//  public ShipStaticData valid(Boolean valid) {
+//    
+//    this.valid = valid;
+//    return this;
+//  }
+//
+//   /**
+//   * Get valid
+//   * @return valid
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Boolean getValid() {
+//    return valid;
+//  }
+//
+//
+//  public void setValid(Boolean valid) {
+//    this.valid = valid;
+//  }
 
 
   public ShipStaticData aisVersion(Integer aisVersion) {
@@ -652,10 +652,10 @@ Type Code 	Description
       return false;
     }
     ShipStaticData shipStaticData = (ShipStaticData) o;
-    return Objects.equals(this.messageID, shipStaticData.messageID) &&
-        Objects.equals(this.repeatIndicator, shipStaticData.repeatIndicator) &&
-        Objects.equals(this.userID, shipStaticData.userID) &&
-        Objects.equals(this.valid, shipStaticData.valid) &&
+    return Objects.equals(getMessageID(), shipStaticData.getMessageID()) &&
+            Objects.equals(getRepeatIndicator(), shipStaticData.getRepeatIndicator()) &&
+            Objects.equals(getUserID(), shipStaticData.getUserID()) &&
+            Objects.equals(getValid(), shipStaticData.getValid()) &&
         Objects.equals(this.aisVersion, shipStaticData.aisVersion) &&
         Objects.equals(this.imoNumber, shipStaticData.imoNumber) &&
         Objects.equals(this.callSign, shipStaticData.callSign) &&
@@ -672,7 +672,8 @@ Type Code 	Description
 
   @Override
   public int hashCode() {
-    return Objects.hash(messageID, repeatIndicator, userID, valid, aisVersion, imoNumber, callSign, name, type, dimension, fixType, eta, maximumStaticDraught, destination, dte, spare);
+    return Objects.hash(getMessageID(), getRepeatIndicator(), getUserID(), getValid(), 
+    imoNumber, callSign, name, type, dimension, fixType, eta, maximumStaticDraught, destination, dte, spare);
   }
 
   // \" hinzu, damit trailing blanks sichtbar sind, type + ShipTypeCargo
@@ -682,10 +683,10 @@ Type Code 	Description
     ShipTypeCargo stc = new ShipTypeCargo(getType());
     ShipTypeColor color = ShipTypeColor.getColor(stc.getShipType());
     sb.append("class ShipStaticData {\n");
-    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
+    sb.append("    messageID: ").append(toIndentedString(getMessageID())).append("\n");
+    sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
+    sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
+    sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
     sb.append("    aisVersion: ").append(toIndentedString(aisVersion)).append("\n");
     sb.append("    imoNumber: ").append(toIndentedString(imoNumber)).append("\n");
     sb.append("    callSign: \"").append(toIndentedString(callSign)).append("\"\n");
@@ -835,39 +836,34 @@ Type Code 	Description
   }
 
 public static ShipStaticData fromJson(JSONObject jo) {
-    ShipStaticData res = new ShipStaticData();
+	AisMessage res = new ShipStaticData();
+    ShipStaticData ssd = null;
     // Extract individual fields from JSONObject
     try {
-//        public ShipStaticData messageID(Integer messageID) {
-        //int mid = shipStaticData.getInt(SERIALIZED_NAME_MESSAGE_I_D);
         res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
         res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
         res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
         res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-        res = res.aisVersion(jo.getInt(SERIALIZED_NAME_AIS_VERSION));
-        res = res.imoNumber(jo.getInt(SERIALIZED_NAME_IMO_NUMBER));
-        res = res.callSign(jo.getString(SERIALIZED_NAME_CALL_SIGN));
-        res = res.name(jo.getString(SERIALIZED_NAME_NAME));
-        res = res.type(jo.getInt(SERIALIZED_NAME_TYPE));
-        // DONE dimensions
+        ssd = (ShipStaticData)res;
+        ssd = ssd.aisVersion(jo.getInt(SERIALIZED_NAME_AIS_VERSION));
+        ssd = ssd.imoNumber(jo.getInt(SERIALIZED_NAME_IMO_NUMBER));
+        ssd = ssd.callSign(jo.getString(SERIALIZED_NAME_CALL_SIGN));
+        ssd = ssd.name(jo.getString(SERIALIZED_NAME_NAME));
+        ssd = ssd.type(jo.getInt(SERIALIZED_NAME_TYPE));
         JSONObject dimensions = jo.getJSONObject(SERIALIZED_NAME_DIMENSION);
-        res = res.dimension(ShipStaticDataDimension.fromJson(dimensions));
-
-        res = res.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
-
-        // TODO eta
+        ssd = ssd.dimension(ShipStaticDataDimension.fromJson(dimensions));
+        ssd = ssd.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
         JSONObject etas = jo.getJSONObject(SERIALIZED_NAME_ETA);
-        res = res.eta(ShipStaticDataEta.fromJson(etas));
-
-        res = res.maximumStaticDraught(jo.getDouble(SERIALIZED_NAME_MAXIMUM_STATIC_DRAUGHT));
-        res = res.destination(jo.getString(SERIALIZED_NAME_DESTINATION));
-        res = res.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
+        ssd = ssd.eta(ShipStaticDataEta.fromJson(etas));
+        ssd = ssd.maximumStaticDraught(jo.getDouble(SERIALIZED_NAME_MAXIMUM_STATIC_DRAUGHT));
+        ssd = ssd.destination(jo.getString(SERIALIZED_NAME_DESTINATION));
+        ssd = ssd.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
         // XXX spare
         System.out.println(res);
     } catch (JSONException e) {
 //    	logger.error("Error creating ShipStaticData", e);
     }
-    return res;
+    return ssd;
 }
 
  /**

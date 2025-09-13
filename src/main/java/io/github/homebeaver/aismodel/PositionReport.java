@@ -33,7 +33,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import dk.dma.ais.message.NavigationalStatus;
-import dk.dma.enav.model.geometry.Position;
 import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
@@ -42,43 +41,43 @@ import io.swagger.annotations.ApiModelProperty;
  * PositionReport
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
-public class PositionReport {
-  /* AisMessage1 extends AisPositionMessage
-   * or
-   * AisMessage2 extends AisMessage1
-   * or
-   * AisMessage3 extends AisPositionMessage
-   * <p>
-   * AisMessage3 : Special position report, response to interrogation;(Class A shipborne mobile equipment)
-   */
-  /**
-   * Identifier for this message 1, 2 or 3
-   */
-  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-  private Integer messageID;
-
-  /**
-   * Used by the repeater to indicate how many times a message has been repeated. 
-   * Refer to ß 4.6.1; 0-3; 
-   * 0 = default; 3 = do not repeat any more
-   */
-  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-  private Integer repeatIndicator;
-
-  /**
-   * R-REC-M.1371-1: 3.3.7.2.1 User ID
-   * The user ID should be the MMSI. The MMSI is 30 bits long. 
-   * The first 9 digits (most significant digits) should be used only. 
-   * Recommendation ITU-R M.1083 should not be applied with respect to the 10th digit (least significant digit).
-   */
-  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-  @SerializedName(SERIALIZED_NAME_USER_I_D)
-  private Integer userID;
-
-  public static final String SERIALIZED_NAME_VALID = "Valid";
-  @SerializedName(SERIALIZED_NAME_VALID)
-  private Boolean valid;
+public class PositionReport extends AisMessage {
+//  /* AisMessage1 extends AisPositionMessage
+//   * or
+//   * AisMessage2 extends AisMessage1
+//   * or
+//   * AisMessage3 extends AisPositionMessage
+//   * <p>
+//   * AisMessage3 : Special position report, response to interrogation;(Class A shipborne mobile equipment)
+//   */
+//  /**
+//   * Identifier for this message 1, 2 or 3
+//   */
+//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
+//  private Integer messageID;
+//
+//  /**
+//   * Used by the repeater to indicate how many times a message has been repeated. 
+//   * Refer to ß 4.6.1; 0-3; 
+//   * 0 = default; 3 = do not repeat any more
+//   */
+//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
+//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
+//  private Integer repeatIndicator;
+//
+//  /**
+//   * R-REC-M.1371-1: 3.3.7.2.1 User ID
+//   * The user ID should be the MMSI. The MMSI is 30 bits long. 
+//   * The first 9 digits (most significant digits) should be used only. 
+//   * Recommendation ITU-R M.1083 should not be applied with respect to the 10th digit (least significant digit).
+//   */
+//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
+//  @SerializedName(SERIALIZED_NAME_USER_I_D)
+//  private Integer userID;
+//
+//  public static final String SERIALIZED_NAME_VALID = "Valid";
+//  @SerializedName(SERIALIZED_NAME_VALID)
+//  private Boolean valid;
 
   /**
    * Navigational status: 
@@ -147,7 +146,7 @@ public class PositionReport {
    * Stores the positions in a general manner
    */
 //  protected AisPosition pos; // : Lat/Long 1/10000 minute
-  private Position position;
+//  private Position position;
   public static final String SERIALIZED_NAME_LONGITUDE = "Longitude";
   @SerializedName(SERIALIZED_NAME_LONGITUDE)
   private Double longitude;
@@ -235,99 +234,100 @@ public class PositionReport {
   @SerializedName(SERIALIZED_NAME_COMMUNICATION_STATE)
   private Integer communicationState;
 
-  public PositionReport() { 
+  public PositionReport() {
+	  super();
   }
 
-  public PositionReport messageID(Integer messageID) {
-    
-    this.messageID = messageID;
-    return this;
-  }
-
-   /**
-   * Get messageID
-   * @return messageID
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getMessageID() {
-    return messageID;
-  }
-
-
-  public void setMessageID(Integer messageID) {
-    this.messageID = messageID;
-  }
-
-
-  public PositionReport repeatIndicator(Integer repeatIndicator) {
-    
-    this.repeatIndicator = repeatIndicator;
-    return this;
-  }
-
-   /**
-   * Get repeatIndicator
-   * @return repeatIndicator
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getRepeatIndicator() {
-    return repeatIndicator;
-  }
-
-
-  public void setRepeatIndicator(Integer repeatIndicator) {
-    this.repeatIndicator = repeatIndicator;
-  }
-
-
-  public PositionReport userID(Integer userID) {
-    
-    this.userID = userID;
-    return this;
-  }
-
-   /**
-   * Get userID
-   * @return userID
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getUserID() {
-    return userID;
-  }
-
-
-  public void setUserID(Integer userID) {
-    this.userID = userID;
-  }
-
-
-  public PositionReport valid(Boolean valid) {
-    
-    this.valid = valid;
-    return this;
-  }
-
-   /**
-   * Get valid
-   * @return valid
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Boolean getValid() {
-    return valid;
-  }
-
-
-  public void setValid(Boolean valid) {
-    this.valid = valid;
-  }
+//  public PositionReport messageID(Integer messageID) {
+//    
+//    this.messageID = messageID;
+//    return this;
+//  }
+//
+//   /**
+//   * Get messageID
+//   * @return messageID
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getMessageID() {
+//    return messageID;
+//  }
+//
+//
+//  public void setMessageID(Integer messageID) {
+//    this.messageID = messageID;
+//  }
+//
+//
+//  public PositionReport repeatIndicator(Integer repeatIndicator) {
+//    
+//    this.repeatIndicator = repeatIndicator;
+//    return this;
+//  }
+//
+//   /**
+//   * Get repeatIndicator
+//   * @return repeatIndicator
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getRepeatIndicator() {
+//    return repeatIndicator;
+//  }
+//
+//
+//  public void setRepeatIndicator(Integer repeatIndicator) {
+//    this.repeatIndicator = repeatIndicator;
+//  }
+//
+//
+//  public PositionReport userID(Integer userID) {
+//    
+//    this.userID = userID;
+//    return this;
+//  }
+//
+//   /**
+//   * Get userID
+//   * @return userID
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getUserID() {
+//    return userID;
+//  }
+//
+//
+//  public void setUserID(Integer userID) {
+//    this.userID = userID;
+//  }
+//
+//
+//  public PositionReport valid(Boolean valid) {
+//    
+//    this.valid = valid;
+//    return this;
+//  }
+//
+//   /**
+//   * Get valid
+//   * @return valid
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Boolean getValid() {
+//    return valid;
+//  }
+//
+//
+//  public void setValid(Boolean valid) {
+//    this.valid = valid;
+//  }
 
 
   public PositionReport navigationalStatus(Integer navigationalStatus) {
@@ -639,10 +639,10 @@ public class PositionReport {
       return false;
     }
     PositionReport positionReport = (PositionReport) o;
-    return Objects.equals(this.messageID, positionReport.messageID) &&
-        Objects.equals(this.repeatIndicator, positionReport.repeatIndicator) &&
-        Objects.equals(this.userID, positionReport.userID) &&
-        Objects.equals(this.valid, positionReport.valid) &&
+    return Objects.equals(getMessageID(), positionReport.getMessageID()) &&
+        Objects.equals(getRepeatIndicator(), positionReport.getRepeatIndicator()) &&
+        Objects.equals(getUserID(), positionReport.getUserID()) &&
+        Objects.equals(getValid(), positionReport.getValid()) &&
         Objects.equals(this.navigationalStatus, positionReport.navigationalStatus) &&
         Objects.equals(this.rateOfTurn, positionReport.rateOfTurn) &&
         Objects.equals(this.sog, positionReport.sog) &&
@@ -660,7 +660,8 @@ public class PositionReport {
 
   @Override
   public int hashCode() {
-    return Objects.hash(messageID, repeatIndicator, userID, valid, navigationalStatus, rateOfTurn, sog, positionAccuracy, longitude, latitude, cog, trueHeading, timestamp, specialManoeuvreIndicator, spare, raim, communicationState);
+    return Objects.hash(getMessageID(), getRepeatIndicator(), getUserID(), getValid(), 
+        navigationalStatus, rateOfTurn, sog, positionAccuracy, longitude, latitude, cog, trueHeading, timestamp, specialManoeuvreIndicator, spare, raim, communicationState);
   }
 
   @Override
@@ -668,10 +669,10 @@ public class PositionReport {
     StringBuilder sb = new StringBuilder();
     NavigationalStatus ns = NavigationalStatus.get(getNavigationalStatus());
     sb.append("class PositionReport {\n");
-    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
+    sb.append("    messageID: ").append(toIndentedString(getMessageID())).append("\n");
+    sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
+    sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
+    sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
     sb.append("    navigationalStatus: ").append(toIndentedString(navigationalStatus)).append("-").append(toIndentedString(ns)).append("\n");
     sb.append("    rateOfTurn: ").append(toIndentedString(rateOfTurn)).append("\n");
     sb.append("    sog: ").append(toIndentedString(sog)).append("\n");
@@ -807,32 +808,34 @@ public class PositionReport {
   }
 
   public static PositionReport fromJson(JSONObject jo) {
-    PositionReport res = new PositionReport();
+	  AisMessage res = new PositionReport();
+	  PositionReport ps = null;
     // Extract individual fields from JSONObject
     try {
         res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
         res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
         res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
         res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-        res = res.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
-        res = res.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
-        res = res.sog(jo.getDouble(SERIALIZED_NAME_SOG));
-        res = res.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
-        res = res.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
-        res = res.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+        ps = (PositionReport)res;
+        ps = ps.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
+        ps = ps.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
+        ps = ps.sog(jo.getDouble(SERIALIZED_NAME_SOG));
+        ps = ps.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+        ps = ps.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+        ps = ps.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
 //        Position position = getPosition(jo);
-        res = res.cog(jo.getDouble(SERIALIZED_NAME_COG));
-        res = res.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
-        res = res.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
-        res = res.specialManoeuvreIndicator(jo.getInt(SERIALIZED_NAME_SPECIAL_MANOEUVRE_INDICATOR));
+        ps = ps.cog(jo.getDouble(SERIALIZED_NAME_COG));
+        ps = ps.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
+        ps = ps.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
+        ps = ps.specialManoeuvreIndicator(jo.getInt(SERIALIZED_NAME_SPECIAL_MANOEUVRE_INDICATOR));
       // XXX spare 
-        res = res.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
-        res = res.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-      System.out.println(res);
+        ps = ps.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+        ps = ps.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
+      System.out.println(ps);
     } catch (JSONException e) {
 //        logger.error("Error creating ShipStaticData", e);
     }
-    return res;
+    return ps;
   }
 
  /**

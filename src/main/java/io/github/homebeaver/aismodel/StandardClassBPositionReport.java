@@ -50,24 +50,24 @@ import java.util.Set;
  * StandardClassBPositionReport
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
-public class StandardClassBPositionReport {
-  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-  // AisMessage18 extends AisMessage implements IVesselPositionMessage
-  private Integer messageID;
-
-  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-  private Integer repeatIndicator;
-
-  // aka MMSI
-  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-  @SerializedName(SERIALIZED_NAME_USER_I_D)
-  private Integer userID;
-
-  public static final String SERIALIZED_NAME_VALID = "Valid";
-  @SerializedName(SERIALIZED_NAME_VALID)
-  private Boolean valid;
+public class StandardClassBPositionReport extends AisMessage {
+//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
+//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
+//  // AisMessage18 extends AisMessage implements IVesselPositionMessage
+//  private Integer messageID;
+//
+//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
+//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
+//  private Integer repeatIndicator;
+//
+//  // aka MMSI
+//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
+//  @SerializedName(SERIALIZED_NAME_USER_I_D)
+//  private Integer userID;
+//
+//  public static final String SERIALIZED_NAME_VALID = "Valid";
+//  @SerializedName(SERIALIZED_NAME_VALID)
+//  private Boolean valid;
 
   /** Not used. Should be set to zero. Reserved for future use */
   public static final String SERIALIZED_NAME_SPARE1 = "Spare1";
@@ -217,98 +217,99 @@ public class StandardClassBPositionReport {
   private Integer communicationState;
 
   public StandardClassBPositionReport() { 
+	  super();
   }
 
-  public StandardClassBPositionReport messageID(Integer messageID) {
-    
-    this.messageID = messageID;
-    return this;
-  }
-
-   /**
-   * Get messageID
-   * @return messageID
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getMessageID() {
-    return messageID;
-  }
-
-
-  public void setMessageID(Integer messageID) {
-    this.messageID = messageID;
-  }
-
-
-  public StandardClassBPositionReport repeatIndicator(Integer repeatIndicator) {
-    
-    this.repeatIndicator = repeatIndicator;
-    return this;
-  }
-
-   /**
-   * Get repeatIndicator
-   * @return repeatIndicator
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getRepeatIndicator() {
-    return repeatIndicator;
-  }
-
-
-  public void setRepeatIndicator(Integer repeatIndicator) {
-    this.repeatIndicator = repeatIndicator;
-  }
-
-
-  public StandardClassBPositionReport userID(Integer userID) {
-    
-    this.userID = userID;
-    return this;
-  }
-
-   /**
-   * Get userID
-   * @return userID
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getUserID() {
-    return userID;
-  }
-
-
-  public void setUserID(Integer userID) {
-    this.userID = userID;
-  }
-
-
-  public StandardClassBPositionReport valid(Boolean valid) {
-    
-    this.valid = valid;
-    return this;
-  }
-
-   /**
-   * Get valid
-   * @return valid
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Boolean getValid() {
-    return valid;
-  }
-
-
-  public void setValid(Boolean valid) {
-    this.valid = valid;
-  }
+//  public StandardClassBPositionReport messageID(Integer messageID) {
+//    
+//    this.messageID = messageID;
+//    return this;
+//  }
+//
+//   /**
+//   * Get messageID
+//   * @return messageID
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getMessageID() {
+//    return messageID;
+//  }
+//
+//
+//  public void setMessageID(Integer messageID) {
+//    this.messageID = messageID;
+//  }
+//
+//
+//  public StandardClassBPositionReport repeatIndicator(Integer repeatIndicator) {
+//    
+//    this.repeatIndicator = repeatIndicator;
+//    return this;
+//  }
+//
+//   /**
+//   * Get repeatIndicator
+//   * @return repeatIndicator
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getRepeatIndicator() {
+//    return repeatIndicator;
+//  }
+//
+//
+//  public void setRepeatIndicator(Integer repeatIndicator) {
+//    this.repeatIndicator = repeatIndicator;
+//  }
+//
+//
+//  public StandardClassBPositionReport userID(Integer userID) {
+//    
+//    this.userID = userID;
+//    return this;
+//  }
+//
+//   /**
+//   * Get userID
+//   * @return userID
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Integer getUserID() {
+//    return userID;
+//  }
+//
+//
+//  public void setUserID(Integer userID) {
+//    this.userID = userID;
+//  }
+//
+//
+//  public StandardClassBPositionReport valid(Boolean valid) {
+//    
+//    this.valid = valid;
+//    return this;
+//  }
+//
+//   /**
+//   * Get valid
+//   * @return valid
+//  **/
+//  @javax.annotation.Nonnull
+//  @ApiModelProperty(required = true, value = "")
+//
+//  public Boolean getValid() {
+//    return valid;
+//  }
+//
+//
+//  public void setValid(Boolean valid) {
+//    this.valid = valid;
+//  }
 
 
   public StandardClassBPositionReport spare1(Integer spare1) {
@@ -735,10 +736,10 @@ public class StandardClassBPositionReport {
       return false;
     }
     StandardClassBPositionReport standardClassBPositionReport = (StandardClassBPositionReport) o;
-    return Objects.equals(this.messageID, standardClassBPositionReport.messageID) &&
-        Objects.equals(this.repeatIndicator, standardClassBPositionReport.repeatIndicator) &&
-        Objects.equals(this.userID, standardClassBPositionReport.userID) &&
-        Objects.equals(this.valid, standardClassBPositionReport.valid) &&
+    return Objects.equals(getMessageID(), standardClassBPositionReport.getMessageID()) &&
+            Objects.equals(getRepeatIndicator(), standardClassBPositionReport.getRepeatIndicator()) &&
+            Objects.equals(getUserID(), standardClassBPositionReport.getUserID()) &&
+            Objects.equals(getValid(), standardClassBPositionReport.getValid()) &&
         Objects.equals(this.spare1, standardClassBPositionReport.spare1) &&
         Objects.equals(this.sog, standardClassBPositionReport.sog) &&
         Objects.equals(this.positionAccuracy, standardClassBPositionReport.positionAccuracy) &&
@@ -761,17 +762,18 @@ public class StandardClassBPositionReport {
 
   @Override
   public int hashCode() {
-    return Objects.hash(messageID, repeatIndicator, userID, valid, spare1, sog, positionAccuracy, longitude, latitude, cog, trueHeading, timestamp, spare2, classBUnit, classBDisplay, classBDsc, classBBand, classBMsg22, assignedMode, raim, communicationStateIsItdma, communicationState);
+    return Objects.hash(getMessageID(), getRepeatIndicator(), getUserID(), getValid(), 
+    spare1, sog, positionAccuracy, longitude, latitude, cog, trueHeading, timestamp, spare2, classBUnit, classBDisplay, classBDsc, classBBand, classBMsg22, assignedMode, raim, communicationStateIsItdma, communicationState);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class StandardClassBPositionReport {\n");
-    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
+    sb.append("    messageID: ").append(toIndentedString(getMessageID())).append("\n");
+    sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
+    sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
+    sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
     sb.append("    spare1: ").append(toIndentedString(spare1)).append("\n");
     sb.append("    sog: ").append(toIndentedString(sog)).append("\n");
     sb.append("    positionAccuracy: ").append(toIndentedString(positionAccuracy)).append("\n");
