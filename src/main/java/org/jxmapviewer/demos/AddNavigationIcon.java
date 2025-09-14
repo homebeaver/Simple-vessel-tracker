@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
+import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
 import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
@@ -43,8 +44,10 @@ public class AddNavigationIcon extends MapClickListener {
 				return set;
 			}
 		};
-		shipLocationPainter.setRenderer(new DefaultWaypointRenderer(4*SizingConstants.M/SizingConstants.M, SizingConstants.M
-        		, FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M)));
+		RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+		int adjustx = icon.getIconWidth()/2;
+		int adjusty = icon.getIconHeight()/2; // SizingConstants.M/2;
+		shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
 		painters.add(shipLocationPainter);
 		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
         overlayPainter.setCacheable(false);
