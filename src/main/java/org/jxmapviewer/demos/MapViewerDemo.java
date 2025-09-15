@@ -3,6 +3,7 @@
 package org.jxmapviewer.demos;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.File;
@@ -16,7 +17,9 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -30,8 +33,11 @@ import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXFrame.StartPosition;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.binding.DisplayInfo;
 import org.jdesktop.swingx.demos.svg.FeatheRmap_pin;
+import org.jdesktop.swingx.icon.PlayIcon;
+import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
 import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
@@ -83,15 +89,15 @@ public class MapViewerDemo extends AbstractDemo {
     	});
     }
 
-	private static final int DEFAULT_ZOOM = 13; // OSM MAX_ZOOM is 19;
+	private static final int DEFAULT_ZOOM = 10; // OSM MAX_ZOOM is 19;
+	private static final String DEFAULT_MAP = "København - Øresund";
 	private TileFactoryInfo info;
-    private JXMapViewer mapViewer;
+    private AisMapViewer mapViewer;
 
     // controller:
     private JComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
     private JSlider zoomSlider;
-    // controller prop name
-//	private static final String SLIDER = "zoomSlider";
+    private JButton animation;
 
     /**
      * Demo Constructor
@@ -113,7 +119,7 @@ public class MapViewerDemo extends AbstractDemo {
         tileFactory.setLocalCache(new FileBasedLocalCache(cacheDir, false));
 
         // Setup JXMapViewer
-        mapViewer = new JXMapViewer();
+        mapViewer = new AisMapViewer();
         mapViewer.setName("mapViewer");
         mapViewer.setTileFactory(tileFactory);
 
@@ -122,10 +128,11 @@ public class MapViewerDemo extends AbstractDemo {
 
         // Set the zoom and focus to Java - the island
         mapViewer.setZoom(DEFAULT_ZOOM);
-        mapViewer.setAddressLocation(nameToGeoPosition.get("Java"));
+        mapViewer.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
 
         // Add interactions / verschieben , zoomen , select
 // "Use left mouse button to pan, mouse wheel to zoom and right mouse to select";
+// mia : class MouseInputAdapter extends MouseAdapter implements MouseInputListener
         MouseInputListener mia = new PanMouseInputListener(mapViewer);
         mapViewer.addMouseListener(mia);
         mapViewer.addMouseMotionListener(mia);
@@ -136,8 +143,9 @@ public class MapViewerDemo extends AbstractDemo {
 
         mapViewer.addKeyListener(new PanKeyListener(mapViewer));
 
-        // Add a selection painter
+        // Add painters:
         SelectionAdapter sa = new SelectionAdapter(mapViewer);
+        mapViewer.addMouseMotionListener(sa); // XXX wozu dient das?
         SelectionPainter selectionPainter = new SelectionPainter(sa);
         mapViewer.addMouseListener(sa);
         mapViewer.addMouseMotionListener(sa);
@@ -147,7 +155,8 @@ public class MapViewerDemo extends AbstractDemo {
         addressLocationPainter.setRenderer(new DefaultWaypointRenderer(FeatheRmap_pin.of(SizingConstants.M, SizingConstants.M)));
         mapViewer.setOverlayPainter(cp);
 
-        add(mapViewer);
+        add(mapViewer, BorderLayout.CENTER);
+        add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
         
         mapViewer.addPropertyChangeListener("zoom", pce -> {
         	LOG.info("---------------------pce:"+pce);
@@ -241,6 +250,18 @@ public class MapViewerDemo extends AbstractDemo {
 		fill.add(new JLabel(getBundleString("zoomIn.text")), BorderLayout.SOUTH);		
 		controls.add(fill);
 
+        animation = new JButton();
+        animation.setName("animation");
+        animation.setText(getBundleString("animation.text"));
+        animation.setIcon(PlayIcon.of(RadianceIcon.XS, RadianceIcon.XS));
+        animation.addActionListener( ae -> {
+        	animation.setEnabled( false );
+            // Starte Extra-Thread per SwingWorker, 
+        	//damit der Event Dispatch Thread (EDT) nicht blockiert wird:
+        	(new MessageLoader(null, mapViewer)).execute();
+        });
+    	fill.add(animation, BorderLayout.EAST);
+
 		return controls;
 	}
 
@@ -252,19 +273,58 @@ public class MapViewerDemo extends AbstractDemo {
         return model;
     }
 
+    // SOUTH:
+    private JComponent statusBarLeft;
+//    private JLabel actionStatus;
+    private JLabel tableStatus;
+    private JLabel tableRows;
+//    private JProgressBar progressBar;
+    protected Container createStatusBar() {
+
+        JXStatusBar statusBar = new JXStatusBar();
+        statusBar.putClientProperty("auto-add-separator", Boolean.FALSE);
+        // Left status area
+        statusBar.add(Box.createRigidArea(new Dimension(10, 22)));
+//        statusBarLeft = Box.createHorizontalBox();
+//        statusBar.add(statusBarLeft, JXStatusBar.Constraint.ResizeBehavior.FILL);
+//        actionStatus = new JLabel();
+//        actionStatus.setName("loadingStatusLabel");
+//        actionStatus.setText(getBundleString("loadingStatusLabel.text"));
+//        actionStatus.setHorizontalAlignment(JLabel.LEADING);
+//        statusBarLeft.add(actionStatus);
+        // display progress bar while data loads
+//        progressBar = new JProgressBar();
+//        statusBarLeft.add(progressBar);   
+
+        // Middle (should stretch)
+        statusBar.add(Box.createVerticalGlue());
+        statusBar.add(Box.createRigidArea(new Dimension(50, 0)));
+
+        // Right status area
+        tableStatus = new JLabel(); 
+        tableStatus.setName("rowCountLabel");
+        tableStatus.setText(getBundleString("rowCountLabel.text"));
+        JComponent bar = Box.createHorizontalBox();
+        bar.add(tableStatus);
+        tableRows = new JLabel("0");
+        bar.add(tableRows);
+        
+        statusBar.add(bar);
+        statusBar.add(Box.createHorizontalStrut(12));
+        return statusBar;
+    }
+
     @SuppressWarnings("serial")
 	private static final Map<String, GeoPosition> nameToGeoPosition = new HashMap<>(){
         {
-            put("Berlin",               new GeoPosition(52,31,0, 13,24,0));
-            put("Darmstadt",            new GeoPosition(49,52,0,  8,39,0));
-            put("Frankfurt am Main",    new GeoPosition(50.11, 8.68));
-//            GeoPosition frankfurt = new GeoPosition(50,  7, 0, 8, 41, 0);
-//            GeoPosition wiesbaden = new GeoPosition(50,  5, 0, 8, 14, 0);
-//            GeoPosition mainz     = new GeoPosition(50,  0, 0, 8, 16, 0);
-//            GeoPosition offenbach = new GeoPosition(50,  6, 0, 8, 46, 0);
-            put("Java",                 new GeoPosition(-7.502778, 111.263056)); // default
-            put("Eugene Oregon",        new GeoPosition(44,3,0, -123,5,0));
-            put("London",               new GeoPosition(51.5, 0));
+            put("Berlin",            new GeoPosition(52,31,0, 13,24,0));
+            put("Darmstadt",         new GeoPosition(49,52,0,  8,39,0));
+            put("Frankfurt am Main", new GeoPosition(50.11, 8.68));
+            put("Java, Mt.Merapi",   new GeoPosition(-7.541389, 110.446111));
+            put("Eugene Oregon",     new GeoPosition(44.058333, -123.068611));
+            put("London",            new GeoPosition(51.5, 0));
+            put("Madeira (Trail)",   new GeoPosition(32.81, -17.141)); // with track
+            put(DEFAULT_MAP,         new GeoPosition(55.70, 12.54)); // // "København - Øresund"
         }
     };
 

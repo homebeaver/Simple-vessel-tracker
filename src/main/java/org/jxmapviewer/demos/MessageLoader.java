@@ -18,6 +18,8 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
+import org.jxmapviewer.JXMapViewer;
+
 import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.MessageReader;
 import io.github.homebeaver.aismodel.AisStreamMessage.MeldungenCallback;
@@ -40,17 +42,17 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 	private static final Logger LOG = Logger.getLogger(MessageLoader.class.getName());
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
     private final URL url;
-    private final MessageReader mr;
-    private final List<AisStreamMessage> candidates = new ArrayList<AisStreamMessage>();
-	private Map<Integer, List<AisStreamMessage>> map;
+    private final AisMapViewer amv;
+//    private final List<AisStreamMessage> candidates = new ArrayList<AisStreamMessage>();
+//	private Map<Integer, List<AisStreamMessage>> map;
 	private int cnt = 0;
 
-    public MessageLoader(URL url, MessageReader mr) {
+    public MessageLoader(URL url, AisMapViewer amv) {
     	super();
         this.url = url;
-        this.mr = mr;
-		this.map = new HashMap<Integer, List<AisStreamMessage>>();
-		this.cnt = 0;
+        this.amv = amv;
+//		this.map = new HashMap<Integer, List<AisStreamMessage>>();
+		this.cnt = 0; // zählt auch die null-Nachrichten
     }
 
 	/*
@@ -160,20 +162,20 @@ protected void done()
 			// Abfrage der Ergebnisses der "doInBackground()"-Methode:
 			ret = get();
 			System.out.println("got " + cnt + " lines. res="+ret);
-			System.out.println("got no of vessels " + map.size() + ".");
-			System.out.println("vessels with track (more then 1 waypoints):");
-			map.forEach( (k,v) -> {
-				if(v.size()>1) {
-					StringBuilder sb = new StringBuilder();
-					for (int i=0; i<v.size();i++) {
-						sb.append(v.get(i).getAisMessageType());
-						sb.append(',');
-					}
-					System.out.println("\tMMSI="+k +":"+v.size() 
-					+ " "+v.get(0).getMetaData().getShipName()
-					+ " "+sb.toString());
-				}
-			});
+//			System.out.println("got no of vessels " + map.size() + ".");
+//			System.out.println("vessels with track (more then 1 waypoints):");
+//			map.forEach( (k,v) -> {
+//				if(v.size()>1) {
+//					StringBuilder sb = new StringBuilder();
+//					for (int i=0; i<v.size();i++) {
+//						sb.append(v.get(i).getAisMessageType());
+//						sb.append(',');
+//					}
+//					System.out.println("\tMMSI="+k +":"+v.size() 
+//					+ " "+v.get(0).getMetaData().getShipName()
+//					+ " "+sb.toString());
+//				}
+//			});
 		} catch (ExecutionException | InterruptedException | CancellationException ex) {
 		}
 	}
@@ -201,15 +203,17 @@ protected void process( List<String> chunks )
 			if(msg==null) {
 				LOG.info("chunk is null");
 			} else {
-				int key = msg.getMetaData().getMMSI();
-//				LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
-				if (!map.containsKey(key)) {
-					List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
-					map.put(key, waypoints); // empty List waypoints 
-				}
-				map.get(key).add(msg);
+//				int key = msg.getMetaData().getMMSI();
+////				LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
+//				if (!map.containsKey(key)) {
+//					List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
+//					map.put(key, waypoints); // empty List waypoints 
+//				}
+//				map.get(key).add(msg);
+				amv.addMessage(msg);
 			}
 			cnt++;
+			//tableRows.setText("" + cnt);
 		});
 	}
 

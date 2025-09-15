@@ -115,7 +115,7 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
     }
 
 	private static final int DEFAULT_ZOOM = 10; // OSM MAX_ZOOM is 19;
-	private static final String DEFAULT_POS = "København - Øresund";
+	private static final String DEFAULT_MAP = "København - Øresund";
 	private TileFactoryInfo info;
 	private JXMapKit mapKit;
 	private SelectionAdapter selectionAdapter;
@@ -194,7 +194,7 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
 
         // Set the zoom and focus to DEFAULT_POS / Oeresund
         mapKit.setZoom(DEFAULT_ZOOM);
-        mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_POS));
+        mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
 //        mapKit.getMainMap().setRestrictOutsidePanning(true); // ???
 //        mapKit.getMainMap().setHorizontalWrapped(false);
 
@@ -493,7 +493,7 @@ mit NE + SW kann man die AIS Positionsmeldungen abfragen
             put("Eugene Oregon",     new GeoPosition(44.058333, -123.068611));
             put("London",            new GeoPosition(51.5, 0));
             put("Madeira (Trail)",   new GeoPosition(32.81, -17.141)); // with track
-            put(DEFAULT_POS,         new GeoPosition(55.70, 12.54)); // København
+            put(DEFAULT_MAP,         new GeoPosition(55.70, 12.54)); // København
         }
     };
 
