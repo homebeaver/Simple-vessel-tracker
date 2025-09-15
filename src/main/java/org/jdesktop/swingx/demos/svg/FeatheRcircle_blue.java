@@ -12,7 +12,7 @@ import org.jdesktop.swingx.icon.RadianceIconUIResource;
  * This class has been automatically generated using 
  * <a href="https://jdesktop.wordpress.com/2022/09/25/svg-icons/">Radiance SVG converter</a>.
  */
-public class FeatheRnavigation_grey implements RadianceIcon {
+public class FeatheRcircle_blue implements RadianceIcon {
     private Shape shape = null;
     private GeneralPath generalPath = null;
     private Paint paint = null;
@@ -53,37 +53,15 @@ g.setComposite(AlphaComposite.getInstance(3, 1.0f * origAlpha));
 transformsStack.push(g.getTransform());
 g.transform(new AffineTransform(1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f));
 // _0_0
-if (generalPath == null) {
-   generalPath = new GeneralPath();
-} else {
-   generalPath.reset();
-}
-generalPath.moveTo(12.0f, 2.0f);
-generalPath.lineTo(19.0f, 21.0f);
-generalPath.lineTo(12.0f, 17.0f);
-generalPath.lineTo(5.0f, 21.0f);
-generalPath.lineTo(12.0f, 2.0f);
-generalPath.closePath();
-shape = generalPath;
-// lightGray + alpha (Durchsichtig)
-paint = (colorFilter != null) ? colorFilter.filter(new Color(211, 211, 211, 128)) : new Color(211, 211, 211, 100);
+shape = new Ellipse2D.Double(2.0, 2.0, 20.0, 20.0);
+// BLUE => Transparent da Alpha = 0
+paint = (colorFilter != null) ? colorFilter.filter(new Color(0, 0, 255, 0)) : new Color(0, 0, 255, 0);
 g.setPaint(paint);
 g.fill(shape);
-// BLACK
+//BLACK
 paint = (colorFilterStroke != null) ? colorFilterStroke.filter(Color.BLACK) : Color.BLACK;
 stroke = new BasicStroke(1.0f,1,1,4.0f,null,0.0f);
-if (generalPath == null) {
-   generalPath = new GeneralPath();
-} else {
-   generalPath.reset();
-}
-generalPath.moveTo(12.0f, 2.0f);
-generalPath.lineTo(19.0f, 21.0f);
-generalPath.lineTo(12.0f, 17.0f);
-generalPath.lineTo(5.0f, 21.0f);
-generalPath.lineTo(12.0f, 2.0f);
-generalPath.closePath();
-shape = generalPath;
+shape = new Ellipse2D.Double(2.0, 2.0, 20.0, 20.0);
 g.setPaint(paint);
 g.setStroke(stroke);
 g.draw(shape);
@@ -122,7 +100,7 @@ g.setTransform(transformsStack.pop());
      * @return The X of the bounding box of the original SVG image.
      */
     public static double getOrigX() {
-        return 4.4581780433654785;
+        return 1.5;
     }
 
     /**
@@ -140,7 +118,7 @@ g.setTransform(transformsStack.pop());
 	 * @return The width of the bounding box of the original SVG image.
 	 */
 	public static double getOrigWidth() {
-		return 15.083643913269043;
+		return 21.0;
 	}
 
 	/**
@@ -149,7 +127,7 @@ g.setTransform(transformsStack.pop());
 	 * @return The height of the bounding box of the original SVG image.
 	 */
 	public static double getOrigHeight() {
-		return 20.03838539123535;
+		return 21.0;
 	}
 
 	/** The current width of this icon. */
@@ -162,7 +140,7 @@ g.setTransform(transformsStack.pop());
 	 * Creates a new transcoded SVG image. This is marked as private to indicate that app
 	 * code should be using the {@link #of(int, int)} method to obtain a pre-configured instance.
 	 */
-	private FeatheRnavigation_grey() {
+	private FeatheRcircle_blue() {
         this.width = (int) getOrigWidth();
         this.height = (int) getOrigHeight();
 	}
@@ -239,7 +217,7 @@ g.setTransform(transformsStack.pop());
      * @return A new instance of this icon with specified dimensions.
      */
     public static RadianceIcon of(int width, int height) {
-       FeatheRnavigation_grey base = new FeatheRnavigation_grey();
+       FeatheRcircle_blue base = new FeatheRcircle_blue();
        base.width = width;
        base.height = height;
        return base;
@@ -253,7 +231,7 @@ g.setTransform(transformsStack.pop());
      * @return A new {@link UIResource} instance of this icon with specified dimensions.
      */
     public static RadianceIconUIResource uiResourceOf(int width, int height) {
-       FeatheRnavigation_grey base = new FeatheRnavigation_grey();
+       FeatheRcircle_blue base = new FeatheRcircle_blue();
        base.width = width;
        base.height = height;
        return new RadianceIconUIResource(base);
@@ -265,7 +243,7 @@ g.setTransform(transformsStack.pop());
      * @return Factory that returns instances of this icon on demand.
      */
     public static Factory factory() {
-        return FeatheRnavigation_grey::new;
+        return FeatheRcircle_blue::new;
     }
 }
 

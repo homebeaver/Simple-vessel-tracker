@@ -3,11 +3,17 @@
 package org.jxmapviewer.demos;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +37,8 @@ import javax.swing.MutableComboBoxModel;
 import javax.swing.Painter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.SwingWorker.StateValue;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputListener;
 
@@ -40,7 +48,9 @@ import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.binding.DisplayInfo;
 import org.jdesktop.swingx.demos.svg.FeatheRflag;
+import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.ChevronIcon;
+import org.jdesktop.swingx.icon.PlayIcon;
 //import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
@@ -62,6 +72,14 @@ import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 //import org.pushingpixels.trident.api.Timeline;
 
+import dk.dma.ais.message.ShipTypeCargo;
+import dk.dma.ais.message.ShipTypeColor;
+import dk.dma.enav.model.geometry.Position;
+import io.github.homebeaver.aismodel.AisMessage;
+import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.MessageReader;
+import io.github.homebeaver.aismodel.PositionReport;
+import io.github.homebeaver.aismodel.ShipStaticData;
 import swingset.AbstractDemo;
 
 /**
@@ -117,7 +135,7 @@ public class MapKitDemo extends AbstractDemo { // AbstractDemo extends JXPanel
     private JButton zoomIn;
 //    private JSlider trackSlider;
     // Animation
-//    private JButton animation;
+    private JButton animation;
 //    Timeline timeline;
 //    public void setTrackProp(float newValue) {
 //    	trackSlider.setValue((int)(newValue*routePainter.getTrackSize()+0.5));
@@ -232,6 +250,7 @@ NE: GeoPosition:[56.15625856755953, 13.458251953125] (56 09.376N, 013 27.495E)
 SW: GeoPosition:[55.24311788040884, 11.612548828125] (55 14.587N, 011 36.753E)
 mit NE + SW kann man die AIS Positionsmeldungen abfragen
  */
+//        start();
     }
 
 //    public void createAnimation(long duration, float to) {
@@ -267,7 +286,7 @@ mit NE + SW kann man die AIS Positionsmeldungen abfragen
         int zoom = mapKit.getZoomSlider().getValue();
         if(zoomSlider!=null) zoomSlider.setValue(zoom);
 
-        LOG.info(String.format("Lat/Lon=(%.2f / %.2f) - Zoom: %d", lat, lon, zoom));
+//        LOG.info(String.format("Lat/Lon=(%.2f / %.2f) - Zoom: %d", lat, lon, zoom));
         return new GeoPosition(lat, lon);
     }
 
@@ -393,15 +412,22 @@ mit NE + SW kann man die AIS Positionsmeldungen abfragen
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
-//        animation = new JButton();
-//        animation.setName("animation");
-//        animation.setText(getBundleString("animation.text"));
-//        animation.setIcon(PlayIcon.of(RadianceIcon.XS, RadianceIcon.XS));
-//        animation.addActionListener( ae -> {
+        animation = new JButton();
+        animation.setName("animation");
+        animation.setText(getBundleString("animation.text"));
+        animation.setIcon(PlayIcon.of(RadianceIcon.XS, RadianceIcon.XS));
+        animation.addActionListener( ae -> {
 //        	setTrackProp(0f);
 //        	timeline.play(); // show track animated
-//        });
-//    	fill.add(animation, gridBagConstraints);
+//        	start();
+        	animation.setEnabled( false );
+            // Starte Extra-Thread per SwingWorker, 
+        	//damit der Event Dispatch Thread (EDT) nicht blockiert wird:
+//            (new TextDateiLesenSwingWorker( textdatei.getText(), charEncod.getSelectedItem().toString(), button, textArea ))
+//            .execute();
+        	(new MessageLoader(null, null)).execute();
+        });
+    	fill.add(animation, gridBagConstraints);
 
 		return controls;
 	}
@@ -470,5 +496,114 @@ mit NE + SW kann man die AIS Positionsmeldungen abfragen
             put(DEFAULT_POS,         new GeoPosition(55.70, 12.54)); // København
         }
     };
+
+    /**
+     * Callback method for demo loader. 
+     */
+    public void start() {
+//        // Use SwingWorker to asynchronously load data
+//        // create SwingWorker which will load the data on a separate thread
+//        SwingWorker<?, ?> loader = new MessageLoader(MapKitDemo.class.getResource("data/aisstream.txt"), new MessageReader());
+//        loader.addPropertyChangeListener( propertyChangeEvent -> {
+//        	if ("state".equals(propertyChangeEvent.getPropertyName())) {
+//        		StateValue state = (StateValue)propertyChangeEvent.getNewValue();
+//                LOG.info("loader StateValue:" + state); // damit ampel steuern
+////                updateStatusBar();
+//                if (state == StateValue.DONE) {
+////                	statusBarLeft.remove(progressBar);
+////                	statusBarLeft.remove(actionStatus);
+//                	revalidate();
+//                	repaint();
+//                }
+//        	}
+//        	if ("progress".equals(propertyChangeEvent.getPropertyName())) {
+//        		int progress = (Integer)propertyChangeEvent.getNewValue();
+//                LOG.info("loader progress:" + progress);
+////        		progressBar.setValue(progress);
+////        		updateStatusBar();
+//        	}
+//        });
+//        StateValue state = loader.getState(); // PENDING - STARTED - DONE
+//        LOG.info("loader StateValue:" + state);
+//        loader.execute();
+
+    	final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
+		AisStreamMessage.liesUrl(GITHUB_URL, new AisStreamMessage.ConsoleCallback());
+//		URL url = MapKitDemo.class.getClassLoader().getResource("data/aisstream.txt");
+//		System.out.println("starting with " + url);
+//		int cnt = 0;
+//	    MessageReader mr = new MessageReader();
+//		try {
+//			File file = new File(url.toURI());
+//			BufferedReader reader = new BufferedReader(new FileReader(file));
+//			while (reader.ready()) {
+//				String line = reader.readLine();
+//				System.out.println(line);
+//				AisStreamMessage asm = mr.readMessage(line); // kann null sein
+//				if(asm!=null) {
+//					
+//				}
+//				cnt++;
+//			}
+//			reader.close();
+//		} catch (IOException | URISyntaxException e) {
+//			System.out.println("Exeption " + e);
+//		}
+////		new AddNavigationIcon(mapKit.getMainMap(), painters)
+//		mr.getMap().forEach( (mmsi,v) -> {
+//			if(mmsi==219005904) { // AURELIA : ShipStaticData,PositionReport
+//				Position pos = v.get(1).getMetaData().getPosition();
+//				GeoPosition location = new GeoPosition(pos.getLatitude(), pos.getLongitude());
+//				
+//		    	RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+//		    	icon.setColorFilter(color -> Color.ORANGE);
+//				// color aus ShipTypeColor ermitteln
+//				AisMessage m0 = v.get(0).getAisMessage();
+//				AisMessage m1 = v.get(1).getAisMessage();
+//				if(m0 instanceof ShipStaticData ssd) {
+//				    ShipTypeCargo stc = new ShipTypeCargo(ssd.getType());
+//				    ShipTypeColor color = ShipTypeColor.getColor(stc.getShipType());
+//					System.out.println("\tMMSI="+mmsi +":"+v.size() + " "
+//							+v.get(0).getMetaData().getShipName()+" "+color);
+//				}
+//				if(m1 instanceof PositionReport pr) {
+//					  /**
+//					   * Course over Ground Course over ground in 1/10 = (0-3599). 
+//					   * 3600 (E10h) = not available = default. 
+//					   * 3601-4095 should not be used
+//					   */
+//					double theta = pr.getCog(); // Double
+//					icon.setRotation(theta);
+//					System.out.println("\tMMSI="+mmsi +":"+v.size() + " "
+//							+v.get(0).getMetaData().getShipName()+" "+theta);
+//					
+////					location = new GeoPosition(pr.getLatitude(), pr.getLongitude());
+//				}
+//				
+//
+//			//if(v.size()>1) {
+////				System.out.println("\tMMSI="+mmsi +":"+v.size() + " "
+////						+v.get(0).getMetaData().getShipName()+v.get(0).getMetaData().getPosition());
+////				Position pos = v.get(0).getMetaData().getPosition();
+////				GeoPosition location = new GeoPosition(pos.getLatitude(), pos.getLongitude());
+////		    	RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+//				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
+//					public Set<Waypoint> getWaypoints() {
+//						Set<Waypoint> set = new HashSet<Waypoint>();
+//						set.add(new DefaultWaypoint(location));
+//						return set;
+//					}
+//				};
+//				int adjustx = icon.getIconWidth()/2;
+//				int adjusty = icon.getIconHeight()/2;;
+//				shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
+//				painters.add(shipLocationPainter);
+//				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+//		        overlayPainter.setCacheable(false);
+//		        overlayPainter.setPainters(painters);
+//		        mapKit.getMainMap().setOverlayPainter(overlayPainter);
+//			}
+//		});
+    }
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
@@ -45,8 +46,9 @@ public class AddNavigationIcon extends MapClickListener {
 			}
 		};
 		RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+//		RadianceIcon icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 		int adjustx = icon.getIconWidth()/2;
-		int adjusty = icon.getIconHeight()/2; // SizingConstants.M/2;
+		int adjusty = icon.getIconHeight()/2;
 		shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
 		painters.add(shipLocationPainter);
 		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
