@@ -1,5 +1,6 @@
 package org.jxmapviewer.demos;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
@@ -20,17 +22,41 @@ import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
+import dk.dma.ais.message.ShipTypeCargo;
+import dk.dma.ais.message.ShipTypeColor;
+import dk.dma.enav.model.geometry.Position;
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.PositionReport;
+import io.github.homebeaver.aismodel.ShipStaticData;
 
 public class AisMapViewer extends JXMapViewer {
 
 	private static final long serialVersionUID = 8162164255394960216L;
 	private static final Logger LOG = Logger.getLogger(AisMapViewer.class.getName());
 
+/*
+// this works for up to 10 elements:
+Map<String, String> test1 = Map.of(
+    "a", "b",
+    "c", "d"
+);
+ */
+	private static Map<ShipTypeColor, Color> typeToColor = Map.of(
+		ShipTypeColor.BLUE, Color.BLUE,
+		ShipTypeColor.GREY, Color.LIGHT_GRAY,
+		ShipTypeColor.GREEN, Color.GREEN,
+		ShipTypeColor.ORANGE, Color.ORANGE,
+		ShipTypeColor.PURPLE, Color.MAGENTA,
+		ShipTypeColor.RED, Color.RED,
+		ShipTypeColor.TURQUOISE, Color.CYAN,
+		ShipTypeColor.YELLOW, Color.YELLOW
+	);
+
 	private Map<Integer, List<AisStreamMessage>> map;
+//	CompoundPainter<JXMapViewer> overlayPainter;
+	
 //	private CompoundPainter<JXMapViewer> painters; 
 	private List painters; // TODO List is a raw type. References to generic type List<E> should be parameterized
 	
@@ -38,7 +64,12 @@ public class AisMapViewer extends JXMapViewer {
     	super();
 		this.map = new HashMap<Integer, List<AisStreamMessage>>();
 		painters = new ArrayList<>(); // besser LinkedList
-    }
+		
+//		overlayPainter = new CompoundPainter<JXMapViewer>();
+//		overlayPainter.setCacheable(false);
+//		overlayPainter.setPainters(painters);
+//		super.setOverlayPainter(overlayPainter);
+	}
 	
 //	public void setCompoundPainter(CompoundPainter<JXMapViewer> cp) {
 //		painters = cp;
@@ -62,35 +93,58 @@ public class AisMapViewer extends JXMapViewer {
 		map.get(key).add(msg);
     }
 
-    private void display1Vessel(AisStreamMessage msg) {
-//    	GeoPosition location = null;
-    	if(msg.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
-    		// Pos aus Meta, kein Kurs, o mit Farbe
-    	} else {
-    		// POSITIONREPORT
-    		// Pos + Kurs aus Msg ; > ohne Farbe
-    		AisMessage amsg = msg.getAisMessage();
-    		if(amsg instanceof PositionReport pr) {
-//            	location = new GeoPosition(pr.getLatitude(), pr.getLongitude());
-            	RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
-            	double theta = pr.getCog(); // Double
-            	icon.setRotation(theta);
+	private void display1Vessel(AisStreamMessage msg) {
+		if (msg.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
+			// Pos aus Meta, kein Kurs, o mit Farbe
+			Position pos = msg.getMetaData().getPosition();
+			AisMessage amsg = msg.getAisMessage();
+			if (amsg instanceof ShipStaticData ssd) {
+				LOG.info("erste Nachricht ist "+ssd);
+				RadianceIcon icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
+				ShipTypeCargo stc = new ShipTypeCargo(ssd.getType());
+				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
+				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
-				public Set<Waypoint> getWaypoints() {
-					Set<Waypoint> set = new HashSet<Waypoint>();
-					set.add(new DefaultWaypoint(new GeoPosition(pr.getLatitude(), pr.getLongitude())));
-					return set;
-				}
+					public Set<Waypoint> getWaypoints() {
+						Set<Waypoint> set = new HashSet<Waypoint>();
+						set.add(new DefaultWaypoint(new GeoPosition(pos.getLatitude(), pos.getLongitude())));
+						return set;
+					}
 				};
-				int adjustx = icon.getIconWidth()/2;
-				int adjusty = icon.getIconHeight()/2;;
+				int adjustx = icon.getIconWidth() / 2;
+				int adjusty = icon.getIconHeight() / 2;
 				shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
 				painters.add(shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
-		        overlayPainter.setCacheable(false);
-		        overlayPainter.setPainters(painters);
-		        super.setOverlayPainter(overlayPainter);
-    		}
-    	}
-    }
+				overlayPainter.setCacheable(false);
+				overlayPainter.setPainters(painters);
+				super.setOverlayPainter(overlayPainter);
+			}
+		} else {
+			// POSITIONREPORT
+			// Pos + Kurs aus Msg ; > ohne Farbe
+			AisMessage amsg = msg.getAisMessage();
+			if (amsg instanceof PositionReport pr) {
+				RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+				icon.setRotation(pr.getCog()); // Kurs
+				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
+					public Set<Waypoint> getWaypoints() {
+						Set<Waypoint> set = new HashSet<Waypoint>();
+						set.add(new DefaultWaypoint(new GeoPosition(pr.getLatitude(), pr.getLongitude())));
+						return set;
+					}
+				};
+				int adjustx = icon.getIconWidth() / 2;
+				int adjusty = icon.getIconHeight() / 2;
+				;
+				shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
+				painters.add(shipLocationPainter);
+				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+				overlayPainter.setCacheable(false);
+				overlayPainter.setPainters(painters);
+				super.setOverlayPainter(overlayPainter);
+			}
+		}
+	}
+
 }
