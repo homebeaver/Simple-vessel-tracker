@@ -9,8 +9,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-
 package io.github.homebeaver.aismodel;
 
 import java.io.IOException;
@@ -42,42 +40,6 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class PositionReport extends AisMessage {
-//  /* AisMessage1 extends AisPositionMessage
-//   * or
-//   * AisMessage2 extends AisMessage1
-//   * or
-//   * AisMessage3 extends AisPositionMessage
-//   * <p>
-//   * AisMessage3 : Special position report, response to interrogation;(Class A shipborne mobile equipment)
-//   */
-//  /**
-//   * Identifier for this message 1, 2 or 3
-//   */
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  private Integer messageID;
-//
-//  /**
-//   * Used by the repeater to indicate how many times a message has been repeated. 
-//   * Refer to ß 4.6.1; 0-3; 
-//   * 0 = default; 3 = do not repeat any more
-//   */
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  /**
-//   * R-REC-M.1371-1: 3.3.7.2.1 User ID
-//   * The user ID should be the MMSI. The MMSI is 30 bits long. 
-//   * The first 9 digits (most significant digits) should be used only. 
-//   * Recommendation ITU-R M.1083 should not be applied with respect to the 10th digit (least significant digit).
-//   */
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   /**
    * Navigational status: 
@@ -237,98 +199,6 @@ public class PositionReport extends AisMessage {
   public PositionReport() {
 	  super();
   }
-
-//  public PositionReport messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public PositionReport repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public PositionReport userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public PositionReport valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-
 
   public PositionReport navigationalStatus(Integer navigationalStatus) {
     

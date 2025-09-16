@@ -9,8 +9,6 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-
 package io.github.homebeaver.aismodel;
 
 import java.io.IOException;
@@ -44,23 +42,6 @@ import io.swagger.annotations.ApiModelProperty;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class ShipStaticData extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  // AisMessage5
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  // aka MMSI
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   /**
    * AIS version indicator: 
@@ -273,98 +254,6 @@ Type Code 	Description
   public ShipStaticData() { 
 	  super();
   }
-
-//  public ShipStaticData messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public ShipStaticData repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public ShipStaticData userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public ShipStaticData valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-
 
   public ShipStaticData aisVersion(Integer aisVersion) {
     
@@ -653,9 +542,9 @@ Type Code 	Description
     }
     ShipStaticData shipStaticData = (ShipStaticData) o;
     return Objects.equals(getMessageID(), shipStaticData.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), shipStaticData.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), shipStaticData.getUserID()) &&
-            Objects.equals(getValid(), shipStaticData.getValid()) &&
+        Objects.equals(getRepeatIndicator(), shipStaticData.getRepeatIndicator()) &&
+        Objects.equals(getUserID(), shipStaticData.getUserID()) &&
+        Objects.equals(getValid(), shipStaticData.getValid()) &&
         Objects.equals(this.aisVersion, shipStaticData.aisVersion) &&
         Objects.equals(this.imoNumber, shipStaticData.imoNumber) &&
         Objects.equals(this.callSign, shipStaticData.callSign) &&
@@ -835,36 +724,36 @@ Type Code 	Description
     }
   }
 
-public static ShipStaticData fromJson(JSONObject jo) {
-	AisMessage res = new ShipStaticData();
-    ShipStaticData ssd = null;
-    // Extract individual fields from JSONObject
-    try {
-        res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
-        res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
-        res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
-        res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-        ssd = (ShipStaticData)res;
-        ssd = ssd.aisVersion(jo.getInt(SERIALIZED_NAME_AIS_VERSION));
-        ssd = ssd.imoNumber(jo.getInt(SERIALIZED_NAME_IMO_NUMBER));
-        ssd = ssd.callSign(jo.getString(SERIALIZED_NAME_CALL_SIGN));
-        ssd = ssd.name(jo.getString(SERIALIZED_NAME_NAME));
-        ssd = ssd.type(jo.getInt(SERIALIZED_NAME_TYPE));
-        JSONObject dimensions = jo.getJSONObject(SERIALIZED_NAME_DIMENSION);
-        ssd = ssd.dimension(ShipStaticDataDimension.fromJson(dimensions));
-        ssd = ssd.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
-        JSONObject etas = jo.getJSONObject(SERIALIZED_NAME_ETA);
-        ssd = ssd.eta(ShipStaticDataEta.fromJson(etas));
-        ssd = ssd.maximumStaticDraught(jo.getDouble(SERIALIZED_NAME_MAXIMUM_STATIC_DRAUGHT));
-        ssd = ssd.destination(jo.getString(SERIALIZED_NAME_DESTINATION));
-        ssd = ssd.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
-        // XXX spare
-        System.out.println(res);
-    } catch (JSONException e) {
+	public static ShipStaticData fromJson(JSONObject jo) {
+		AisMessage res = new ShipStaticData();
+		ShipStaticData ssd = null;
+		// Extract individual fields from JSONObject
+		try {
+			res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
+			res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
+			res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
+			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
+			ssd = (ShipStaticData) res;
+			ssd = ssd.aisVersion(jo.getInt(SERIALIZED_NAME_AIS_VERSION));
+			ssd = ssd.imoNumber(jo.getInt(SERIALIZED_NAME_IMO_NUMBER));
+			ssd = ssd.callSign(jo.getString(SERIALIZED_NAME_CALL_SIGN));
+			ssd = ssd.name(jo.getString(SERIALIZED_NAME_NAME));
+			ssd = ssd.type(jo.getInt(SERIALIZED_NAME_TYPE));
+			JSONObject dimensions = jo.getJSONObject(SERIALIZED_NAME_DIMENSION);
+			ssd = ssd.dimension(ShipStaticDataDimension.fromJson(dimensions));
+			ssd = ssd.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
+			JSONObject etas = jo.getJSONObject(SERIALIZED_NAME_ETA);
+			ssd = ssd.eta(ShipStaticDataEta.fromJson(etas));
+			ssd = ssd.maximumStaticDraught(jo.getDouble(SERIALIZED_NAME_MAXIMUM_STATIC_DRAUGHT));
+			ssd = ssd.destination(jo.getString(SERIALIZED_NAME_DESTINATION));
+			ssd = ssd.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
+			// XXX spare
+			System.out.println(res);
+		} catch (JSONException e) {
 //    	logger.error("Error creating ShipStaticData", e);
-    }
-    return ssd;
-}
+		}
+		return ssd;
+	}
 
  /**
   * Create an instance of ShipStaticData given an JSON string
