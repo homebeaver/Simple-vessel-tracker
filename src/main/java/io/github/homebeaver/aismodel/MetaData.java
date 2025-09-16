@@ -3,8 +3,6 @@ package io.github.homebeaver.aismodel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import dk.dma.enav.model.geometry.Position;
-
 public class MetaData {
 
 	public static final String MMSI = "MMSI";
@@ -17,7 +15,9 @@ public class MetaData {
 	private int mmsi;
 	private String mmsi_string;
 	private String shipName;
-	private Position position; // type aus dk.dma.enav.model.geometry.Position
+	private Double latitude;
+	private Double longitude;
+//	private Position position; // type aus dk.dma.enav.model.geometry.Position
 	private String time_utc;
 
 	public static MetaData fromJson(JSONObject jo) {
@@ -27,7 +27,9 @@ public class MetaData {
 			res = res.mmsi(jo.getInt(MMSI))
 					.mmsi_string(String.valueOf(jo.getLong(MMSI_STRING))) // long => String
 					.shipName(jo.getString(SHIPNAME).trim())
-					.position(getPosition(jo))
+//					.position(getPosition(jo))
+					.latitude(jo.getDouble(LATITUDE))
+					.longitude(jo.getDouble(LONGITUDE))
 					.time_utc(jo.getString(TIME_UTC));
 		} catch (JSONException e) {
 //		        logger.error("Error creating MetaData", e);
@@ -44,9 +46,15 @@ public class MetaData {
 	public String getShipName() {
 		return shipName;
 	}
-	public Position getPosition() {
-		return position;
+	public Double getLatitude() {
+		return latitude;
 	}
+	public Double getLongitude() {
+		return longitude;
+	}
+//	public Position getPosition() {
+//		return position;
+//	}
 
 	public MetaData mmsi(int mmsi) {
 		this.mmsi = mmsi;
@@ -60,8 +68,16 @@ public class MetaData {
 		this.shipName = shipName;
 		return this;
 	}
-	public MetaData position(Position position) {
-		this.position = position;
+//	public MetaData position(Position position) {
+//		this.position = position;
+//		return this;
+//	}
+	public MetaData latitude(Double latitude) {
+		this.latitude = latitude;
+		return this;
+	}
+	public MetaData longitude(Double longitude) {
+		this.longitude = longitude;
 		return this;
 	}
 	public MetaData time_utc(String time_utc) {
@@ -78,17 +94,19 @@ public class MetaData {
 		sb.append(COMMA).append(MMSI).append(COLON).append(mmsi);
 		sb.append(COMMA).append(MMSI_STRING).append(COLON).append(mmsi_string);
 		sb.append(COMMA).append(SHIPNAME).append(COLON).append(shipName);
-		sb.append(COMMA).append("Position").append(COLON).append(position);
+//		sb.append(COMMA).append("Position").append(COLON).append(position);
+		sb.append(COMMA).append(LATITUDE).append(COLON).append(latitude);
+		sb.append(COMMA).append(LONGITUDE).append(COLON).append(longitude);
 		sb.append("}");
 		return sb.toString();
 	}
 
-	private static Position getPosition(JSONObject jo) {
-		return getPosition(jo.getDouble(LATITUDE), jo.getDouble(LONGITUDE));
-	}
-
-	private static Position getPosition(double latitude, double longitude) {
-		return Position.create(latitude, longitude);
-	}
+//	private static Position getPosition(JSONObject jo) {
+//		return getPosition(jo.getDouble(LATITUDE), jo.getDouble(LONGITUDE));
+//	}
+//
+//	private static Position getPosition(double latitude, double longitude) {
+//		return Position.create(latitude, longitude);
+//	}
 
 }

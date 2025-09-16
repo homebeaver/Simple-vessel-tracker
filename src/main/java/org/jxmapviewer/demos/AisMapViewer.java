@@ -24,10 +24,10 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import dk.dma.ais.message.ShipTypeCargo;
 import dk.dma.ais.message.ShipTypeColor;
-import dk.dma.enav.model.geometry.Position;
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.MetaData;
 import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 
@@ -96,7 +96,8 @@ Map<String, String> test1 = Map.of(
 	private void display1Vessel(AisStreamMessage msg) {
 		if (msg.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 			// Pos aus Meta, kein Kurs, o mit Farbe
-			Position pos = msg.getMetaData().getPosition();
+//			Position pos = msg.getMetaData().getPosition();
+			MetaData md = msg.getMetaData();
 			AisMessage amsg = msg.getAisMessage();
 			if (amsg instanceof ShipStaticData ssd) {
 				LOG.info("erste Nachricht ist "+ssd);
@@ -107,7 +108,7 @@ Map<String, String> test1 = Map.of(
 				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
 					public Set<Waypoint> getWaypoints() {
 						Set<Waypoint> set = new HashSet<Waypoint>();
-						set.add(new DefaultWaypoint(new GeoPosition(pos.getLatitude(), pos.getLongitude())));
+						set.add(new DefaultWaypoint(new GeoPosition(md.getLatitude(), md.getLongitude())));
 						return set;
 					}
 				};
@@ -125,8 +126,16 @@ Map<String, String> test1 = Map.of(
 			// Pos + Kurs aus Msg ; > ohne Farbe
 			AisMessage amsg = msg.getAisMessage();
 			if (amsg instanceof PositionReport pr) {
-				RadianceIcon icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
-				icon.setRotation(pr.getCog()); // Kurs
+				int navStatus = pr.getNavigationalStatus();
+				RadianceIcon icon = null;
+				//if(navStatus==5) { //= moored (festgemacht)
+				if(navStatus!=0) { // Under way
+					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
+				} else {
+					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+					icon = FeatheRnavigation_grey.of(20, 20);
+					icon.setRotation(pr.getCog()); // Kurs
+				}
 				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
 					public Set<Waypoint> getWaypoints() {
 						Set<Waypoint> set = new HashSet<Waypoint>();
