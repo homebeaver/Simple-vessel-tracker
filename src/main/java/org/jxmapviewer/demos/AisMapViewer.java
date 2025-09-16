@@ -3,10 +3,9 @@ package org.jxmapviewer.demos;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -16,9 +15,6 @@ import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
 import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
-import org.jxmapviewer.viewer.DefaultWaypoint;
-import org.jxmapviewer.viewer.DefaultWaypointRenderer;
-import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
@@ -27,7 +23,6 @@ import dk.dma.ais.message.ShipTypeColor;
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
-import io.github.homebeaver.aismodel.MetaData;
 import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 
@@ -58,6 +53,7 @@ Map<String, String> test1 = Map.of(
 //	CompoundPainter<JXMapViewer> overlayPainter;
 	
 //	private CompoundPainter<JXMapViewer> painters; 
+	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
 	private List painters; // TODO List is a raw type. References to generic type List<E> should be parameterized
 	
 	public AisMapViewer() {
@@ -83,6 +79,59 @@ Map<String, String> test1 = Map.of(
 			LOG.info("mindestens zweite Nachricht für "+key);
 			// ShipData : TODO letzte Position holen, wenn vorhanden Kurs holen, icon löschen und neu anlegen
 			// PositionReport TODO map.get(key) 
+			AisMessage amsg = msg.getAisMessage();
+			Double cog = null; // Kurs
+			Integer type = null; // Schiffstyp
+//			if (amsg instanceof PositionReport pr) {
+//				cog = pr.getCog();
+//			} else if (amsg instanceof ShipStaticData ssd) {
+//				type = ssd.getType();
+//			}
+//			// cog == null ==> cog aus list holen
+			List<AisStreamMessage> list = map.get(key);
+			Iterator<AisStreamMessage> i = list.iterator();
+			int n=0;
+			while (i.hasNext()) {
+				AisStreamMessage next = i.next();
+				n++;
+				AisMessage nextamsg = next.getAisMessage();
+				if (nextamsg instanceof PositionReport pr) {
+					cog = pr.getCog();
+				} else if (nextamsg instanceof ShipStaticData ssd) {
+					type = ssd.getType();
+				}
+//				LOG.info(">>="+n+" "+key+":"+next.getAisMessageType() + "cog="+cog + "type="+type);
+			}
+			if (amsg instanceof PositionReport pr) {
+				cog = pr.getCog();
+			} else if (amsg instanceof ShipStaticData ssd) {
+				type = ssd.getType();
+//			LOG.info("==============>"+key+": "+ " LAST cog="+cog + " type="+type + " #="+n);
+			}
+			LOG.info("-------------->"+key+": "+ " cog="+cog + " type="+type + " #="+n);
+//			list.forEach( m -> { ... NICHT so
+
+			RadianceIcon icon;
+			// cog == null ==> nur SHIPSTATICDATAs
+			if(cog==null) {
+				icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
+			} else {
+				icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+			}
+			if(type!=null) {
+				ShipTypeCargo stc = new ShipTypeCargo(type);
+				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
+				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
+			}
+			// TODO den zuletzt erstellten Painter löschen aus painters
+			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(list, msg);
+			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
+			painters.add(shipLocationPainter);
+//			painters.remove() TODO
+			CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+			overlayPainter.setCacheable(false);
+			overlayPainter.setPainters(painters);
+			super.setOverlayPainter(overlayPainter);
 		} else {
 			List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
 			map.put(key, waypoints); // empty List waypoints 
@@ -96,8 +145,6 @@ Map<String, String> test1 = Map.of(
 	private void display1Vessel(AisStreamMessage msg) {
 		if (msg.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 			// Pos aus Meta, kein Kurs, o mit Farbe
-//			Position pos = msg.getMetaData().getPosition();
-			MetaData md = msg.getMetaData();
 			AisMessage amsg = msg.getAisMessage();
 			if (amsg instanceof ShipStaticData ssd) {
 				LOG.info("erste Nachricht ist "+ssd);
@@ -105,16 +152,8 @@ Map<String, String> test1 = Map.of(
 				ShipTypeCargo stc = new ShipTypeCargo(ssd.getType());
 				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
-				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
-					public Set<Waypoint> getWaypoints() {
-						Set<Waypoint> set = new HashSet<Waypoint>();
-						set.add(new DefaultWaypoint(new GeoPosition(md.getLatitude(), md.getLongitude())));
-						return set;
-					}
-				};
-				int adjustx = icon.getIconWidth() / 2;
-				int adjusty = icon.getIconHeight() / 2;
-				shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
+				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
+				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.add(shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 				overlayPainter.setCacheable(false);
@@ -136,17 +175,8 @@ Map<String, String> test1 = Map.of(
 					icon = FeatheRnavigation_grey.of(20, 20);
 					icon.setRotation(pr.getCog()); // Kurs
 				}
-				WaypointPainter<Waypoint> shipLocationPainter = new WaypointPainter<Waypoint>() {
-					public Set<Waypoint> getWaypoints() {
-						Set<Waypoint> set = new HashSet<Waypoint>();
-						set.add(new DefaultWaypoint(new GeoPosition(pr.getLatitude(), pr.getLongitude())));
-						return set;
-					}
-				};
-				int adjustx = icon.getIconWidth() / 2;
-				int adjusty = icon.getIconHeight() / 2;
-				;
-				shipLocationPainter.setRenderer(new DefaultWaypointRenderer(adjustx, adjusty, icon));
+				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
+				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.add(shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 				overlayPainter.setCacheable(false);
