@@ -2,12 +2,15 @@ package org.jxmapviewer.demos;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
+
+import javax.swing.Painter;
 
 import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
@@ -54,13 +57,14 @@ Map<String, String> test1 = Map.of(
 	
 //	private CompoundPainter<JXMapViewer> painters; 
 	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
-	private List<WaypointPainter<Waypoint>> painters; 
-	// TODO List is a raw type. References to generic type List<E> should be parameterized
+	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
+	// In dierser Version ohne Spur
+	private Map<Integer, WaypointPainter<Waypoint>> painters; 
 	
 	public AisMapViewer() {
     	super();
 		this.map = new HashMap<Integer, List<AisStreamMessage>>();
-		painters = new ArrayList<>(); // besser LinkedList
+		painters = new HashMap<>();
 		
 //		overlayPainter = new CompoundPainter<JXMapViewer>();
 //		overlayPainter.setCacheable(false);
@@ -121,11 +125,15 @@ Map<String, String> test1 = Map.of(
 			// TODO den zuletzt erstellten Painter löschen aus painters
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(list, msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-			painters.add(shipLocationPainter);
-//			painters.remove() TODO
+			//painters.remove(key); besser:
+			painters.replace(key, shipLocationPainter);
 			CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 			overlayPainter.setCacheable(false);
-			overlayPainter.setPainters(painters);
+//			Arrays a; Arrays.asList(null)
+//			WaypointPainter<Waypoint>[] a = (WaypointPainter<Waypoint>[])painters.entrySet().toArray();
+//			overlayPainter.setPainters(a); // array of painters (Painter<?>... painters)
+			// besser mit List:
+			overlayPainter.setPainters(List.copyOf(painters.values()));
 			super.setOverlayPainter(overlayPainter);
 		} else {
 			List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
@@ -138,6 +146,8 @@ Map<String, String> test1 = Map.of(
     }
 
 	private void display1Vessel(AisStreamMessage msg) {
+		int key = msg.getMetaData().getMMSI();
+		assert null==painters.get(key); // expected null
 		if (msg.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 			// Pos aus Meta, kein Kurs, o mit Farbe
 			AisMessage amsg = msg.getAisMessage();
@@ -149,10 +159,14 @@ Map<String, String> test1 = Map.of(
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-				painters.add(shipLocationPainter);
+				painters.put(key, shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 				overlayPainter.setCacheable(false);
-				overlayPainter.setPainters(painters);
+//				overlayPainter.setPainters(painters);
+//				WaypointPainter<Waypoint>[] a = (WaypointPainter<Waypoint>[])painters.entrySet().toArray();
+//				overlayPainter.setPainters(a); // array of painters (Painter<?>... painters)
+				// besser mit List:
+				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
 			}
 		} else {
@@ -172,10 +186,14 @@ Map<String, String> test1 = Map.of(
 				}
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-				painters.add(shipLocationPainter);
+				painters.put(key, shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 				overlayPainter.setCacheable(false);
-				overlayPainter.setPainters(painters);
+//				overlayPainter.setPainters(painters);
+//				WaypointPainter<Waypoint>[] a = (WaypointPainter<Waypoint>[])painters.values().toArray();
+//				overlayPainter.setPainters(a); // array of painters (Painter<?>... painters)
+//				// besser:
+				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
 			}
 		}
