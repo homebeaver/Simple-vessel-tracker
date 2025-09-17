@@ -1,16 +1,12 @@
 package org.jxmapviewer.demos;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
-
-import javax.swing.Painter;
 
 import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
@@ -116,6 +112,7 @@ Map<String, String> test1 = Map.of(
 				icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 			} else {
 				icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+				icon.setRotation(cog); // Kurs
 			}
 			if(type!=null) {
 				ShipTypeCargo stc = new ShipTypeCargo(type);
@@ -123,16 +120,14 @@ Map<String, String> test1 = Map.of(
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 			}
 			// TODO den zuletzt erstellten Painter löschen aus painters
+			// NEIN : nur letze Positien (ohne Spur - das kommt später)
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(list, msg);
+//			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 			//painters.remove(key); besser:
 			painters.replace(key, shipLocationPainter);
 			CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 			overlayPainter.setCacheable(false);
-//			Arrays a; Arrays.asList(null)
-//			WaypointPainter<Waypoint>[] a = (WaypointPainter<Waypoint>[])painters.entrySet().toArray();
-//			overlayPainter.setPainters(a); // array of painters (Painter<?>... painters)
-			// besser mit List:
 			overlayPainter.setPainters(List.copyOf(painters.values()));
 			super.setOverlayPainter(overlayPainter);
 		} else {
@@ -146,8 +141,23 @@ Map<String, String> test1 = Map.of(
     }
 
 	private void display1Vessel(AisStreamMessage msg) {
+/*
+
+vessels with track (more then 1 waypoints):
+	MMSI=265820920:2 SEA4FUN ShipStaticData,PositionReport,
+	MMSI=219007393:2 VENUS (GUARD VESSEL) PositionReport,PositionReport,
+	MMSI=219024675:3 DANPILOT JULIET PositionReport,PositionReport,ShipStaticData,
+	MMSI=219369000:2 LEA ELIZABETH PositionReport,PositionReport,
+	MMSI=219000368:2 MERCANDIA IV PositionReport,PositionReport,
+	MMSI=220476000:2 FRIGGA PositionReport,ShipStaticData,
+	MMSI=219005904:2 AURELIA ShipStaticData,PositionReport,
+	MMSI=219024336:2 JEPPE PositionReport,PositionReport,
+	MMSI=305773000:2 VOHBURG PositionReport,PositionReport,
+
+ */
 		int key = msg.getMetaData().getMMSI();
 		assert null==painters.get(key); // expected null
+// test: if(key==265820920 || key==-219007393 || key==219024675 || key==-219369000 || key==-219000368 || key==220476000 || key==219005904 || key==-219024336 || key==-305773000)
 		if (msg.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 			// Pos aus Meta, kein Kurs, o mit Farbe
 			AisMessage amsg = msg.getAisMessage();
@@ -162,10 +172,6 @@ Map<String, String> test1 = Map.of(
 				painters.put(key, shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 				overlayPainter.setCacheable(false);
-//				overlayPainter.setPainters(painters);
-//				WaypointPainter<Waypoint>[] a = (WaypointPainter<Waypoint>[])painters.entrySet().toArray();
-//				overlayPainter.setPainters(a); // array of painters (Painter<?>... painters)
-				// besser mit List:
 				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
 			}
@@ -177,22 +183,18 @@ Map<String, String> test1 = Map.of(
 				int navStatus = pr.getNavigationalStatus();
 				RadianceIcon icon = null;
 				//if(navStatus==5) { //= moored (festgemacht)
-				if(navStatus!=0) { // Under way
-					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
-				} else {
-					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
-					icon = FeatheRnavigation_grey.of(20, 20);
+				if(navStatus==0) { // Under way
+					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M); kleiner:
+					icon = FeatheRnavigation_grey.of(18, 18);
 					icon.setRotation(pr.getCog()); // Kurs
+				} else {
+					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 				}
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
 				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 				overlayPainter.setCacheable(false);
-//				overlayPainter.setPainters(painters);
-//				WaypointPainter<Waypoint>[] a = (WaypointPainter<Waypoint>[])painters.values().toArray();
-//				overlayPainter.setPainters(a); // array of painters (Painter<?>... painters)
-//				// besser:
 				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
 			}
