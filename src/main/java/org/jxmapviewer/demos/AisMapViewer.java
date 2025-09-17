@@ -54,7 +54,8 @@ Map<String, String> test1 = Map.of(
 	
 //	private CompoundPainter<JXMapViewer> painters; 
 	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
-	private List painters; // TODO List is a raw type. References to generic type List<E> should be parameterized
+	private List<WaypointPainter<Waypoint>> painters; 
+	// TODO List is a raw type. References to generic type List<E> should be parameterized
 	
 	public AisMapViewer() {
     	super();
@@ -82,12 +83,6 @@ Map<String, String> test1 = Map.of(
 			AisMessage amsg = msg.getAisMessage();
 			Double cog = null; // Kurs
 			Integer type = null; // Schiffstyp
-//			if (amsg instanceof PositionReport pr) {
-//				cog = pr.getCog();
-//			} else if (amsg instanceof ShipStaticData ssd) {
-//				type = ssd.getType();
-//			}
-//			// cog == null ==> cog aus list holen
 			List<AisStreamMessage> list = map.get(key);
 			Iterator<AisStreamMessage> i = list.iterator();
 			int n=0;
