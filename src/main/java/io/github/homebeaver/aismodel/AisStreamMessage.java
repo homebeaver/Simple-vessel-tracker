@@ -63,7 +63,7 @@ public class AisStreamMessage {
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
 				break;
 			case STANDARDCLASSBPOSITIONREPORT:
-				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+//				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
