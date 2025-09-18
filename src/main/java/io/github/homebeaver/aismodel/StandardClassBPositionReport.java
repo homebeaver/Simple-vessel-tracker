@@ -17,6 +17,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,13 +30,14 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
-import dk.dma.enav.model.geometry.Position;
 import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
 /**
  * StandardClassBPositionReport
+ * <p>
+ * Standard position report for Class B shipborne mobile equipment to be used instead of Messages 1, 2, 3 (8)
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class StandardClassBPositionReport extends AisMessage {
@@ -61,7 +65,6 @@ public class StandardClassBPositionReport extends AisMessage {
   private Boolean positionAccuracy;
 
   /** Store the positions just as in message 1-3 */
-  private Position position;
   public static final String SERIALIZED_NAME_LONGITUDE = "Longitude";
   @SerializedName(SERIALIZED_NAME_LONGITUDE)
   private Double longitude;
@@ -800,7 +803,51 @@ public class StandardClassBPositionReport extends AisMessage {
     }
   }
 
-//	public static StandardClassBPositionReport fromJson(JSONObject jo) { TODO
+/*
+{"Message":{"StandardClassBPositionReport":{"AssignedMode":false,"ClassBBand":true,"ClassBDisplay":false,"ClassBDsc":true,"ClassBMsg22":true,"ClassBUnit":true,
+"Cog":360,"CommunicationState":393222,"CommunicationStateIsItdma":true,"Latitude":55.643431666666665,"Longitude":12.649876666666668,"MessageID":18,"PositionAccuracy":false,
+"Raim":false,"RepeatIndicator":0,"Sog":0,"Spare1":0,"Spare2":0,"Timestamp":29,"TrueHeading":511,"UserID":219021795,"Valid":true}},"MessageType":"StandardClassBPositionReport","MetaData":{"MMSI":219021795,"MMSI_String":219021795,"ShipName":"CELMA","latitude":55.643431666666665,"longitude":12.649876666666668,"time_utc":"2025-09-12 10:51:30.145792207 +0000 UTC"}}
+
+ */
+public static StandardClassBPositionReport fromJson(JSONObject jo) {
+	  AisMessage res = new StandardClassBPositionReport();
+	  StandardClassBPositionReport ps = null;
+  // Extract individual fields from JSONObject
+  try {
+      res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
+      res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
+      res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
+      res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
+      ps = (StandardClassBPositionReport)res;
+      ps = ps.assignedMode(jo.getBoolean(SERIALIZED_NAME_ASSIGNED_MODE));
+      ps = ps.classBBand(jo.getBoolean(SERIALIZED_NAME_CLASS_B_BAND));
+      ps = ps.classBDisplay(jo.getBoolean(SERIALIZED_NAME_CLASS_B_DISPLAY));
+      ps = ps.classBDsc(jo.getBoolean(SERIALIZED_NAME_CLASS_B_DSC));
+      ps = ps.classBMsg22(jo.getBoolean(SERIALIZED_NAME_CLASS_B_MSG22));
+      ps = ps.classBUnit(jo.getBoolean(SERIALIZED_NAME_CLASS_B_UNIT));
+      ps = ps.cog(jo.getDouble(SERIALIZED_NAME_COG));
+      ps = ps.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
+      ps = ps.communicationStateIsItdma(jo.getBoolean(SERIALIZED_NAME_COMMUNICATION_STATE_IS_ITDMA));
+      ps = ps.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+      ps = ps.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+      ps = ps.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+      ps = ps.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+      ps = ps.sog(jo.getDouble(SERIALIZED_NAME_SOG));
+      // XXX Spare1 Spare2
+      ps = ps.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
+      ps = ps.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
+// diese Felder sind in PositionReport aber nicht in StandardClassBPositionReport
+//      ps = ps.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
+//      ps = ps.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
+//      ps = ps.specialManoeuvreIndicator(jo.getInt(SERIALIZED_NAME_SPECIAL_MANOEUVRE_INDICATOR));
+    // XXX spare 
+    System.out.println(ps);
+  } catch (JSONException e) {
+//      logger.error("Error creating ShipStaticData", e);
+  }
+  return ps;
+}
+
 
  /**
   * Create an instance of StandardClassBPositionReport given an JSON string

@@ -63,7 +63,7 @@ public class AisStreamMessage {
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
 				break;
 			case STANDARDCLASSBPOSITIONREPORT:
-//            	handleStandardClassBPositionReport(message.getJSONObject("Message").getJSONObject("StandardClassBPositionReport"), metaData);
+				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
@@ -80,7 +80,7 @@ public class AisStreamMessage {
 	 * Zwischenergebnissen waehrend der Verarbeitung, 
 	 * damit beliebige GUIs moeglich sind.
 	 */
-	public static interface MeldungenCallback<V> {
+	public static interface MeldungenCallback<V> { // TODO umbenennen
 		void ausgabeMeldung(V v);
 	}
 	public static class ConsoleCallback implements MeldungenCallback<AisStreamMessage> {
