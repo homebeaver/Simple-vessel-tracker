@@ -693,7 +693,6 @@ public class PositionReport extends AisMessage {
         ps = ps.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
         ps = ps.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
         ps = ps.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
-//        Position position = getPosition(jo);
         ps = ps.cog(jo.getDouble(SERIALIZED_NAME_COG));
         ps = ps.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
         ps = ps.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));

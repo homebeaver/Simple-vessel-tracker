@@ -19,6 +19,10 @@ public class AisMessage {
 	 * 4 Base station report 
 	 * <p> 
 	 * 5 Static and voyage related data
+	 * <p> 
+	 * 18 Standard Class B equipment position report
+	 * <p> 
+	 * 19 Extended Class B equipment position report (kommt in data/aisstream.txt nicht vor)
 	 */
 	private Integer messageID;
 
