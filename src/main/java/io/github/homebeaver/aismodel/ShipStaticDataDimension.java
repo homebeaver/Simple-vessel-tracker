@@ -69,7 +69,8 @@ public class ShipStaticDataDimension {
    * Reference point for reported position. Also indicates the dimension of ship (m)
    * (see Fig. 42 and § 3.3.3)
    * <p>
-   * NOTE: When GPS position is not available, but the ships dimensions is available, then this field should be 0
+   * NOTE: When GPS position is not available, but the ships dimensions is available, 
+   * then this field should be 0
    */
 //  protected int dimBow; // 9 bits
 //from AisStaticCommon
@@ -81,8 +82,8 @@ public class ShipStaticDataDimension {
    * GPS Ant. Distance from stern (B) Reference point for reported position. Also indicates the dimension of ship (m)
    * (see Fig. 42 and § 3.3.3)
    * <p>
-   * NOTE: When GPS position is not available, but the ships dimensions is available, then this field should be
-   * representing the length of the ship
+   * NOTE: When GPS position is not available, but the ships dimensions is available, 
+   * then this field should be representing the length of the ship
    */
 //  protected int dimStern; // 9 bits
 //from AisStaticCommon
@@ -199,17 +200,27 @@ public class ShipStaticDataDimension {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getD() {
     return D;
   }
-
-
   public void setD(Integer D) {
     this.D = D;
   }
 
-
+  /**
+   * length of the ship
+   * @return length in m
+   */
+  public int getLength() {
+	  return A+B;
+  }
+  /**
+   * width of the ship
+   * @return width in m
+   */
+  public int getWidth() {
+	  return C+D;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -262,17 +273,17 @@ public class ShipStaticDataDimension {
   static {
     // a set of all properties/fields (JSON key names)
     openapiFields = new HashSet<String>();
-    openapiFields.add("A");
-    openapiFields.add("B");
-    openapiFields.add("C");
-    openapiFields.add("D");
+    openapiFields.add(SERIALIZED_NAME_A);
+    openapiFields.add(SERIALIZED_NAME_B);
+    openapiFields.add(SERIALIZED_NAME_C);
+    openapiFields.add(SERIALIZED_NAME_D);
 
     // a set of required properties/fields (JSON key names)
     openapiRequiredFields = new HashSet<String>();
-    openapiRequiredFields.add("A");
-    openapiRequiredFields.add("B");
-    openapiRequiredFields.add("C");
-    openapiRequiredFields.add("D");
+    openapiRequiredFields.add(SERIALIZED_NAME_A);
+    openapiRequiredFields.add(SERIALIZED_NAME_B);
+    openapiRequiredFields.add(SERIALIZED_NAME_C);
+    openapiRequiredFields.add(SERIALIZED_NAME_D);
   }
 
  /**
@@ -339,11 +350,6 @@ public class ShipStaticDataDimension {
     ShipStaticDataDimension res = new ShipStaticDataDimension();
     // Extract individual fields from JSONObject
     try {
-//        res = res.A(jo.getInt(SERIALIZED_NAME_A));
-//        res = res.B(jo.getInt(SERIALIZED_NAME_B));
-//        res = res.C(jo.getInt(SERIALIZED_NAME_C));
-//        res = res.D(jo.getInt(SERIALIZED_NAME_D));
-//        System.out.println(res);
         res = res.A(jo.getInt(SERIALIZED_NAME_A))
         .B(jo.getInt(SERIALIZED_NAME_B))
         .C(jo.getInt(SERIALIZED_NAME_C))
