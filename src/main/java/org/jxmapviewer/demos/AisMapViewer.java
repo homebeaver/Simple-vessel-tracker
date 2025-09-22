@@ -24,6 +24,7 @@ import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
+import io.github.homebeaver.aismodel.StandardClassBPositionReport;
 
 public class AisMapViewer extends JXMapViewer {
 
@@ -55,7 +56,7 @@ Map<String, String> test1 = Map.of(
 	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
 	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
 	// In dierser Version ohne Spur
-	private Map<Integer, WaypointPainter<Waypoint>> painters; 
+	private Map<Integer, WaypointPainter<Waypoint>> painters;
 	
 	public AisMapViewer() {
     	super();
@@ -75,6 +76,7 @@ Map<String, String> test1 = Map.of(
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
 //		LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
+if(key==311001729) // XXX test
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
 			LOG.info("mindestens zweite Nachricht für "+key);
@@ -83,6 +85,7 @@ Map<String, String> test1 = Map.of(
 			AisMessage amsg = msg.getAisMessage();
 			Double cog = null; // Kurs
 			Integer type = null; // Schiffstyp
+			Integer shipLenght = null;
 			List<AisStreamMessage> list = map.get(key);
 			Iterator<AisStreamMessage> i = list.iterator();
 			int n=0;
@@ -92,15 +95,21 @@ Map<String, String> test1 = Map.of(
 				AisMessage nextamsg = next.getAisMessage();
 				if (nextamsg instanceof PositionReport pr) {
 					cog = pr.getCog();
+				} else if (nextamsg instanceof StandardClassBPositionReport scbpr) {
+					cog = scbpr.getCog();
 				} else if (nextamsg instanceof ShipStaticData ssd) {
 					type = ssd.getType();
+					shipLenght = ssd.getDimension().getLength();
 				}
 //				LOG.info(">>="+n+" "+key+":"+next.getAisMessageType() + "cog="+cog + "type="+type);
 			}
 			if (amsg instanceof PositionReport pr) {
 				cog = pr.getCog();
+			} else if (amsg instanceof StandardClassBPositionReport scbpr) {
+				cog = scbpr.getCog();
 			} else if (amsg instanceof ShipStaticData ssd) {
 				type = ssd.getType();
+				shipLenght = ssd.getDimension().getLength();
 //			LOG.info("==============>"+key+": "+ " LAST cog="+cog + " type="+type + " #="+n);
 			}
 			LOG.info("-------------->"+key+": "+ " cog="+cog + " type="+type + " #="+n);
@@ -111,7 +120,12 @@ Map<String, String> test1 = Map.of(
 			if(cog==null) {
 				icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 			} else {
-				icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M);
+				int zoom = this.getZoom(); // value between 1 and 15
+				// ab zoom 6 kleineste icons XS==18
+				//int f = 432/48 = 9 Berechnung für zoom 5:
+				int iconsize = shipLenght==null ? 0 : shipLenght/6; // XXX
+				if(iconsize<18) iconsize = 18;
+				icon = FeatheRnavigation_grey.of(iconsize, iconsize);
 				icon.setRotation(cog); // Kurs
 			}
 			if(type!=null) {
@@ -124,6 +138,8 @@ Map<String, String> test1 = Map.of(
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(list, msg);
 //			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
+//			painters.get(key).setVisible(false);
+//			this.getAddressLocation():
 			//painters.remove(key); besser:
 			painters.replace(key, shipLocationPainter);
 			CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
@@ -137,6 +153,7 @@ Map<String, String> test1 = Map.of(
 			// also neues o-Schiff mit Color
 			display1Vessel(msg);
 		}
+if(key==311001729) // XXX test
 		map.get(key).add(msg);
     }
 
@@ -158,15 +175,37 @@ vessels with track (more then 1 waypoints):
 		int key = msg.getMetaData().getMMSI();
 		assert null==painters.get(key); // expected null
 // test: if(key==265820920 || key==-219007393 || key==219024675 || key==-219369000 || key==-219000368 || key==220476000 || key==219005904 || key==-219024336 || key==-305773000)
-		if (msg.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
-			// Pos aus Meta, kein Kurs, o mit Farbe
+//if(key==311001729) // XXX test
+		if (msg.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
+			// POSITIONREPORT
+			// Pos + Kurs aus Msg ; > ohne Farbe
 			AisMessage amsg = msg.getAisMessage();
-			if (amsg instanceof ShipStaticData ssd) {
-				LOG.info("erste Nachricht ist "+ssd);
-				RadianceIcon icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
-				ShipTypeCargo stc = new ShipTypeCargo(ssd.getType());
-				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
-				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
+			RadianceIcon icon = null;
+			if (amsg instanceof PositionReport pr) {
+				int navStatus = pr.getNavigationalStatus();
+				//if(navStatus==5) { //= moored (festgemacht)
+				if(navStatus==0) { // Under way XXX navStatus nicht in StandardClassBPositionReport
+					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M); kleiner:
+					icon = FeatheRnavigation_grey.of(18, 18);
+					icon.setRotation(pr.getCog()); // Kurs
+				} else {
+					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
+				}
+				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
+				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
+				painters.put(key, shipLocationPainter);
+				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+				overlayPainter.setCacheable(false);
+				overlayPainter.setPainters(List.copyOf(painters.values()));
+				super.setOverlayPainter(overlayPainter);
+			}
+		} else if (msg.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
+			// STANDARDCLASSBPOSITIONREPORT
+			// Pos + Kurs aus Msg ; > ohne Farbe
+			AisMessage amsg = msg.getAisMessage();
+			RadianceIcon icon = FeatheRnavigation_grey.of(18, 18);
+			if (amsg instanceof StandardClassBPositionReport scbpr) {
+				icon.setRotation(scbpr.getCog()); // Kurs
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
@@ -176,20 +215,22 @@ vessels with track (more then 1 waypoints):
 				super.setOverlayPainter(overlayPainter);
 			}
 		} else {
-			// POSITIONREPORT
-			// Pos + Kurs aus Msg ; > ohne Farbe
+			// SHIPSTATICDATA
+			// Pos aus Meta, kein Kurs, o mit Farbe
 			AisMessage amsg = msg.getAisMessage();
-			if (amsg instanceof PositionReport pr) {
-				int navStatus = pr.getNavigationalStatus();
-				RadianceIcon icon = null;
-				//if(navStatus==5) { //= moored (festgemacht)
-				if(navStatus==0) { // Under way
-					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M); kleiner:
-					icon = FeatheRnavigation_grey.of(18, 18);
-					icon.setRotation(pr.getCog()); // Kurs
-				} else {
-					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
-				}
+			if (amsg instanceof ShipStaticData ssd) {
+				int shipLenght = ssd.getDimension().getLength();
+				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
+				ShipTypeColor c = ShipTypeColor.getColor(stype.getShipType());
+				LOG.info("erste Nachricht ist SHIPSTATICDATA ShipType="+stype + " shipLenght="+shipLenght);
+				int zoom = this.getZoom(); // value between 1 and 15
+				// ab zoom 6 kleineste icons XS==10
+				//int f = 432/48
+				int iconsize = shipLenght/9;
+				if(iconsize<SizingConstants.XS) iconsize = SizingConstants.XS;
+				// XXX das gilt nur für FeatheRnavigation_grey
+				RadianceIcon icon = FeatheRcircle_blue.of(iconsize, iconsize);
+				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
