@@ -12,7 +12,7 @@ import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
-import org.jdesktop.swingx.painter.CompoundPainter;
+//import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
@@ -50,22 +50,23 @@ Map<String, String> test1 = Map.of(
 	);
 
 	private Map<Integer, List<AisStreamMessage>> map;
-//	CompoundPainter<JXMapViewer> overlayPainter;
+//	OverlayPainter<JXMapViewer> overlayPainter;
 	
 //	private CompoundPainter<JXMapViewer> painters; 
 	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
 	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
-	// In dierser Version ohne Spur
+	// In dieser Version ohne Spur
 	private Map<Integer, WaypointPainter<Waypoint>> painters;
+//	private Map<Integer, List<WaypointPainter<Waypoint>>> painters;
 	
 	public AisMapViewer() {
     	super();
 		this.map = new HashMap<Integer, List<AisStreamMessage>>();
 		painters = new HashMap<>();
 		
-//		overlayPainter = new CompoundPainter<JXMapViewer>();
+//		overlayPainter = (OverlayPainter<JXMapViewer>) new OverlayPainter<JXMapViewer>();
 //		overlayPainter.setCacheable(false);
-//		overlayPainter.setPainters(painters);
+////		overlayPainter.setPainters(painters);
 //		super.setOverlayPainter(overlayPainter);
 	}
 	
@@ -75,11 +76,11 @@ Map<String, String> test1 = Map.of(
     
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
+		if(key!=311001729) return;
 //		LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
-if(key==311001729) // XXX test
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
-			LOG.info("mindestens zweite Nachricht für "+key);
+			LOG.info("mindestens zweite Nachricht für "+key + " "+msg.getAisMessageType());
 			// ShipData : TODO letzte Position holen, wenn vorhanden Kurs holen, icon löschen und neu anlegen
 			// PositionReport TODO map.get(key) 
 			AisMessage amsg = msg.getAisMessage();
@@ -136,10 +137,7 @@ if(key==311001729) // XXX test
 			// TODO den zuletzt erstellten Painter löschen aus painters
 			// NEIN : nur letze Positien (ohne Spur - das kommt später)
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(list, msg);
-//			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-//			painters.get(key).setVisible(false);
-//			this.getAddressLocation():
 			//painters.remove(key); besser:
 			painters.replace(key, shipLocationPainter);
 			CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
@@ -153,7 +151,6 @@ if(key==311001729) // XXX test
 			// also neues o-Schiff mit Color
 			display1Vessel(msg);
 		}
-if(key==311001729) // XXX test
 		map.get(key).add(msg);
     }
 
@@ -191,6 +188,7 @@ vessels with track (more then 1 waypoints):
 				} else {
 					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 				}
+				LOG.info("erste Nachricht ist POSITIONREPORT navStatus="+navStatus + " cog="+pr.getCog());
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
