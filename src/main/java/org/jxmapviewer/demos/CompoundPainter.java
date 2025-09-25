@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.Painter;
 
@@ -22,6 +23,8 @@ import org.jdesktop.swingx.painter.AbstractPainter;
 @JavaBean
 public class CompoundPainter<T> extends AbstractPainter<T> {
 	
+	private static final Logger LOG = Logger.getLogger(CompoundPainter.class.getName());
+
     /**
      * {@inheritDoc}
      */
@@ -73,54 +76,8 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
     
     private Handler handler;
     
-//    private Painter<?>[] painters = new Painter<?>[0];
-	private List<Painter<T>> painters = new ArrayList<Painter<T>>();
-    /* XXX DONE Painter[] ==> List<Painter<T>> - so ist es in jxmapviewer2 implementiert:
-//    private List<Painter<T>> painters = new CopyOnWriteArrayList<Painter<T>>();
+	private List<Painter<T>> painters = new ArrayList<Painter<T>>(10);
 
-ich belasse es hier bei Painter<?>[] painters , 
-füge aber einen ctor mit List 
-und setPainters(List<? extends Painter<T>> painters) 
-hinzu, damit jxmapviewer2 es nutzen kann
-
-Ausserdem gibt es in jxmapviewer2
-- einen getter, der Collection liefert, getPainters hier liefert Array
-- addPainter und
-- removePainter ( beide werden in jxmapviewer2 nicht genutzt!? )
-
-    public final Collection<Painter<T>> getPainters() {
-        return Collections.unmodifiableCollection(painters);
-    }
-
-    public void addPainter(Painter<T> painter) {
-        Collection<Painter<T>> old = new ArrayList<Painter<T>>(getPainters());
-        
-        this.painters.add(painter);    
-        
-        if (painter instanceof AbstractPainter)
-        {
-            ((AbstractPainter<?>) painter).addPropertyChangeListener(handler);
-        }
-
-        setDirty(true);
-        firePropertyChange("painters", old, getPainters());
-    }
-
-    public void removePainter(Painter<T> painter) {
-        Collection<Painter<T>> old = new ArrayList<Painter<T>>(getPainters());
-        
-        this.painters.remove(painter);
-        
-        if (painter instanceof AbstractPainter)
-        {
-            ((AbstractPainter<?>) painter).removePropertyChangeListener(handler);
-        }
-
-        setDirty(true);
-        firePropertyChange("painters", old, getPainters());
-    }
-
- */
     private AffineTransform transform;
     private boolean clipPreserved = false;
 
@@ -128,8 +85,7 @@ Ausserdem gibt es in jxmapviewer2
 
     /** Creates a new instance of CompoundPainter */
     public CompoundPainter() {
-        this((Painter[]) null);
-//        this((Painter<T>[]) null);
+        this((Painter<T>[]) null);
    }
     
     /**
@@ -198,7 +154,11 @@ Ausserdem gibt es in jxmapviewer2
             }
         }
 
-        this.painters = painters == null ? new ArrayList<Painter<T>>() : List.copyOf(painters);
+        this.painters = new ArrayList<Painter<T>>();
+        for (Painter<T> p : painters) {
+        	this.painters.add(p);
+        }
+
         for (Painter<?> p : this.painters) {
             if (p instanceof AbstractPainter ap) {
                 ap.addPropertyChangeListener(handler);
@@ -227,10 +187,28 @@ Ausserdem gibt es in jxmapviewer2
     // XXX neu DONE 
     public void addPainter(Painter<T> painter) {
         Collection<Painter<T>> old = new ArrayList<Painter<T>>(getPainters());
+        LOG.fine("painters.size="+painters.size() + " addPainter "+painter);
+        painters.forEach( p -> {
+            LOG.finer("painters.size="+painters.size() + " ... "+p);
+        });
         this.painters.add(painter);
         
         if (painter instanceof AbstractPainter ap) {
             ap.addPropertyChangeListener(handler);
+        }
+
+        setDirty(true);
+        firePropertyChange("painters", old, getPainters());
+    }
+    // XXX neu DONE 
+    public void removePainter(Painter<T> painter) {
+        Collection<Painter<T>> old = new ArrayList<Painter<T>>(getPainters());
+        
+        boolean done = this.painters.remove(painter);
+        LOG.fine("removePainter done="+done + " "+painter);
+        
+        if (painter instanceof AbstractPainter ap) {
+            ap.removePropertyChangeListener(handler);
         }
 
         setDirty(true);

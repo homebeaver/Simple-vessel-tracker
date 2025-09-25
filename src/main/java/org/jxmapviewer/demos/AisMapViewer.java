@@ -51,6 +51,7 @@ Map<String, String> test1 = Map.of(
 
 	private Map<Integer, List<AisStreamMessage>> map;
 //	OverlayPainter<JXMapViewer> overlayPainter;
+	CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 	
 //	private CompoundPainter<JXMapViewer> painters; 
 	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
@@ -76,7 +77,7 @@ Map<String, String> test1 = Map.of(
     
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
-		if(key!=311001729) return;
+//		if(key!=311001729) return;
 //		LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
@@ -122,9 +123,9 @@ Map<String, String> test1 = Map.of(
 				icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 			} else {
 				int zoom = this.getZoom(); // value between 1 and 15
-				// ab zoom 6 kleineste icons XS==18
+				// ab zoom 6 kleinste icons XS==18
 				//int f = 432/48 = 9 Berechnung für zoom 5:
-				int iconsize = shipLenght==null ? 0 : shipLenght/6; // XXX
+				int iconsize = shipLenght==null ? 0 : shipLenght/9; // XXX
 				if(iconsize<18) iconsize = 18;
 				icon = FeatheRnavigation_grey.of(iconsize, iconsize);
 				icon.setRotation(cog); // Kurs
@@ -134,13 +135,16 @@ Map<String, String> test1 = Map.of(
 				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 			}
-			// TODO den zuletzt erstellten Painter löschen aus painters
-			// NEIN : nur letze Positien (ohne Spur - das kommt später)
-			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(list, msg);
+			CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
+			
+			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-			//painters.remove(key); besser:
+			
+			// den zuletzt erstellten Painter löschen in overlayPainter und aus painters
+			overlayPainter.removePainter(painters.get(key));
 			painters.replace(key, shipLocationPainter);
-			CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+			overlayPainter.addPainter(shipLocationPainter);
+			
 			overlayPainter.setCacheable(false);
 			overlayPainter.setPainters(List.copyOf(painters.values()));
 			super.setOverlayPainter(overlayPainter);
@@ -192,7 +196,7 @@ vessels with track (more then 1 waypoints):
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
-				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+				CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
 				overlayPainter.setCacheable(false);
 				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
@@ -207,7 +211,7 @@ vessels with track (more then 1 waypoints):
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
-				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+				CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
 				overlayPainter.setCacheable(false);
 				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
@@ -232,7 +236,7 @@ vessels with track (more then 1 waypoints):
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
-				CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+				CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
 				overlayPainter.setCacheable(false);
 				overlayPainter.setPainters(List.copyOf(painters.values()));
 				super.setOverlayPainter(overlayPainter);
