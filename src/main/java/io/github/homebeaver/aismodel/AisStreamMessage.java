@@ -48,10 +48,18 @@ public class AisStreamMessage {
 		try {
 			JSONObject jo = new JSONObject(messageJson);
 			res.messageType = AisMessageTypes.fromValue(jo.getString(SERIALIZED_NAME_MESSAGE_TYPE));
-			System.out.println(">>>"+res.messageType.toString());
+//			System.out.println(">>>"+res.messageType.toString());
 			res.metaData = MetaData.fromJson(jo.getJSONObject(SERIALIZED_NAME_METADATA));
 			JSONObject joMsg = jo.getJSONObject(SERIALIZED_NAME_MESSAGE);
 //			System.out.println(">>>"+res.messageType.toString() + res.metaData);
+/*
+			try {
+				Thread.sleep( 10 ); // XXX slow down
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+ */
 			switch (res.messageType) {
 			case POSITIONREPORT:
 				res.message = PositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
@@ -64,6 +72,21 @@ public class AisStreamMessage {
 				break;
 			case STANDARDCLASSBPOSITIONREPORT:
 //				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case EXTENDEDCLASSBPOSITIONREPORT:
+//	TODO		res.message = ExtendedClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case STATICDATAREPORT:
+//	TODO		res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case BASESTATIONREPORT:
+//	TODO		res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case DATALINKMANAGEMENTMESSAGE:
+//	TODO		res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case AIDSTONAVIGATIONREPORT:
+//	TODO		res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
@@ -91,9 +114,9 @@ public class AisStreamMessage {
 		}
 	}
 
-//	public static final String GITHUB_URL =	"https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
 	public static Boolean liesUrl(URL fileurl, MeldungenCallback<AisStreamMessage> meldungenCallback) {
 		try {
+			System.out.println("starting with fileurl: " + fileurl);
 			File file = new File(fileurl.toURI());
 			return liesUrl(new BufferedReader(new FileReader(file)), meldungenCallback);
 		} catch (URISyntaxException | FileNotFoundException e) {

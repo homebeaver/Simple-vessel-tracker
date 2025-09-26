@@ -13,14 +13,15 @@ import io.github.homebeaver.aismodel.PositionReport;
 
 public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rename to AisStreamMessageTest
 	
+	static final String TEST_DATA = "data/aisstream.txt";
+	static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/"+TEST_DATA;
+
 	public static void main(String[] args) throws URISyntaxException {
-//		URL url = StreamTest.class.getClassLoader().getResource("data/aisstream.txt");
+//		URL url = StreamTest.class.getClassLoader().getResource(TEST_DATA);
 		URL url = StreamTest.class.getClassLoader().getResource("aisstream.txt");
-		System.out.println("starting with " + url);
-		// Resource-URL aus main
-//		AisStreamMessage.liesUrl(url, new AisStreamMessage.ConsoleCallback());
 		StreamTest st = new StreamTest();
-		AisStreamMessage.liesUrl(url, st);
+//		AisStreamMessage.liesUrl(url, st);
+		AisStreamMessage.liesUrl(GITHUB_URL, st);
 		st.report();
 		
 	}
