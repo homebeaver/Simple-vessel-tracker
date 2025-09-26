@@ -65,19 +65,14 @@ Map<String, String> test1 = Map.of(
 		this.map = new HashMap<Integer, List<AisStreamMessage>>();
 		painters = new HashMap<>();
 		
-//		overlayPainter = (OverlayPainter<JXMapViewer>) new OverlayPainter<JXMapViewer>();
-//		overlayPainter.setCacheable(false);
-////		overlayPainter.setPainters(painters);
-//		super.setOverlayPainter(overlayPainter);
+//		super.setOverlayPainter(overlayPainter); // XXX das funktioniert nicht
 	}
 	
-//	public void setCompoundPainter(CompoundPainter<JXMapViewer> cp) {
-//		painters = cp;
-//	}
-    
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
-//		if(key!=311001729) return;
+//		if(key!=219024675 && key!=220434000 && key!=219035097 && key!=219007393) return;
+// nur grosse Potte:		
+//		if(key!=525121076 && key!=230706000 && key!=538010235 && key!=247389200) return;
 //		LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
@@ -135,7 +130,6 @@ Map<String, String> test1 = Map.of(
 				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 			}
-			CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
 			
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
@@ -145,9 +139,8 @@ Map<String, String> test1 = Map.of(
 			painters.replace(key, shipLocationPainter);
 			overlayPainter.addPainter(shipLocationPainter);
 			
-			overlayPainter.setCacheable(false);
-			overlayPainter.setPainters(List.copyOf(painters.values()));
-			super.setOverlayPainter(overlayPainter);
+//			overlayPainter.setPainters(List.copyOf(painters.values()));
+//			super.setOverlayPainter(overlayPainter);
 		} else {
 			List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
 			map.put(key, waypoints); // empty List waypoints 
@@ -156,6 +149,7 @@ Map<String, String> test1 = Map.of(
 			display1Vessel(msg);
 		}
 		map.get(key).add(msg);
+		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
     }
 
 	private void display1Vessel(AisStreamMessage msg) {
@@ -175,8 +169,6 @@ vessels with track (more then 1 waypoints):
  */
 		int key = msg.getMetaData().getMMSI();
 		assert null==painters.get(key); // expected null
-// test: if(key==265820920 || key==-219007393 || key==219024675 || key==-219369000 || key==-219000368 || key==220476000 || key==219005904 || key==-219024336 || key==-305773000)
-//if(key==311001729) // XXX test
 		if (msg.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
 			// POSITIONREPORT
 			// Pos + Kurs aus Msg ; > ohne Farbe
@@ -196,10 +188,9 @@ vessels with track (more then 1 waypoints):
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
-				CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
-				overlayPainter.setCacheable(false);
-				overlayPainter.setPainters(List.copyOf(painters.values()));
-				super.setOverlayPainter(overlayPainter);
+				overlayPainter.addPainter(shipLocationPainter);
+//				overlayPainter.setPainters(List.copyOf(painters.values()));
+//				super.setOverlayPainter(overlayPainter);
 			}
 		} else if (msg.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
 			// STANDARDCLASSBPOSITIONREPORT
@@ -211,10 +202,9 @@ vessels with track (more then 1 waypoints):
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
-				CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
-				overlayPainter.setCacheable(false);
-				overlayPainter.setPainters(List.copyOf(painters.values()));
-				super.setOverlayPainter(overlayPainter);
+				overlayPainter.addPainter(shipLocationPainter);
+//				overlayPainter.setPainters(List.copyOf(painters.values()));
+//				super.setOverlayPainter(overlayPainter);
 			}
 		} else {
 			// SHIPSTATICDATA
@@ -231,15 +221,15 @@ vessels with track (more then 1 waypoints):
 				int iconsize = shipLenght/9;
 				if(iconsize<SizingConstants.XS) iconsize = SizingConstants.XS;
 				// XXX das gilt nur für FeatheRnavigation_grey
+				iconsize = SizingConstants.XS;
 				RadianceIcon icon = FeatheRcircle_blue.of(iconsize, iconsize);
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
-				CompoundPainter<JXMapViewer> overlayPainter = this.overlayPainter;
-				overlayPainter.setCacheable(false);
-				overlayPainter.setPainters(List.copyOf(painters.values()));
-				super.setOverlayPainter(overlayPainter);
+				overlayPainter.addPainter(shipLocationPainter);
+//				overlayPainter.setPainters(List.copyOf(painters.values()));
+//				super.setOverlayPainter(overlayPainter);
 			}
 		}
 	}

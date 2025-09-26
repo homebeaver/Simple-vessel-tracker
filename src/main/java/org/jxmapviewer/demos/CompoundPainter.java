@@ -83,33 +83,38 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
 
     private boolean checkForDirtyChildPainters = true;
 
-    /** Creates a new instance of CompoundPainter */
-    public CompoundPainter() {
-        this((Painter<T>[]) null);
-   }
-    
-    /**
-     * Convenience constructor for creating a CompoundPainter for an array
-     * of painters. A defensive copy of the given array is made, so that future
-     * modification to the array does not result in changes to the CompoundPainter.
-     *
-     * @param painters array of painters, which will be painted in order
-     */
-    public CompoundPainter(Painter<?>... painters) {
-        handler = new Handler(this);
-        
-        setPainters(painters);
-    }
+	/** Creates a new instance of CompoundPainter */
+	public CompoundPainter() {
+		this(false);
+	}
 
-    /**
-     * Convenience constructor for creating a CompoundPainter for a list of painters.
-     * @param painters list of painters
-     */
-    public CompoundPainter(List<? extends Painter<T>> painters) {
-        handler = new Handler(this);
+	public CompoundPainter(boolean cacheable) {
+		super(cacheable);
+		handler = new Handler(this);
+	}
 
-        setPainters(painters);
-    }
+	/**
+	 * Convenience constructor for creating a CompoundPainter for an array of painters. 
+	 * A defensive copy of the given array is made, so that future modification to the array 
+	 * does not result in changes to the CompoundPainter.
+	 *
+	 * @param painters array of painters, which will be painted in order
+	 */
+	public CompoundPainter(Painter<?>... painters) {
+		this();
+		setPainters(painters);
+	}
+
+	/**
+	 * Convenience constructor for creating a CompoundPainter for a list of
+	 * painters.
+	 * 
+	 * @param painters list of painters
+	 */
+	public CompoundPainter(List<? extends Painter<T>> painters) {
+		this();
+		setPainters(painters);
+	}
 
     /**
      * Sets the array of Painters to use. These painters will be executed in
@@ -393,7 +398,7 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
     @Override
     public void clearCache() {
         if (!clearLocalCacheOnly) {
-            for (Painter<?> p : painters) {
+            if (painters!=null) for (Painter<?> p : painters) {
                 if (p instanceof AbstractPainter) {
                     AbstractPainter<?> ap = (AbstractPainter<?>) p;
                     ap.clearCache();
