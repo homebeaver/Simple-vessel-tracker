@@ -1,32 +1,21 @@
 package tracker;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.swing.SwingWorker;
-
-import org.jdesktop.swingx.demos.table.OscarCandidate;
-import org.jdesktop.swingx.demos.table.OscarDataParser;
-import org.jdesktop.swingx.demos.table.OscarTableModel;
-
-import io.aisstream.app.MessageHandler;
+import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
-import io.github.homebeaver.aismodel.MessageReader;
 import io.github.homebeaver.aismodel.AisStreamMessage.MeldungenCallback;
+import io.github.homebeaver.aismodel.PositionReport;
 
 public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rename to AisStreamMessageTest
 	
 	public static void main(String[] args) throws URISyntaxException {
-		URL url = StreamTest.class.getClassLoader().getResource("data/aisstream.txt");
+//		URL url = StreamTest.class.getClassLoader().getResource("data/aisstream.txt");
+		URL url = StreamTest.class.getClassLoader().getResource("aisstream.txt");
 		System.out.println("starting with " + url);
 		// Resource-URL aus main
 //		AisStreamMessage.liesUrl(url, new AisStreamMessage.ConsoleCallback());
@@ -34,42 +23,6 @@ public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rena
 		AisStreamMessage.liesUrl(url, st);
 		st.report();
 		
-//		int cnt = 0;
-////	    MessageHandler mh = new MessageHandler();
-//	    MessageReader mr = new MessageReader();
-//		try {
-//			File file = new File(url.toURI());
-////    		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//			BufferedReader reader = new BufferedReader(new FileReader(file));
-////    		FileInputStream fis = new FileInputStream(file);
-//			while (reader.ready()) {
-//				String line = reader.readLine();
-//				System.out.println(line);
-//				//mh.processMessage(line);
-//				//AisStreamMessage.fromJson(line);
-////				AisStreamMessage asm =
-//				mr.readMessage(line);
-//				cnt++;
-//			}
-//			reader.close();
-//		} catch (IOException | URISyntaxException e) {
-//			System.out.println("Exeption " + e);
-//		}
-//		System.out.println("got " + cnt + " lines.");
-//		System.out.println("got no of vessels " + mr.getMap().size() + ".");
-//		System.out.println("vessels with track (more then 1 waypoints):");
-//		mr.getMap().forEach( (k,v) -> {
-//			if(v.size()>1) {
-//				StringBuilder sb = new StringBuilder();
-//				for (int i=0; i<v.size();i++) {
-//					sb.append(v.get(i).getAisMessageType());
-//					sb.append(',');
-//				}
-//				System.out.println("\tMMSI="+k +":"+v.size() 
-//				+ " "+v.get(0).getMetaData().getShipName()
-//				+ " "+sb.toString());
-//			}
-//		});
 	}
 
 	int lines = 0;
@@ -86,20 +39,39 @@ public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rena
 		}
 	}
 
-	private Map<Integer, Integer> mmsiCounter = new HashMap<Integer, Integer>();
+	// mmsiCounter aka msg counter per ship
+	// mmsi -> [NoAllMsges, PositionReports, ShipStaticData]
+	private Map<Integer, Integer[]> mmsiCounter = new HashMap<Integer, Integer[]>();
 	private Map<AisMessageTypes, Integer> msgTypeCounter = new HashMap<AisMessageTypes, Integer>();
 
 	public void addMessage(AisStreamMessage msg) {
-		int key = msg.getMetaData().getMMSI();
-		if (mmsiCounter.containsKey(key)) {
-			int cnt = mmsiCounter.get(key);
-			cnt++;
-			mmsiCounter.replace(key, cnt);
+		AisMessageTypes msgType = msg.getAisMessageType();
+		if (msgType == AisMessageTypes.POSITIONREPORT) {
+			AisMessage amsg = msg.getAisMessage();
+			if (amsg instanceof PositionReport pr) {
+				if(msg.getMetaData().getLatitude().equals(pr.getLatitude()) 
+						&& msg.getMetaData().getLongitude().equals(pr.getLongitude())) {
+					// expected to be equal
+				} else {
+					System.out.println("NOT equal " + msg.getMetaData() + " and "+pr);
+				}
+			}
+		}
+		int mmsi = msg.getMetaData().getMMSI();
+		if (mmsiCounter.containsKey(mmsi)) {
+			Integer cnt[] = mmsiCounter.get(mmsi);
+			cnt[0]++;
+			if (msgType == AisMessageTypes.POSITIONREPORT) cnt[1]++;
+			if (msgType == AisMessageTypes.SHIPSTATICDATA) cnt[2]++;
+			mmsiCounter.replace(mmsi, cnt);
 		} else {
-			mmsiCounter.put(key, 1);
+			Integer cnt[] = new Integer[3];
+			cnt[0] = 1;
+			cnt[1] = (msgType == AisMessageTypes.POSITIONREPORT) ? 1 : 0;
+			cnt[2] = (msgType == AisMessageTypes.SHIPSTATICDATA) ? 1 : 0;
+			mmsiCounter.put(mmsi, cnt);
 		}
 		
-		AisMessageTypes msgType = msg.getAisMessageType();
 		if (msgTypeCounter.containsKey(msgType)) {
 			int cnt = msgTypeCounter.get(msgType);
 			cnt++;
@@ -118,8 +90,11 @@ public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rena
 		System.out.println("got no of vessels " + mmsiCounter.size() + ".");
 		System.out.println("vessels with track (more then 1 waypoints):");
 		mmsiCounter.forEach((k, v) -> {
-			if (v > 1) {
-				System.out.println("\tMMSI=" + k + ":" + v);
+			if (v[0] > 1) {
+//				System.out.println("\tMMSI=" + k + ":" + v[0] + " POSITIONREPORTs:"+v[1]+ " SHIPSTATICDATA:"+v[2]);
+				System.out.println("\tMMSI=" + k + ":" + " SHIPSTATICDATA:"+v[2] + " POSITIONREPORTs:"+v[1]
+						+ (v[0]==v[1]+v[2] ? "" : " other:"+(v[0]-v[1]-v[2]))
+						);
 			}
 		});
 	}
