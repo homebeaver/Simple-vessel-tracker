@@ -7,8 +7,12 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -68,7 +72,8 @@ public class MapViewerDemo extends AbstractDemo {
 	private static final long serialVersionUID = -4946197162374262488L;
 	private static final Logger LOG = Logger.getLogger(MapViewerDemo.class.getName());
 	private static final String DESCRIPTION = "Demonstrates JXMapViewer, a simple application that shows a map of Europe and the World";
-
+	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
+	
     /**
      * main method allows us to run as a standalone demo.
      * @param args params
@@ -167,6 +172,14 @@ public class MapViewerDemo extends AbstractDemo {
         	mapViewer.setCenterPosition(pos);
         });
         getPosAndZoom();
+        List painters = new ArrayList<>(); // besser LinkedList
+        mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
+        painters.add(addressLocationPainter);
+        painters.add(selectionPainter);
+//        overlayPainter = new CompoundPainter<JXMapViewer>();
+//        overlayPainter.setPainters(painters);
+        cp.setPainters(painters);
+
     }
 
     // from JXMapKit
@@ -257,8 +270,21 @@ public class MapViewerDemo extends AbstractDemo {
         animation.addActionListener( ae -> {
         	animation.setEnabled( false );
             // Starte Extra-Thread per SwingWorker, 
-        	//damit der Event Dispatch Thread (EDT) nicht blockiert wird:
-        	(new MessageLoader(null, mapViewer)).execute();
+        	// damit der Event Dispatch Thread (EDT) nicht blockiert wird:
+        	MessageLoader ml = new MessageLoader("src/test/java/aisstream.txt", mapViewer);
+        	ml.setSleep(10);
+        	ml.execute();
+        	// file aus GITHUB gebremst 100ms
+//			try {
+//				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapViewer);
+//				//ml.setSleep(100);
+//				ml.execute();
+//			} catch (MalformedURLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+        	// Live:
+//        	(new MessageLoader((URL)null, mapViewer)).execute();
         });
     	fill.add(animation, BorderLayout.EAST);
 

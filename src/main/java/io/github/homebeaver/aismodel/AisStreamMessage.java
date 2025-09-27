@@ -124,6 +124,7 @@ public class AisStreamMessage {
 			return Boolean.FALSE;
 		}
 	}
+	// used in MessageLoader
 	public static Boolean liesUrl(BufferedReader reader, MeldungenCallback<AisStreamMessage> meldungenCallback) {
 		try {
 			String line;
@@ -149,7 +150,6 @@ public class AisStreamMessage {
 		} finally {
 			
 		}
-//		return Boolean.TRUE;
 	}
 
 }
