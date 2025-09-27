@@ -17,6 +17,7 @@ import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
+import dk.dma.ais.message.NavigationalStatus;
 import dk.dma.ais.message.ShipTypeCargo;
 import dk.dma.ais.message.ShipTypeColor;
 import io.github.homebeaver.aismodel.AisMessage;
@@ -49,14 +50,20 @@ Map<String, String> test1 = Map.of(
 		ShipTypeColor.YELLOW, Color.YELLOW
 	);
 
+	// message map per vessel with MMSI as key
 	private Map<Integer, List<AisStreamMessage>> map;
-//	OverlayPainter<JXMapViewer> overlayPainter;
 	CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 	
-//	private CompoundPainter<JXMapViewer> painters; 
-	// TODO einen Painter aus der Liste entfernen, dazu LIST ==> Map<Integer, Painter>
+	// painters ==> Map<Integer, WaypointPainter>
 	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
 	// In dieser Version ohne Spur
+	/*
+	 * pro Schiff (MMSI) den letzen painter merken, damit kann man in overlayPainter
+	 * den letzten painter löschen:
+	 *   overlayPainter.removePainter(painters.get(key));
+	 * bevor man für die neue Position einen neuen erstellt:
+	 * 	 overlayPainter.addPainter(shipLocationPainter);
+	 */
 	private Map<Integer, WaypointPainter<Waypoint>> painters;
 //	private Map<Integer, List<WaypointPainter<Waypoint>>> painters;
 	
@@ -72,8 +79,8 @@ Map<String, String> test1 = Map.of(
 		int key = msg.getMetaData().getMMSI();
 //		if(key!=219024675 && key!=220434000 && key!=219035097 && key!=219007393) return;
 // nur grosse Potte:		
-//		if(key!=525121076 && key!=230706000 && key!=538010235 && key!=247389200) return;
-//		LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
+//		if(key!=525121076 && key!=230706000 && key!=538010235 && key!=629009622 && key!=247389200) return;
+//		LOG.info(msg.getMetaData().getShipName() + " >>> "+msg.getAisMessageType() + " MMSI="+key);
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
 			LOG.info("mindestens zweite Nachricht für "+key + " "+msg.getAisMessageType());
@@ -83,9 +90,10 @@ Map<String, String> test1 = Map.of(
 			Double cog = null; // Kurs
 			Integer type = null; // Schiffstyp
 			Integer shipLenght = null;
+			Integer navStatus = null;
 			List<AisStreamMessage> list = map.get(key);
 			Iterator<AisStreamMessage> i = list.iterator();
-			int n=0;
+			int n=1; // n sagt wievielte Nachticht ist es => mindestens die Zweite
 			while (i.hasNext()) {
 				AisStreamMessage next = i.next();
 				n++;
@@ -98,18 +106,19 @@ Map<String, String> test1 = Map.of(
 					type = ssd.getType();
 					shipLenght = ssd.getDimension().getLength();
 				}
-//				LOG.info(">>="+n+" "+key+":"+next.getAisMessageType() + "cog="+cog + "type="+type);
 			}
 			if (amsg instanceof PositionReport pr) {
 				cog = pr.getCog();
+				navStatus = pr.getNavigationalStatus();
 			} else if (amsg instanceof StandardClassBPositionReport scbpr) {
 				cog = scbpr.getCog();
 			} else if (amsg instanceof ShipStaticData ssd) {
 				type = ssd.getType();
 				shipLenght = ssd.getDimension().getLength();
-//			LOG.info("==============>"+key+": "+ " LAST cog="+cog + " type="+type + " #="+n);
 			}
-			LOG.info("-------------->"+key+": "+ " cog="+cog + " type="+type + " #="+n);
+			LOG.info("-------------->"+key+": "
+				+ " NavigationalStatus="+(navStatus==null?"?":NavigationalStatus.get(navStatus))
+				+ " cog="+cog + " type="+type + " #="+n);
 //			list.forEach( m -> { ... NICHT so
 
 			RadianceIcon icon;
@@ -136,11 +145,8 @@ Map<String, String> test1 = Map.of(
 			
 			// den zuletzt erstellten Painter löschen in overlayPainter und aus painters
 			overlayPainter.removePainter(painters.get(key));
-			painters.replace(key, shipLocationPainter);
 			overlayPainter.addPainter(shipLocationPainter);
-			
-//			overlayPainter.setPainters(List.copyOf(painters.values()));
-//			super.setOverlayPainter(overlayPainter);
+			painters.replace(key, shipLocationPainter); // den letzten painter wegwerfen/überschreiben
 		} else {
 			List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
 			map.put(key, waypoints); // empty List waypoints 
@@ -175,22 +181,20 @@ vessels with track (more then 1 waypoints):
 			AisMessage amsg = msg.getAisMessage();
 			RadianceIcon icon = null;
 			if (amsg instanceof PositionReport pr) {
-				int navStatus = pr.getNavigationalStatus();
+				NavigationalStatus navStatus = NavigationalStatus.get(pr.getNavigationalStatus());
 				//if(navStatus==5) { //= moored (festgemacht)
-				if(navStatus==0) { // Under way XXX navStatus nicht in StandardClassBPositionReport
+				if(navStatus==NavigationalStatus.UNDER_WAY_USING_ENGINE) { // XXX navStatus nicht in StandardClassBPositionReport
 					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M); kleiner:
 					icon = FeatheRnavigation_grey.of(18, 18);
 					icon.setRotation(pr.getCog()); // Kurs
 				} else {
 					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 				}
-				LOG.info("erste Nachricht ist POSITIONREPORT navStatus="+navStatus + " cog="+pr.getCog());
+				LOG.info("erste Nachricht ist POSITIONREPORT NavigationalStatus="+navStatus + ", cog="+pr.getCog());
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
 				overlayPainter.addPainter(shipLocationPainter);
-//				overlayPainter.setPainters(List.copyOf(painters.values()));
-//				super.setOverlayPainter(overlayPainter);
 			}
 		} else if (msg.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
 			// STANDARDCLASSBPOSITIONREPORT
@@ -203,8 +207,6 @@ vessels with track (more then 1 waypoints):
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
 				overlayPainter.addPainter(shipLocationPainter);
-//				overlayPainter.setPainters(List.copyOf(painters.values()));
-//				super.setOverlayPainter(overlayPainter);
 			}
 		} else {
 			// SHIPSTATICDATA
@@ -214,22 +216,14 @@ vessels with track (more then 1 waypoints):
 				int shipLenght = ssd.getDimension().getLength();
 				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
 				ShipTypeColor c = ShipTypeColor.getColor(stype.getShipType());
-				LOG.info("erste Nachricht ist SHIPSTATICDATA ShipType="+stype + " shipLenght="+shipLenght);
-				int zoom = this.getZoom(); // value between 1 and 15
-				// ab zoom 6 kleineste icons XS==10
-				//int f = 432/48
-				int iconsize = shipLenght/9;
-				if(iconsize<SizingConstants.XS) iconsize = SizingConstants.XS;
-				// XXX das gilt nur für FeatheRnavigation_grey
-				iconsize = SizingConstants.XS;
+				LOG.info("erste Nachricht ist SHIPSTATICDATA ShipType="+stype + ", shipLenght="+shipLenght);
+				int iconsize = SizingConstants.XS;
 				RadianceIcon icon = FeatheRcircle_blue.of(iconsize, iconsize);
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
 				overlayPainter.addPainter(shipLocationPainter);
-//				overlayPainter.setPainters(List.copyOf(painters.values()));
-//				super.setOverlayPainter(overlayPainter);
 			}
 		}
 	}
