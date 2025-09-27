@@ -1,28 +1,20 @@
 package org.jxmapviewer.demos;
 
-import java.awt.Color;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
-import org.jxmapviewer.JXMapViewer;
-
 import io.github.homebeaver.aismodel.AisStreamMessage;
-import io.github.homebeaver.aismodel.MessageReader;
-import io.github.homebeaver.aismodel.AisStreamMessage.MeldungenCallback;
 
 /*
  * @param <T> the result type returned by this {@code SwingWorker's}
@@ -40,13 +32,21 @@ und ueber einen Kommunikationsmechanismus die Swing-Komponenten Thread-sicher as
 public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 
 	private static final Logger LOG = Logger.getLogger(MessageLoader.class.getName());
-	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
-    private final URL url;
+	private String testdata;
+	private URL url;
     private final AisMapViewer amv;
 //    private final List<AisStreamMessage> candidates = new ArrayList<AisStreamMessage>();
 //	private Map<Integer, List<AisStreamMessage>> map;
+    private long millis = 10; // -1;
 	private int cnt = 0;
 
+    public MessageLoader(String fileUrl, AisMapViewer amv) {
+    	super();
+        this.testdata = fileUrl;
+        this.amv = amv;
+//		this.map = new HashMap<Integer, List<AisStreamMessage>>();
+		this.cnt = 0; // zählt auch die null-Nachrichten
+    }
     public MessageLoader(URL url, AisMapViewer amv) {
     	super();
         this.url = url;
@@ -55,6 +55,9 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		this.cnt = 0; // zählt auch die null-Nachrichten
     }
 
+    public void setSleep(long millis) {
+    	this.millis = millis;
+    }
 	/*
 	 * Die "doInBackground()"-Methode wird in einem eigenen Background-Thread ausgefuehrt. 
 	 * Sie darf nicht direkt Swing-Komponenten manipulieren.
@@ -69,17 +72,42 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 			 */
 			@Override
 			public void ausgabeMeldung(AisStreamMessage s) {
+				if (millis>0) try {
+					Thread.sleep( millis ); // XXX slow down
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				publish(s);
 			}
 		}
 
+		if (testdata!=null) try {
+			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(testdata)));
+			return AisStreamMessage.liesUrl(in, new SwingMeldungenCallback());
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+			
+		if (url!=null) try {
+			InputStream input = url.openStream();
+			BufferedReader in = new BufferedReader(new InputStreamReader(input));
+			return AisStreamMessage.liesUrl(in, new SwingMeldungenCallback());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
 		/**
-		 * Aufruf des eigentlichen Jobs. Zwischenergebnisse werden per Callback
-		 * returniert. Das finale Return-Ergebnis kann in der "done()"-Methode per
-		 * "get()" abgefragt werden.
+		 * Aufruf des eigentlichen Jobs. Zwischenergebnisse werden per Callback returniert. 
+		 * Das finale Return-Ergebnis kann in der "done()"-Methode per "get()" abgefragt werden.
 		 */
-//   return DateiLeserMitCallback.liesTextdatei( textdatei, charEncod, new SwingMeldungenCallback() );
-		return AisStreamMessage.liesUrl(GITHUB_URL, new SwingMeldungenCallback());
+//		return AisStreamMessage.liesUrl(GITHUB_URL, new SwingMeldungenCallback());
+//		return AisStreamMessage.liesUrl(testdata, new SwingMeldungenCallback());
+//		Exeption java.net.MalformedURLException: no protocol: src/test/java/aisstream.txt
+		return false; // TODO
 	}
 //	@Override
 //	protected List<AisStreamMessage> doInBackground() throws Exception {
@@ -201,7 +229,7 @@ protected void process( List<String> chunks )
 		LOG.info("chunks#:"+chunks.size()); // XXX ? die Anzahl stimmt nicht
 		chunks.forEach( msg -> {
 			if(msg==null) {
-				LOG.info("chunk is null");
+				LOG.fine("chunk is null");
 			} else {
 //				int key = msg.getMetaData().getMMSI();
 ////				LOG.info(">>>>>>>>>>>>>>>"+msg.getAisMessageType() + " MMSI="+key);
