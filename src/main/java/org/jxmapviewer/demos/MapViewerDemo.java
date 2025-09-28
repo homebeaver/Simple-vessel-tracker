@@ -7,6 +7,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,7 +160,7 @@ public class MapViewerDemo extends AbstractDemo {
     	CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 //    	overlayPainter.setPainters(addressLocationPainter, selectionPainter);
         addressLocationPainter.setRenderer(new DefaultWaypointRenderer(FeatheRmap_pin.of(SizingConstants.M, SizingConstants.M)));
-        mapViewer.setOverlayPainter(overlayPainter);
+//        mapViewer.setOverlayPainter(overlayPainter);
 
         add(mapViewer, BorderLayout.CENTER);
         add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
@@ -179,7 +180,7 @@ public class MapViewerDemo extends AbstractDemo {
         painters.add(addressLocationPainter);
         painters.add(selectionPainter);
         overlayPainter.setPainters(painters);
-
+        mapViewer.setOverlayPainter(overlayPainter);
     }
 
     // from JXMapKit
@@ -274,17 +275,15 @@ public class MapViewerDemo extends AbstractDemo {
         	MessageLoader ml = new MessageLoader("src/test/java/aisstream.txt", mapViewer);
         	ml.setSleep(10);
         	ml.execute();
-        	// file aus GITHUB gebremst 100ms
+        	// file aus GITHUB gebremst 50ms
 //			try {
 //				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapViewer);
-//				//ml.setSleep(100);
+//				ml.setSleep(50);
 //				ml.execute();
 //			} catch (MalformedURLException e) {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
-        	// Live:
-//        	(new MessageLoader((URL)null, mapViewer)).execute();
         });
     	fill.add(animation, BorderLayout.EAST);
 
@@ -329,6 +328,14 @@ public class MapViewerDemo extends AbstractDemo {
     	toolBar.add(Box.createHorizontalGlue());
     	toolBar.add(Box.createRigidArea(new Dimension(0, 50)));
     	toolBar.add(startButton);
+    	toolBar.add(ColorLegend.SINGLETON.blueButton());
+    	toolBar.add(ColorLegend.SINGLETON.redButton());
+    	toolBar.add(ColorLegend.SINGLETON.greenButton());
+    	toolBar.add(ColorLegend.SINGLETON.orangeButton());
+    	toolBar.add(ColorLegend.SINGLETON.magentaButton());
+    	toolBar.add(ColorLegend.SINGLETON.cyanButton());
+    	toolBar.add(ColorLegend.SINGLETON.yellowButton());
+    	toolBar.add(ColorLegend.SINGLETON.greyButton());
 //        JComponent bar = Box.createHorizontalBox();
 //        bar.add(tableStatus);
 //        tableRows = new JLabel("0");

@@ -12,7 +12,6 @@ import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
-//import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
@@ -32,27 +31,9 @@ public class AisMapViewer extends JXMapViewer {
 	private static final long serialVersionUID = 8162164255394960216L;
 	private static final Logger LOG = Logger.getLogger(AisMapViewer.class.getName());
 
-/*
-// this works for up to 10 elements:
-Map<String, String> test1 = Map.of(
-    "a", "b",
-    "c", "d"
-);
- */
-	private static Map<ShipTypeColor, Color> typeToColor = Map.of(
-		ShipTypeColor.BLUE, Color.BLUE,
-		ShipTypeColor.GREY, Color.LIGHT_GRAY,
-		ShipTypeColor.GREEN, Color.GREEN,
-		ShipTypeColor.ORANGE, Color.ORANGE,
-		ShipTypeColor.PURPLE, Color.MAGENTA,
-		ShipTypeColor.RED, Color.RED,
-		ShipTypeColor.TURQUOISE, Color.CYAN,
-		ShipTypeColor.YELLOW, Color.YELLOW
-	);
-
 	// message map per vessel with MMSI as key
 	private Map<Integer, List<AisStreamMessage>> map;
-	CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+	CompoundPainter<JXMapViewer> overlayPainter;
 	
 	// painters ==> Map<Integer, WaypointPainter>
 	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
@@ -74,7 +55,10 @@ Map<String, String> test1 = Map.of(
 		
 //		super.setOverlayPainter(overlayPainter); // XXX das funktioniert nicht
 	}
-	
+	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
+		overlayPainter = p;
+		super.setOverlayPainter(p);
+	}
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
 //		if(key!=219024675 && key!=220434000 && key!=219035097 && key!=219007393) return;
@@ -129,6 +113,9 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
  */
 //		if(key!=525121076 && key!=230706000 && key!=538010235 && key!=629009622 && key!=247389200) return;
 //		LOG.info(msg.getMetaData().getShipName() + " >>> "+msg.getAisMessageType() + " MMSI="+key);
+		// Suche nach cyan Schiffen:
+//		if(key!=219024336 && key!=305773000 && key!=219024675 && key!=220476000 && key!=219005904) return;
+//		LOG.info(msg.getMetaData().getShipName() + " >>> "+msg.getAisMessageType() + " MMSI="+key);
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
 //			LOG.info("mindestens zweite Nachricht für "+key + " "+msg.getAisMessageType());
@@ -181,9 +168,8 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 				icon.setRotation(cog); // Kurs
 			}
 			if(type!=null) {
-				ShipTypeCargo stc = new ShipTypeCargo(type);
-				ShipTypeColor c = ShipTypeColor.getColor(stc.getShipType());
-				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
+				int shiptype = type;
+				icon.setColorFilter(color -> ColorLegend.typeToColor(shiptype)); // ShipType => java Color
 			}
 			
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
@@ -262,12 +248,11 @@ data/aisstream.txt : vessels with track (more then 1 waypoints):
 			if (amsg instanceof ShipStaticData ssd) {
 				int shipLenght = ssd.getDimension().getLength();
 				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
-				ShipTypeColor c = ShipTypeColor.getColor(stype.getShipType());
 				LOG.info("SHIPSTATICDATA "+key+": #=1 NavigationalStatus=?, cog=null, type="+stype 
 						+ ", shipLenght="+shipLenght);
 				int iconsize = SizingConstants.XS;
 				RadianceIcon icon = FeatheRcircle_blue.of(iconsize, iconsize);
-				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color
+				icon.setColorFilter(color -> ColorLegend.typeToColor(ssd.getType())); // ShipType => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
