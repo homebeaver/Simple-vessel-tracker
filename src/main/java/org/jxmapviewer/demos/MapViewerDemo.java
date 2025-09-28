@@ -7,7 +7,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.MutableComboBoxModel;
+import javax.swing.Painter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
@@ -46,8 +46,6 @@ import org.jdesktop.swingx.icon.PauseIcon;
 import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
-import org.jdesktop.swingx.icon.StopIcon;
-import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.cache.FileBasedLocalCache;
@@ -75,7 +73,7 @@ public class MapViewerDemo extends AbstractDemo {
 	
 	private static final long serialVersionUID = -4946197162374262488L;
 	private static final Logger LOG = Logger.getLogger(MapViewerDemo.class.getName());
-	private static final String DESCRIPTION = "Demonstrates JXMapViewer, a simple application that shows a map of Europe and the World";
+	private static final String DESCRIPTION = "Demonstrates JXMapViewer, a simple simple vessel tracker using the AISStream API";
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
 	
     /**
@@ -135,7 +133,7 @@ public class MapViewerDemo extends AbstractDemo {
         // Use 8 threads in parallel to load the tiles
         tileFactory.setThreadPoolSize(8);
 
-        // Set the zoom and focus to Java - the island
+        // Set the zoom and focus to Øresund
         mapViewer.setZoom(DEFAULT_ZOOM);
         mapViewer.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
 
@@ -154,15 +152,14 @@ public class MapViewerDemo extends AbstractDemo {
 
         // Add painters:
         SelectionAdapter sa = new SelectionAdapter(mapViewer);
-        mapViewer.addMouseMotionListener(sa); // XXX wozu dient das?
-        SelectionPainter selectionPainter = new SelectionPainter(sa);
+        mapViewer.addMouseMotionListener(sa); // SelectionAdapter to get the selected Rectangle
+        SelectionPainter<JXMapViewer> selectionPainter = new SelectionPainter<>(sa);
         mapViewer.addMouseListener(sa);
         mapViewer.addMouseMotionListener(sa);
-        CompoundPainter<JXMapViewer> cp = new CompoundPainter<JXMapViewer>();
-        cp.setCacheable(false);
-        cp.setPainters(addressLocationPainter, selectionPainter);
+    	CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
+//    	overlayPainter.setPainters(addressLocationPainter, selectionPainter);
         addressLocationPainter.setRenderer(new DefaultWaypointRenderer(FeatheRmap_pin.of(SizingConstants.M, SizingConstants.M)));
-        mapViewer.setOverlayPainter(cp);
+        mapViewer.setOverlayPainter(overlayPainter);
 
         add(mapViewer, BorderLayout.CENTER);
         add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
@@ -177,13 +174,11 @@ public class MapViewerDemo extends AbstractDemo {
         	mapViewer.setCenterPosition(pos);
         });
         getPosAndZoom();
-        List painters = new ArrayList<>(); // besser LinkedList
+        List<Painter<JXMapViewer>> painters = new ArrayList<>(); // besser LinkedList
         mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
         painters.add(addressLocationPainter);
         painters.add(selectionPainter);
-//        overlayPainter = new CompoundPainter<JXMapViewer>();
-//        overlayPainter.setPainters(painters);
-        cp.setPainters(painters);
+        overlayPainter.setPainters(painters);
 
     }
 

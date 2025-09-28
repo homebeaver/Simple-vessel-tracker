@@ -6,6 +6,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -100,7 +101,8 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
 	 *
 	 * @param painters array of painters, which will be painted in order
 	 */
-	public CompoundPainter(Painter<?>... painters) {
+	@SafeVarargs
+	public CompoundPainter(Painter<T>... painters) {
 		this();
 		setPainters(painters);
 	}
@@ -124,7 +126,8 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
      *
      * @param painters array of painters, which will be painted in order
      */
-    public void setPainters(Painter<?>... painters) {
+	@SafeVarargs
+    final public void setPainters(Painter<T>... painters) {
         Painter<?>[] old = getPaintersAsArray();
         for (Painter<?> p : old) {
             if (p instanceof AbstractPainter) {
@@ -134,7 +137,7 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
         
         this.painters = new ArrayList<Painter<T>>();
         if (painters != null) {
-            System.arraycopy(painters, 0, this.painters, 0, painters.length);
+        	this.painters = Arrays.asList(painters);
         }
         
         for (Painter<?> p : this.painters) {

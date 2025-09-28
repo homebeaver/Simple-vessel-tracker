@@ -12,7 +12,7 @@ import javax.swing.Painter;
  * Paints a selection rectangle
  * @author Martin Steiger
  */
-public class SelectionPainter implements Painter<Object>
+public class SelectionPainter<T> implements Painter<T>
 {
     private Color fillColor = new Color(128, 192, 255, 128);
     private Color frameColor = new Color(0, 0, 255, 128);
@@ -28,7 +28,7 @@ public class SelectionPainter implements Painter<Object>
     }
 
     @Override
-    public void paint(Graphics2D g, Object t, int width, int height)
+    public void paint(Graphics2D g, T t, int width, int height)
     {
         Rectangle rc = adapter.getRectangle();
 
