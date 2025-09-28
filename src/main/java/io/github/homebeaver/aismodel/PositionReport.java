@@ -700,7 +700,7 @@ public class PositionReport extends AisMessage {
       // XXX spare 
         ps = ps.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
         ps = ps.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-      System.out.println(ps);
+//      System.out.println(ps);
     } catch (JSONException e) {
 //        logger.error("Error creating ShipStaticData", e);
     }

@@ -1,6 +1,7 @@
 package io.github.homebeaver.aismodel;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -37,6 +38,8 @@ https://deepwiki.com/aisstream
  */
 public class AisStreamWebsocketClient extends WebSocketClient {
 
+	private static final String WSS_AISSTREAM_URI = "wss://stream.aisstream.io/v0/stream";
+
     private static final String GLOBAL = "[[[-90,-180],[90,180]]]";
     private static final String MEDITERRANEAN = "[[[-6, 30], [36, 46]]]";
     private static final String BALTICSEA = "[[[53, 10], [66, 30]]]";
@@ -45,10 +48,13 @@ public class AisStreamWebsocketClient extends WebSocketClient {
 //    SW: GeoPosition:[55.24311788040884, 11.612548828125] (55 14.587N, 011 36.753E)
 
     String apikey;
-    MeldungenCallback<AisStreamMessage> meldungenCallback;
-    public AisStreamWebsocketClient(URI serverURI, String apikey) {
-        super(serverURI);
+
+    public AisStreamWebsocketClient(boolean connect, String apikey) throws URISyntaxException {
+        super(new URI(WSS_AISSTREAM_URI));
         this.apikey = apikey;
+        if (connect) {
+        	this.connect();
+        }
     }
 
     @Override
@@ -61,12 +67,6 @@ public class AisStreamWebsocketClient extends WebSocketClient {
     public void onMessage(ByteBuffer message) {
         String jsonString = StandardCharsets.UTF_8.decode(message).toString();
         System.out.println(jsonString);
-        try {
-        	meldungenCallback.ausgabeMeldung(AisStreamMessage.fromJson(jsonString));
-        } catch (Exception e) {
-            System.out.println("Error occurred while processing the message: " + e.getMessage());
-            System.out.println("Original message: " + jsonString);
-        }
     }
 
     @Override

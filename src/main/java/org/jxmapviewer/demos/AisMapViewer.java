@@ -78,14 +78,60 @@ Map<String, String> test1 = Map.of(
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
 //		if(key!=219024675 && key!=220434000 && key!=219035097 && key!=219007393) return;
-// nur grosse Potte:		
+/* nur grosse Potte:
+
+525121076 : SAVIR TIGER
+INFORMATION: erste Nachricht ist SHIPSTATICDATA ShipType=Tanker cargo of Undefined, shipLenght=245
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=131.3 type=80 #=2
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=131.5 type=80 #=3
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=131.4 type=80 #=4
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=130.6 type=80 #=5
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=130.5 type=80 #=6
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=130.7 type=80 #=7
+INFORMATION: -------------->525121076:  ShipStaticData NavigationalStatus=? cog=130.7 type=80 #=8
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=129.2 type=80 #=9
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=129.2 type=80 #=10
+INFORMATION: -------------->525121076:  NavigationalStatus=Under way using engine cog=128.1 type=80 #=11
+230706000 : SAANA
+INFORMATION: erste Nachricht ist POSITIONREPORT NavigationalStatus=Moored, cog=266.0
+INFORMATION: -------------->230706000:  ShipStaticData NavigationalStatus=? cog=266.0 type=80 #=2
+INFORMATION: -------------->230706000:  NavigationalStatus=Moored cog=266.0 type=80 #=3
+INFORMATION: -------------->230706000:  ShipStaticData NavigationalStatus=? cog=266.0 type=80 #=4
+INFORMATION: -------------->230706000:  NavigationalStatus=Moored cog=266.0 type=80 #=5
+538010235 : ANIKITOS
+INFORMATION: erste Nachricht ist POSITIONREPORT NavigationalStatus=Under way using engine, cog=172.7
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.9 type=null #=2
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.9 type=null #=3
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.8 type=null #=4
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=173.0 type=null #=5
+INFORMATION: -------------->538010235:  ShipStaticData NavigationalStatus=? cog=173.0 type=80 #=6
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.6 type=80 #=7
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.7 type=80 #=8
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.2 type=80 #=9
+INFORMATION: -------------->538010235:  NavigationalStatus=Under way using engine cog=172.7 type=80 #=10
+629009622 : ASTRAL
+INFORMATION: erste Nachricht ist POSITIONREPORT NavigationalStatus=Under way using engine, cog=185.0
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=185.0 type=null #=2
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=185.0 type=null #=3
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=187.0 type=null #=4
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=190.0 type=null #=5
+INFORMATION: -------------->629009622:  ShipStaticData NavigationalStatus=? cog=190.0 type=89 #=6
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=190.0 type=89 #=7
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=190.0 type=89 #=8
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=188.0 type=89 #=9
+INFORMATION: -------------->629009622:  NavigationalStatus=Under way using engine cog=188.0 type=89 #=10
+247389200 : AIDANOVA
+INFORMATION: erste Nachricht ist POSITIONREPORT NavigationalStatus=Moored, cog=231.2
+INFORMATION: -------------->247389200:  ShipStaticData NavigationalStatus=? cog=231.2 type=60 #=2
+INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=231.2 type=60 #=3
+INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type=60 #=4
+
+ */
 //		if(key!=525121076 && key!=230706000 && key!=538010235 && key!=629009622 && key!=247389200) return;
 //		LOG.info(msg.getMetaData().getShipName() + " >>> "+msg.getAisMessageType() + " MMSI="+key);
 		if (map.containsKey(key)) {
 			// mindestens zweite Nachricht
-			LOG.info("mindestens zweite Nachricht für "+key + " "+msg.getAisMessageType());
-			// ShipData : TODO letzte Position holen, wenn vorhanden Kurs holen, icon löschen und neu anlegen
-			// PositionReport TODO map.get(key) 
+//			LOG.info("mindestens zweite Nachricht für "+key + " "+msg.getAisMessageType());
 			AisMessage amsg = msg.getAisMessage();
 			Double cog = null; // Kurs
 			Integer type = null; // Schiffstyp
@@ -116,9 +162,9 @@ Map<String, String> test1 = Map.of(
 				type = ssd.getType();
 				shipLenght = ssd.getDimension().getLength();
 			}
-			LOG.info("-------------->"+key+": "
-				+ " NavigationalStatus="+(navStatus==null?"?":NavigationalStatus.get(navStatus))
-				+ " cog="+cog + " type="+type + " #="+n);
+			LOG.info(""+msg.getAisMessageType()+" "+key+": #="+n
+				+ " NavigationalStatus="+(navStatus==null ? "?" : NavigationalStatus.get(navStatus))
+				+ ", cog="+cog + ", type="+(type==null ? "?" : new ShipTypeCargo(type)) + ", shipLenght="+shipLenght);
 //			list.forEach( m -> { ... NICHT so
 
 			RadianceIcon icon;
@@ -161,7 +207,7 @@ Map<String, String> test1 = Map.of(
 	private void display1Vessel(AisStreamMessage msg) {
 /*
 
-vessels with track (more then 1 waypoints):
+data/aisstream.txt : vessels with track (more then 1 waypoints):
 	MMSI=265820920:2 SEA4FUN ShipStaticData,PositionReport,
 	MMSI=219007393:2 VENUS (GUARD VESSEL) PositionReport,PositionReport,
 	MMSI=219024675:3 DANPILOT JULIET PositionReport,PositionReport,ShipStaticData,
@@ -190,7 +236,8 @@ vessels with track (more then 1 waypoints):
 				} else {
 					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 				}
-				LOG.info("erste Nachricht ist POSITIONREPORT NavigationalStatus="+navStatus + ", cog="+pr.getCog());
+				LOG.info("POSITIONREPORT "+key+": #=1 NavigationalStatus="+navStatus
+						+ ", cog="+pr.getCog() + ", type=?, shipLenght=`?");
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				painters.put(key, shipLocationPainter);
@@ -216,7 +263,8 @@ vessels with track (more then 1 waypoints):
 				int shipLenght = ssd.getDimension().getLength();
 				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
 				ShipTypeColor c = ShipTypeColor.getColor(stype.getShipType());
-				LOG.info("erste Nachricht ist SHIPSTATICDATA ShipType="+stype + ", shipLenght="+shipLenght);
+				LOG.info("SHIPSTATICDATA "+key+": #=1 NavigationalStatus=?, cog=null, type="+stype 
+						+ ", shipLenght="+shipLenght);
 				int iconsize = SizingConstants.XS;
 				RadianceIcon icon = FeatheRcircle_blue.of(iconsize, iconsize);
 				icon.setColorFilter(color -> typeToColor.get(c)); // ShipTypeColor => java Color

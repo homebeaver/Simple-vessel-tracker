@@ -27,7 +27,9 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JToolBar;
 import javax.swing.MutableComboBoxModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputListener;
@@ -40,9 +42,11 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
 import org.jdesktop.swingx.binding.DisplayInfo;
 import org.jdesktop.swingx.demos.svg.FeatheRmap_pin;
+import org.jdesktop.swingx.icon.PauseIcon;
 import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
+import org.jdesktop.swingx.icon.StopIcon;
 import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -162,6 +166,7 @@ public class MapViewerDemo extends AbstractDemo {
 
         add(mapViewer, BorderLayout.CENTER);
         add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
+        add(createControlBar(), BorderLayout.WEST);
         
         mapViewer.addPropertyChangeListener("zoom", pce -> {
         	LOG.info("---------------------pce:"+pce);
@@ -298,7 +303,46 @@ public class MapViewerDemo extends AbstractDemo {
         });
         return model;
     }
-
+    // WEST:
+    private JButton startButton;
+    RadianceIcon start = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
+    RadianceIcon stop = PauseIcon.of(RadianceIcon.M, RadianceIcon.M);
+    MessageLoader ml;
+    protected Container createControlBar() {
+    	JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
+    	startButton = new JButton();
+    	startButton.setName("startButton");
+    	startButton.setText(getBundleString("startButton.text"));
+    	startButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+    	startButton.setHorizontalTextPosition(SwingConstants.CENTER);
+    	startButton.setIcon(start);
+    	startButton.addActionListener( ae -> {
+    		//startButton.setEnabled( false ); // Nein Start->Stop
+    		if (startButton.getIcon()==start) {
+            	startButton.setIcon(stop);
+            	// Live:
+            	ml = new MessageLoader((URL)null, mapViewer);
+    			ml.execute();
+    		} else {
+    	    	startButton.setIcon(start);
+    	    	if (ml.cancel(true)) {
+    	    		LOG.info("canceled.");
+    	    	}
+    		}
+    	});
+    	toolBar.add(Box.createRigidArea(new Dimension(22, 10)));
+    	toolBar.add(Box.createHorizontalGlue());
+    	toolBar.add(Box.createRigidArea(new Dimension(0, 50)));
+    	toolBar.add(startButton);
+//        JComponent bar = Box.createHorizontalBox();
+//        bar.add(tableStatus);
+//        tableRows = new JLabel("0");
+//        bar.add(tableRows);
+//        
+//        statusBar.add(bar);
+    	toolBar.add(Box.createVerticalStrut(12));
+    	return toolBar;
+    }
     // SOUTH:
     private JComponent statusBarLeft;
 //    private JLabel actionStatus;

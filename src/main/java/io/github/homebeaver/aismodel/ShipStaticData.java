@@ -748,7 +748,7 @@ Type Code 	Description
 			ssd = ssd.destination(jo.getString(SERIALIZED_NAME_DESTINATION));
 			ssd = ssd.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
 			// XXX spare
-			System.out.println(res);
+//			System.out.println(res);
 		} catch (JSONException e) {
 //    	logger.error("Error creating ShipStaticData", e);
 		}

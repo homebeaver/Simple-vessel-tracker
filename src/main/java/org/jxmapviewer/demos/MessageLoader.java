@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -17,9 +16,9 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingWorker;
 
-import io.aisstream.app.AisStreamWebsocketClient;
 import io.aisstream.app.App;
 import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.AisStreamWebsocketClient;
 
 /*
  * @param <T> the result type returned by this {@code SwingWorker's}
@@ -74,11 +73,16 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 			 */
 			@Override
 			public void ausgabeMeldung(AisStreamMessage s) {
+				if (isCancelled()) {
+					LOG.info("canceled.");
+					return;
+				}
 				if (millis>0) try {
 					Thread.sleep( millis ); // XXX slow down
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+				} catch (InterruptedException e) { // sleep throws this when thread is canceled
+					// TODO Auto-generated catch block 
 					e.printStackTrace();
+					return;
 				}
 				publish(s);
 			}
@@ -107,16 +111,24 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		 * Das finale Return-Ergebnis kann in der "done()"-Methode per "get()" abgefragt werden.
 		 */
 		SwingMeldungenCallback smc = new SwingMeldungenCallback();
-		AisStreamWebsocketClient client = new AisStreamWebsocketClient(new URI(App.WSS_AISSTREAM_URI), App.AN_APIKEY) {
+		AisStreamWebsocketClient client = new AisStreamWebsocketClient(true, App.AN_APIKEY) {
 			@Override
 			public void onMessage(ByteBuffer message) {
 				String jsonString = StandardCharsets.UTF_8.decode(message).toString();
-				System.out.println(jsonString);
+				//System.out.println(jsonString);
+				if (isCancelled()) {
+					LOG.info("canceled.");
+					this.close();
+					return;
+				}
 				smc.ausgabeMeldung(AisStreamMessage.fromJson(jsonString));
 			}
 		};
-		client.connect();
-		return false;
+		int ms = 600000; // 10min
+		Thread.sleep( ms );
+		LOG.info("Ende nach "+ms/60000+"min.");
+		client.close();
+		return true;
 	}
 
 	/*
@@ -126,13 +138,19 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 	@Override
 	protected void done() {
 		Boolean ret = Boolean.FALSE;
+		String reason = "";
 		try {
 			// Abfrage der Ergebnisses der "doInBackground()"-Methode:
 			ret = get();
-			System.out.println("got " + cnt + " lines. res=" + ret);
-		} catch (ExecutionException | InterruptedException | CancellationException e) {
-			System.out.println("" + e);
+//			System.out.println("got " + cnt + " lines. res=" + ret);
+		} catch (CancellationException e) {
+			System.out.println(">>>>>>>>>>>>" + e);
+			reason = "Cancellation";
+		} catch (ExecutionException | InterruptedException e) {
+			System.out.println(">>>>>>>>>>>>" + e);
+			reason = e.getMessage();
 		}
+		System.out.println("got " + cnt + " lines. res=" + ret + " " + reason + " "+this.getState());
 	}
 
 	/*
@@ -155,7 +173,7 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 			}
 			cnt++;
 		});
-		LOG.info("chunks#:" + chunks.size()+"/"+cnt);
+		LOG.fine("chunks#:" + chunks.size()+"/"+cnt);
 	}
 
 }
