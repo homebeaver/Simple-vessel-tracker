@@ -55,6 +55,9 @@ public class AisMapViewer extends JXMapViewer {
 		
 //		super.setOverlayPainter(overlayPainter); // XXX das funktioniert nicht
 	}
+	public int getNoOfVessels() {
+		return map.size();
+	}
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
 		overlayPainter = p;
 		super.setOverlayPainter(p);

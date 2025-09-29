@@ -14,6 +14,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
+import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
 import io.aisstream.app.App;
@@ -39,19 +40,22 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 	private String testdata;
 	private URL url;
     private final AisMapViewer amv;
+    private final JLabel counter;
     private long millis = -1;
 	private int cnt = 0;
 
-    public MessageLoader(String fileUrl, AisMapViewer amv) {
+    public MessageLoader(String fileUrl, AisMapViewer amv, JLabel counter) {
     	super();
         this.testdata = fileUrl;
         this.amv = amv;
+        this.counter = counter;
 		this.cnt = 0; // zählt auch die null-Nachrichten
     }
-    public MessageLoader(URL url, AisMapViewer amv) {
+    public MessageLoader(URL url, AisMapViewer amv, JLabel counter) {
     	super();
         this.url = url;
         this.amv = amv;
+        this.counter = counter;
 		this.cnt = 0; // zählt auch die null-Nachrichten
     }
 
@@ -173,7 +177,8 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 			}
 			cnt++;
 		});
-		LOG.fine("chunks#:" + chunks.size()+"/"+cnt);
+		LOG.fine("chunks#:" + chunks.size()+"/"+cnt+"/"+amv.getNoOfVessels());
+		counter.setText(""+amv.getNoOfVessels());
 	}
 
 }

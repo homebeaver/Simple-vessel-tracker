@@ -272,12 +272,12 @@ public class MapViewerDemo extends AbstractDemo {
         	animation.setEnabled( false );
             // Starte Extra-Thread per SwingWorker, 
         	// damit der Event Dispatch Thread (EDT) nicht blockiert wird:
-        	MessageLoader ml = new MessageLoader("src/test/java/aisstream.txt", mapViewer);
+        	MessageLoader ml = new MessageLoader("src/test/java/aisstream.txt", mapViewer, getCounter());
         	ml.setSleep(10);
         	ml.execute();
         	// file aus GITHUB gebremst 50ms
 //			try {
-//				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapViewer);
+//				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapViewer, getCounter());
 //				ml.setSleep(50);
 //				ml.execute();
 //			} catch (MalformedURLException e) {
@@ -315,7 +315,7 @@ public class MapViewerDemo extends AbstractDemo {
     		if (startButton.getIcon()==start) {
             	startButton.setIcon(stop);
             	// Live:
-            	ml = new MessageLoader((URL)null, mapViewer);
+            	ml = new MessageLoader((URL)null, mapViewer, getCounter());
     			ml.execute();
     		} else {
     	    	startButton.setIcon(start);
@@ -346,10 +346,13 @@ public class MapViewerDemo extends AbstractDemo {
     	return toolBar;
     }
     // SOUTH:
-    private JComponent statusBarLeft;
+//    private JComponent statusBarLeft;
 //    private JLabel actionStatus;
     private JLabel tableStatus;
     private JLabel tableRows;
+    public JLabel getCounter() {
+    	return tableRows;
+    }
 //    private JProgressBar progressBar;
     protected Container createStatusBar() {
 
