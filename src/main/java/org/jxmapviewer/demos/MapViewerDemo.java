@@ -311,7 +311,7 @@ public class MapViewerDemo extends AbstractDemo {
 		// two Demo Buttons
 		toolBar.add(Box.createVerticalStrut(10));
 		JPanel grid = new JPanel(new GridLayout(3, 1, 10, 10));
-		miniDemoButton = fileDemoButton("animation", getBundleString("animation.text"));
+		miniDemoButton = fileDemoButton("miniDemoButton", getBundleString("miniDemoButton.text"));
 		miniDemoButton.setDisabledIcon(playDisabled());
 		miniDemoButton.addActionListener(ae -> {
 			miniDemoButton.setEnabled(false);
@@ -329,7 +329,7 @@ public class MapViewerDemo extends AbstractDemo {
 		});
 		grid.add(miniDemoButton);
 //    	toolBar.add(Box.createVerticalStrut(10));
-		fileDemoButton = fileDemoButton("animation", getBundleString("animation.text"));
+		fileDemoButton = fileDemoButton("fileDemoButton", getBundleString("fileDemoButton.text"));
 		fileDemoButton.setDisabledIcon(playDisabled());
 		fileDemoButton.addActionListener(ae -> {
 			fileDemoButton.setEnabled(false);
@@ -342,7 +342,7 @@ public class MapViewerDemo extends AbstractDemo {
 		grid.add(fileDemoButton);
 
 //    	toolBar.add(Box.createVerticalStrut(10));
-		liveButton = fileDemoButton("startButton", getBundleString("startButton.text"));
+		liveButton = fileDemoButton("liveButton", getBundleString("liveButton.text"));
 		liveButton.setIcon(start);
 		liveButton.addActionListener(ae -> {
 			// Start->Stop
