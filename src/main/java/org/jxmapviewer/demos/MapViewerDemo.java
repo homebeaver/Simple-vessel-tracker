@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.Painter;
@@ -43,7 +44,10 @@ import org.jdesktop.swingx.JXFrame.StartPosition;
 import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXStatusBar;
+import org.jdesktop.swingx.JXTitledSeparator;
 import org.jdesktop.swingx.binding.DisplayInfo;
+import org.jdesktop.swingx.binding.LabelHandler;
+import org.jdesktop.swingx.demos.svg.FeatheRcrosshair;
 import org.jdesktop.swingx.demos.svg.FeatheRmap_pin;
 import org.jdesktop.swingx.icon.PauseIcon;
 import org.jdesktop.swingx.icon.PlayIcon;
@@ -64,6 +68,15 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import dk.dma.ais.message.ShipTypeCargo;
+import io.github.homebeaver.aismodel.AisMessageTypes;
+import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.ShipStaticData;
 import swingset.AbstractDemo;
 
 /**
@@ -76,7 +89,7 @@ public class MapViewerDemo extends AbstractDemo {
 	
 	private static final long serialVersionUID = -4946197162374262488L;
 	private static final Logger LOG = Logger.getLogger(MapViewerDemo.class.getName());
-	private static final String DESCRIPTION = "Demonstrates JXMapViewer, a simple vessel tracker using the AISStream API";
+	private static final String DESCRIPTION = "A simple vessel tracker using JXMapViewer and AISStream API";
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
 
 	/**
@@ -103,14 +116,7 @@ public class MapViewerDemo extends AbstractDemo {
 	private static final int DEFAULT_ZOOM = 10; // OSM MAX_ZOOM is 19;
 	private static final String DEFAULT_MAP = "København - Øresund";
 	private TileFactoryInfo info;
-    private AisMapViewer mapViewer;
-
-	// controller:
-	private JComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
-	private JSlider zoomSlider;
-	private JButton miniDemoButton; // data from GitHub
-	private JButton fileDemoButton; // data from local file
-	private JButton liveButton; // data from aisstream
+	private AisMapViewer mapViewer;
 
 	/**
 	 * Demo Constructor
@@ -175,6 +181,43 @@ public class MapViewerDemo extends AbstractDemo {
 			GeoPosition pos = getPosAndZoom();
 			mapViewer.setCenterPosition(pos);
 		});
+		mapViewer.addPropertyChangeListener("mmsiToTrack", pce -> {
+//			LOG.info(">>>>>>"+pce.getPropertyName());
+			@SuppressWarnings("unchecked")
+			List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
+			setShipStaticDataFields(ls);
+//			ls.forEach( asm -> {
+//				if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
+//					ShipStaticData ssd = (ShipStaticData)(asm.getAisMessage());
+//					nameField.setText(ssd.getName());
+//					imoField.setText(ssd.getImoNumber().toString());
+//					callSignField.setText(ssd.getCallSign());
+//					ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
+//					typeField.setText(stype.toString());
+//					dimensionField.setText(""+ssd.getDimension().getLength()
+//							+" / "+ssd.getDimension().getWidth()
+//							+" / "+ssd.getMaximumStaticDraught()
+//							);
+//					destinationField.setText(ssd.getDestination());
+//				}
+//			});
+			// safe with all checks:
+//			Object o = pce.getNewValue();
+//			if(o instanceof List l) {
+//				for (Object item : l) {
+//					if(item instanceof AisStreamMessage asm) {
+//						if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
+//							AisMessage m = asm.getAisMessage();
+//							if(m instanceof ShipStaticData ssd) {
+//								nameField.setText(ssd.getName());
+//								imoField.setText(ssd.getImoNumber().toString());
+//							}
+//						}
+//					}
+//				}
+//			}
+		});
+		
 		getPosAndZoom();
 		List<Painter<JXMapViewer>> painters = new ArrayList<>(); // besser LinkedList?
 		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
@@ -210,12 +253,33 @@ public class MapViewerDemo extends AbstractDemo {
 		return new GeoPosition(lat, lon);
 	}
 
+	MessageLoader ml; // SwingWorker
+	
+	// controller:
+	private JComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
+	private JSlider zoomSlider;
+	private JButton miniDemoButton; // data from GitHub
+	private JButton fileDemoButton; // data from local file
+	private JButton liveButton; // data from aisstream
+	private JButton crosshairButton; // show ship static data and trace
+	
+	static private RadianceIcon start = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
+	static private RadianceIcon stop = PauseIcon.of(RadianceIcon.M, RadianceIcon.M);
+	static private RadianceIcon play = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
+	static private RadianceIcon crosshair = FeatheRcrosshair.of(RadianceIcon.M, RadianceIcon.M);
+	
+	static private RadianceIcon playDisabled() {
+		RadianceIcon ri = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
+		ri.setColorFilter(color -> Color.LIGHT_GRAY);
+		return ri;
+	}
+
 	/*
 	 * N: map selector 
 	 * W: Zoom 
 	 * E: Start Demo+Live, Legende 
 	 * S: Status 
-	 * C: ???
+	 * C: SHIPSTATICDATA + last Pos TODO
 	 */
 	@Override
 	public JXPanel getControlPane() {
@@ -229,10 +293,224 @@ public class MapViewerDemo extends AbstractDemo {
 		controls.add(createZoomer(), BorderLayout.WEST);
 		controls.add(createControlBar(), BorderLayout.EAST);
 		controls.add(createStatusBar(), BorderLayout.SOUTH);
-		controls.add(new JXPanel(new BorderLayout()), BorderLayout.CENTER); // TODO
+		controls.add(createCenter(), BorderLayout.CENTER);
 		return controls;
 	}
 
+	JXPanel centerControls;
+    private JTextField mmsiField;
+    private JTextField nameField;
+    private JTextField imoField;
+    private JTextField callSignField;
+    private JTextField typeField;
+    private JTextField dimensionField;
+    private JTextField destinationField;
+    private void setShipStaticDataFields(List<AisStreamMessage> ls) {
+		ls.forEach( asm -> {
+			if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
+				ShipStaticData ssd = (ShipStaticData)(asm.getAisMessage());
+				nameField.setText(ssd.getName());
+				imoField.setText(ssd.getImoNumber().toString());
+				callSignField.setText(ssd.getCallSign());
+				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
+				typeField.setText(stype.toString());
+				dimensionField.setText(""+ssd.getDimension().getLength()
+						+" / "+ssd.getDimension().getWidth()
+						+" / "+ssd.getMaximumStaticDraught()
+						);
+				destinationField.setText(ssd.getDestination());
+			}
+		});
+    }
+    
+	protected Container createCenter() {
+		centerControls = new JXPanel(new BorderLayout());
+//		 jgoodies layout and builder:
+        FormLayout formLayout = new FormLayout(
+                "5dlu, r:d:n, l:4dlu:n, f:d:g", // 2 columns
+                "c:d:n " + // controlSeparator
+                ", t:4dlu:n, c:d:n" +  // mmsiField
+                ", t:4dlu:n, c:d:n" +  // nameField
+                ", t:4dlu:n, c:d:n" +  // imoField
+                ", t:4dlu:n, c:d:n" +  // callSignField
+                ", t:4dlu:n, c:d:n" +  // typeField
+                ", t:4dlu:n, c:d:n" +  // dimensionField
+                ", t:4dlu:n, c:d:n" +  // destinationField
+                ", t:4dlu:n, c:d:n" // button
+                ); // rows
+        PanelBuilder builder = new PanelBuilder(formLayout, centerControls);
+        builder.setBorder(Borders.DIALOG_BORDER);
+        CellConstraints cl = new CellConstraints();
+        CellConstraints cc = new CellConstraints();
+        
+        JXTitledSeparator controlSeparator = new JXTitledSeparator();
+        controlSeparator.setName("controlSeparator");
+        controlSeparator.setTitle(getBundleString("controlSeparator.title"));
+        builder.add(controlSeparator, cc.xywh(1, 1, 4, 1));
+        
+        int labelColumn = 2;
+        int widgetColumn = labelColumn + 2;
+        int currentRow = 3;
+        mmsiField = new JTextField(20);
+        mmsiField.setName("mmsiField");
+        mmsiField.setText(getBundleString("mmsiField.text", "219230000"));
+        JLabel mmsiLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+                mmsiField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        mmsiLabel.setName("mmsiLabel");
+        mmsiLabel.setText(getBundleString("mmsiLabel.text", mmsiLabel));
+        mmsiField.addActionListener(ae -> {
+        	//titledPanel.setTitle(titleField.getText());
+        });        
+        currentRow += 2;
+        
+        nameField = new JTextField(20);
+        nameField.setName("nameField");       
+        nameField.setText(getBundleString("nameField.text"));
+        JLabel nameLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		nameField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        nameLabel.setName("nameLabel");
+        nameLabel.setText(getBundleString("nameLabel.text", nameLabel));
+        LabelHandler.bindLabelFor(nameLabel, nameField);
+        currentRow += 2;
+        
+        imoField = new JTextField(20);
+        imoField.setName("imoField");       
+        imoField.setText(getBundleString("imoField.text"));
+        JLabel imoLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		imoField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        imoLabel.setName("imoLabel");
+        imoLabel.setText(getBundleString("imoLabel.text", imoLabel));
+        LabelHandler.bindLabelFor(imoLabel, imoField);
+        currentRow += 2;
+        
+        callSignField = new JTextField(20);
+        callSignField.setName("callSignField");       
+        callSignField.setText(getBundleString("callSignField.text"));
+        JLabel callSignLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		callSignField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        callSignLabel.setName("callSignLabel");
+        callSignLabel.setText(getBundleString("callSignLabel.text", callSignLabel));
+        LabelHandler.bindLabelFor(callSignLabel, callSignField);
+        currentRow += 2;
+        
+        typeField = new JTextField(20);
+        typeField.setName("typeField");       
+        typeField.setText(getBundleString("typeField.text"));
+        JLabel typeLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		typeField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        typeLabel.setName("typeLabel");
+        typeLabel.setText(getBundleString("typeLabel.text", typeLabel));
+        LabelHandler.bindLabelFor(typeLabel, typeField);
+        currentRow += 2;
+        
+        dimensionField = new JTextField(20);
+        dimensionField.setName("dimensionField");       
+        dimensionField.setText(getBundleString("dimensionField.text"));
+        JLabel dimensionLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		dimensionField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        dimensionLabel.setName("dimensionLabel");
+        dimensionLabel.setText(getBundleString("dimensionLabel.text", dimensionLabel));
+        LabelHandler.bindLabelFor(dimensionLabel, dimensionField);
+        currentRow += 2;
+        
+        destinationField = new JTextField(20);
+        destinationField.setName("destinationField");       
+        destinationField.setText(getBundleString("destinationField.text"));
+        JLabel destinationLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		destinationField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        destinationLabel.setName("destinationLabel");
+        destinationLabel.setText(getBundleString("destinationLabel.text", destinationLabel));
+        LabelHandler.bindLabelFor(destinationLabel, destinationField);
+        currentRow += 2;
+        // ... TODO AIS-Flagge
+// --------------------------
+//		centerControls.setLayout(new FormLayout(
+//            new ColumnSpec[] { // 2 columns + glue
+//                FormFactory.GLUE_COLSPEC,
+//                FormFactory.DEFAULT_COLSPEC,	// 1st column
+//                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+//                FormFactory.PREF_COLSPEC,		// 2nd column
+//                FormFactory.GLUE_COLSPEC,
+//            },
+//            new RowSpec[] { // 5 rows + glue
+//                FormFactory.DEFAULT_ROWSPEC,
+//                FormFactory.LINE_GAP_ROWSPEC,
+//                FormFactory.DEFAULT_ROWSPEC, 
+//                FormFactory.UNRELATED_GAP_ROWSPEC,
+//                FormFactory.DEFAULT_ROWSPEC, 
+//                FormFactory.UNRELATED_GAP_ROWSPEC,
+//                FormFactory.DEFAULT_ROWSPEC, 
+//                FormFactory.UNRELATED_GAP_ROWSPEC,
+//                FormFactory.DEFAULT_ROWSPEC, 
+//                FormFactory.UNRELATED_GAP_ROWSPEC,
+//                FormFactory.DEFAULT_ROWSPEC 
+//            }
+//        ));
+////        CellConstraints cc = new CellConstraints();
+//        
+//        JLabel slabel = new JLabel(getBundleString("sortComboLabel.text", "Vessel MMSI:"));
+//        centerControls.add(slabel, cc.rc(1, 2));
+///*
+//ShipStaticData class MetaData {time_utc:2025-09-25 17:15:15.451047904 +0000 UTC,MMSI:219230000,MMSI_String:219230000,ShipName:TYCHO BRAHE,latitude:56.0353,longitude:12.628018333333333} class ShipStaticData {
+//    messageID: 5
+//    repeatIndicator: 0
+//    userID: 219230000
+//    valid: true
+//    aisVersion: 1
+//    imoNumber: 9007116
+//    callSign: "OVIC2  "
+//    name: "TYCHO BRAHE         "
+//    type: 69-Passenger cargo of Undefined-BLUE
+//    dimension: class ShipStaticDataDimension {A: 40, B: 70, C: 14, D: 14}
+//    fixType: 1
+//    eta: class ShipStaticDataEta {month: 2, day: 9, hour: 7, minute: 0}
+//    maximumStaticDraught: 5.0
+//    destination: "SE HEL              "
+//    dte: false
+// */
+//        JTextField ssdMmsi = new JTextField(20);
+//        ssdMmsi.setName("titleField");
+//        ssdMmsi.setText(getBundleString("titleField.text", "219230000"));
+//        ssdMmsi.setEnabled(true);
+//        centerControls.add(ssdMmsi, cc.rc(1, 4));
+//        
+//// TODO callSign, type, dimension+draught, destination, AIS-Flagge
+//        JLabel sname = new JLabel(getBundleString("snameLabel.text", "Vessel Name:"));
+//        centerControls.add(sname, cc.rc(3, 2));
+//        JTextField ssdName = new JTextField(20);
+//        ssdName.setName("nameField");
+//        ssdName.setText(getBundleString("nameField.text", "TYCHO BRAHE"));
+//        ssdName.setEnabled(false);
+//        centerControls.add(ssdName, cc.rc(3, 4));
+//
+//        JLabel simo = new JLabel(getBundleString("simoLabel.text", "IMO No:"));
+//        centerControls.add(simo, cc.rc(5, 2));
+//        JTextField ssdImo = new JTextField(20);
+//        ssdImo.setName("imoField");
+//        ssdImo.setText(getBundleString("imoField.text", "9007116"));
+//        ssdName.setEnabled(false);
+//        centerControls.add(ssdImo, cc.rc(5, 4));
+
+		crosshairButton = fileDemoButton("crosshairButton", getBundleString("crosshairButton.text"));
+		crosshairButton.setIcon(crosshair);
+//		centerControls.add(crosshairButton, cc.rc(7, 4));
+        builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
+		crosshairButton.addActionListener(ae -> {
+			LOG.info("Show TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
+			List<AisStreamMessage> v = mapViewer.getVesselTrace(219230000);
+			if(v!=null) {
+				setShipStaticDataFields(v);
+//				v.forEach( m -> {
+//					System.out.println(""+m.getAisMessageType() +" "+ m.getMetaData() +" "+ m.getAisMessage());
+//				});
+			} else {
+				System.out.println("nix gefunden für TYCHO BRAHE");
+			}
+			
+		});
+		
+		return centerControls;
+	}
 	protected Container createMapSelector() {
 		JXPanel controls = new JXPanel(new BorderLayout());
 		JXLabel selectLabel = new JXLabel("select another location:");
@@ -284,18 +562,6 @@ public class MapViewerDemo extends AbstractDemo {
 		return controls;
 	}
 
-	// EAST:
-	MessageLoader ml;
-	RadianceIcon start = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
-	RadianceIcon stop = PauseIcon.of(RadianceIcon.M, RadianceIcon.M);
-	RadianceIcon play = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
-
-	RadianceIcon playDisabled() {
-		RadianceIcon ri = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
-		ri.setColorFilter(color -> Color.LIGHT_GRAY);
-		return ri;
-	}
-
 	private JButton fileDemoButton(String name, String text) {
 		JButton b = new JButton();
 		b.setName(name);
@@ -306,6 +572,7 @@ public class MapViewerDemo extends AbstractDemo {
 		return b;
 	}
 
+	// EAST:
 	protected Container createControlBar() {
 		JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
 		// two Demo Buttons

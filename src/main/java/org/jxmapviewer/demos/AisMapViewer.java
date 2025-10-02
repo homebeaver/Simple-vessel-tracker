@@ -1,6 +1,7 @@
 package org.jxmapviewer.demos;
 
-import java.awt.Color;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +19,6 @@ import org.jxmapviewer.viewer.WaypointPainter;
 
 import dk.dma.ais.message.NavigationalStatus;
 import dk.dma.ais.message.ShipTypeCargo;
-import dk.dma.ais.message.ShipTypeColor;
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
@@ -35,6 +35,48 @@ public class AisMapViewer extends JXMapViewer {
 	private Map<Integer, List<AisStreamMessage>> map;
 	CompoundPainter<JXMapViewer> overlayPainter;
 	
+	private Integer mmsiToTrack = null; // vessel to track
+
+	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+		LOG.info("register "+listener + " for PropertyChange of "+propertyName+".");
+		super.addPropertyChangeListener(propertyName, listener);
+	}
+
+//	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+//    public void addPropertyChangeListener(PropertyChangeListener listener) {
+//        this.pcs.addPropertyChangeListener(listener);
+//    }
+//
+//    public void removePropertyChangeListener(PropertyChangeListener listener) {
+//        this.pcs.removePropertyChangeListener(listener);
+//    }
+/*
+ public class MyBean {
+     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
+     public void addPropertyChangeListener(PropertyChangeListener listener) {
+         this.pcs.addPropertyChangeListener(listener);
+     }
+
+     public void removePropertyChangeListener(PropertyChangeListener listener) {
+         this.pcs.removePropertyChangeListener(listener);
+     }
+
+     private String value;
+
+     public String getValue() {
+         return this.value;
+     }
+
+     public void setValue(String newValue) {
+         String oldValue = this.value;
+         this.value = newValue;
+         this.pcs.firePropertyChange("value", oldValue, newValue);
+     }
+
+     [...]
+ }	
+ */
 	// painters ==> Map<Integer, WaypointPainter>
 	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
 	// In dieser Version ohne Spur
@@ -57,6 +99,12 @@ public class AisMapViewer extends JXMapViewer {
 	}
 	public int getNoOfVessels() {
 		return map.size();
+	}
+	// +register for mmsiToTrack
+	public List<AisStreamMessage> getVesselTrace(int mmsi) {
+		this.mmsiToTrack = mmsi;
+//		this.addPropertyChangeListener("mmsiToTrack", listener);
+		return map.get(mmsi);
 	}
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
 		overlayPainter = p;
@@ -185,11 +233,18 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 		} else {
 			List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
 			map.put(key, waypoints); // empty List waypoints 
-			// msg ist erste Nachricht für Schiff key, wir haben keinen Kurs
-			// also neues o-Schiff mit Color
+			// msg ist erste Nachricht für Schiff mit mmsi==key, wir haben entweder Kurs oder StaticData
 			display1Vessel(msg);
 		}
-		map.get(key).add(msg);
+		List<AisStreamMessage> old = null;
+		if(mmsiToTrack!=null && key==mmsiToTrack) {
+			old = List.copyOf(map.get(key));
+		}
+		if(map.get(key).add(msg) && mmsiToTrack!=null && key==mmsiToTrack) {
+			LOG.info("firePropertyChange mmsiToTrack="+mmsiToTrack+ " key= "+key+" old value#="+old.size());
+			firePropertyChange("mmsiToTrack", old, map.get(key));
+		}
+
 		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
     }
 
