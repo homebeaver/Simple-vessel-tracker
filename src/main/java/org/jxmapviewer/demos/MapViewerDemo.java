@@ -182,25 +182,9 @@ public class MapViewerDemo extends AbstractDemo {
 			mapViewer.setCenterPosition(pos);
 		});
 		mapViewer.addPropertyChangeListener("mmsiToTrack", pce -> {
-//			LOG.info(">>>>>>"+pce.getPropertyName());
 			@SuppressWarnings("unchecked")
 			List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
 			setShipStaticDataFields(ls);
-//			ls.forEach( asm -> {
-//				if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
-//					ShipStaticData ssd = (ShipStaticData)(asm.getAisMessage());
-//					nameField.setText(ssd.getName());
-//					imoField.setText(ssd.getImoNumber().toString());
-//					callSignField.setText(ssd.getCallSign());
-//					ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
-//					typeField.setText(stype.toString());
-//					dimensionField.setText(""+ssd.getDimension().getLength()
-//							+" / "+ssd.getDimension().getWidth()
-//							+" / "+ssd.getMaximumStaticDraught()
-//							);
-//					destinationField.setText(ssd.getDestination());
-//				}
-//			});
 			// safe with all checks:
 //			Object o = pce.getNewValue();
 //			if(o instanceof List l) {
@@ -298,31 +282,34 @@ public class MapViewerDemo extends AbstractDemo {
 	}
 
 	JXPanel centerControls;
-    private JTextField mmsiField;
-    private JTextField nameField;
-    private JTextField imoField;
-    private JTextField callSignField;
-    private JTextField typeField;
-    private JTextField dimensionField;
-    private JTextField destinationField;
-    private void setShipStaticDataFields(List<AisStreamMessage> ls) {
-		ls.forEach( asm -> {
-			if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
-				ShipStaticData ssd = (ShipStaticData)(asm.getAisMessage());
+	private JTextField mmsiField;
+	private JTextField nameField;
+	private JTextField imoField;
+	private JTextField callSignField;
+	private JTextField typeField;
+	private JTextField dimensionField;
+	private JTextField destinationField;
+
+	private void setShipStaticDataFields(List<AisStreamMessage> ls) {
+		ls.forEach(asm -> {
+			if (asm.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
+				ShipStaticData ssd = (ShipStaticData) (asm.getAisMessage());
 				nameField.setText(ssd.getName());
 				imoField.setText(ssd.getImoNumber().toString());
 				callSignField.setText(ssd.getCallSign());
 				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
 				typeField.setText(stype.toString());
-				dimensionField.setText(""+ssd.getDimension().getLength()
-						+" / "+ssd.getDimension().getWidth()
-						+" / "+ssd.getMaximumStaticDraught()
+				dimensionField.setText("" + ssd.getDimension().getLength() 
+						+ " / " + ssd.getDimension().getWidth()
+						+ " / " + ssd.getMaximumStaticDraught() + " m"
 						);
 				destinationField.setText(ssd.getDestination());
+			} else {
+				nameField.setText(asm.getMetaData().getShipName());
 			}
 		});
-    }
-    
+	}
+
 	protected Container createCenter() {
 		centerControls = new JXPanel(new BorderLayout());
 //		 jgoodies layout and builder:
@@ -423,86 +410,15 @@ public class MapViewerDemo extends AbstractDemo {
         LabelHandler.bindLabelFor(destinationLabel, destinationField);
         currentRow += 2;
         // ... TODO AIS-Flagge
-// --------------------------
-//		centerControls.setLayout(new FormLayout(
-//            new ColumnSpec[] { // 2 columns + glue
-//                FormFactory.GLUE_COLSPEC,
-//                FormFactory.DEFAULT_COLSPEC,	// 1st column
-//                FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-//                FormFactory.PREF_COLSPEC,		// 2nd column
-//                FormFactory.GLUE_COLSPEC,
-//            },
-//            new RowSpec[] { // 5 rows + glue
-//                FormFactory.DEFAULT_ROWSPEC,
-//                FormFactory.LINE_GAP_ROWSPEC,
-//                FormFactory.DEFAULT_ROWSPEC, 
-//                FormFactory.UNRELATED_GAP_ROWSPEC,
-//                FormFactory.DEFAULT_ROWSPEC, 
-//                FormFactory.UNRELATED_GAP_ROWSPEC,
-//                FormFactory.DEFAULT_ROWSPEC, 
-//                FormFactory.UNRELATED_GAP_ROWSPEC,
-//                FormFactory.DEFAULT_ROWSPEC, 
-//                FormFactory.UNRELATED_GAP_ROWSPEC,
-//                FormFactory.DEFAULT_ROWSPEC 
-//            }
-//        ));
-////        CellConstraints cc = new CellConstraints();
-//        
-//        JLabel slabel = new JLabel(getBundleString("sortComboLabel.text", "Vessel MMSI:"));
-//        centerControls.add(slabel, cc.rc(1, 2));
-///*
-//ShipStaticData class MetaData {time_utc:2025-09-25 17:15:15.451047904 +0000 UTC,MMSI:219230000,MMSI_String:219230000,ShipName:TYCHO BRAHE,latitude:56.0353,longitude:12.628018333333333} class ShipStaticData {
-//    messageID: 5
-//    repeatIndicator: 0
-//    userID: 219230000
-//    valid: true
-//    aisVersion: 1
-//    imoNumber: 9007116
-//    callSign: "OVIC2  "
-//    name: "TYCHO BRAHE         "
-//    type: 69-Passenger cargo of Undefined-BLUE
-//    dimension: class ShipStaticDataDimension {A: 40, B: 70, C: 14, D: 14}
-//    fixType: 1
-//    eta: class ShipStaticDataEta {month: 2, day: 9, hour: 7, minute: 0}
-//    maximumStaticDraught: 5.0
-//    destination: "SE HEL              "
-//    dte: false
-// */
-//        JTextField ssdMmsi = new JTextField(20);
-//        ssdMmsi.setName("titleField");
-//        ssdMmsi.setText(getBundleString("titleField.text", "219230000"));
-//        ssdMmsi.setEnabled(true);
-//        centerControls.add(ssdMmsi, cc.rc(1, 4));
-//        
-//// TODO callSign, type, dimension+draught, destination, AIS-Flagge
-//        JLabel sname = new JLabel(getBundleString("snameLabel.text", "Vessel Name:"));
-//        centerControls.add(sname, cc.rc(3, 2));
-//        JTextField ssdName = new JTextField(20);
-//        ssdName.setName("nameField");
-//        ssdName.setText(getBundleString("nameField.text", "TYCHO BRAHE"));
-//        ssdName.setEnabled(false);
-//        centerControls.add(ssdName, cc.rc(3, 4));
-//
-//        JLabel simo = new JLabel(getBundleString("simoLabel.text", "IMO No:"));
-//        centerControls.add(simo, cc.rc(5, 2));
-//        JTextField ssdImo = new JTextField(20);
-//        ssdImo.setName("imoField");
-//        ssdImo.setText(getBundleString("imoField.text", "9007116"));
-//        ssdName.setEnabled(false);
-//        centerControls.add(ssdImo, cc.rc(5, 4));
 
 		crosshairButton = fileDemoButton("crosshairButton", getBundleString("crosshairButton.text"));
 		crosshairButton.setIcon(crosshair);
-//		centerControls.add(crosshairButton, cc.rc(7, 4));
-        builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
+		builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
 		crosshairButton.addActionListener(ae -> {
 			LOG.info("Show TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
 			List<AisStreamMessage> v = mapViewer.getVesselTrace(219230000);
 			if(v!=null) {
 				setShipStaticDataFields(v);
-//				v.forEach( m -> {
-//					System.out.println(""+m.getAisMessageType() +" "+ m.getMetaData() +" "+ m.getAisMessage());
-//				});
 			} else {
 				System.out.println("nix gefunden für TYCHO BRAHE");
 			}
