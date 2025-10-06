@@ -35,13 +35,13 @@ public class AisMapViewer extends JXMapViewer {
 	private Map<Integer, List<AisStreamMessage>> map;
 	CompoundPainter<JXMapViewer> overlayPainter;
 	
-	private Integer mmsiToTrack = null; // vessel to track
+	private static final String MMSITOTRACK_PROPNAME = "mmsiToTrack";
+	/**
+	 * there is one vessel to track (or nothing)
+	 */
+	private Integer mmsiToTrack = null;
 
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-		LOG.info("register "+listener + " for PropertyChange of "+propertyName+".");
-		super.addPropertyChangeListener(propertyName, listener);
-	}
-
+	// ist mmsiToTrack eine Java Bohne?
 //	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 //    public void addPropertyChangeListener(PropertyChangeListener listener) {
 //        this.pcs.addPropertyChangeListener(listener);
@@ -50,33 +50,46 @@ public class AisMapViewer extends JXMapViewer {
 //    public void removePropertyChangeListener(PropertyChangeListener listener) {
 //        this.pcs.removePropertyChangeListener(listener);
 //    }
-/*
- public class MyBean {
-     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-     public void addPropertyChangeListener(PropertyChangeListener listener) {
-         this.pcs.addPropertyChangeListener(listener);
-     }
+	// bean that supports bound property "mmsiToTrack"
+	public class VesselToTrack {
+		
+		private Integer mmsiToTrack;
+		List<AisStreamMessage> track = null;
+		
+		public VesselToTrack(Integer mmsi) {
+			mmsiToTrack = mmsi;
+		}
+		// vessel change support (vcs) statt pcs
+		private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-     public void removePropertyChangeListener(PropertyChangeListener listener) {
-         this.pcs.removePropertyChangeListener(listener);
-     }
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
+			pcs.addPropertyChangeListener(listener);
+		}
 
-     private String value;
+		public void removePropertyChangeListener(PropertyChangeListener listener) {
+			pcs.removePropertyChangeListener(listener);
+		}
 
-     public String getValue() {
-         return this.value;
-     }
+//		private String value;
+//
+//		public String getValue() {
+//			return this.value;
+//		}
 
-     public void setValue(String newValue) {
-         String oldValue = this.value;
-         this.value = newValue;
-         this.pcs.firePropertyChange("value", oldValue, newValue);
-     }
+		public void setValue(List<AisStreamMessage> newValue) {
+//			String oldValue = this.value;
+//			this.value = newValue;
+//			this.pcs.firePropertyChange("value", oldValue, newValue);
+			List<AisStreamMessage> oldValue = track;
+			track = newValue;
+			//firePropertyChange("mmsiToTrack", old, map.get(key));
+			pcs.firePropertyChange("mmsiToTrack", oldValue, newValue);
+		}
 
-     [...]
- }	
- */
+//     [...]
+	}
+ 
 	// painters ==> Map<Integer, WaypointPainter>
 	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
 	// In dieser Version ohne Spur
@@ -100,10 +113,33 @@ public class AisMapViewer extends JXMapViewer {
 	public int getNoOfVessels() {
 		return map.size();
 	}
+	
+	// damit überschreibe ich Container.addPropertyChangeListener
+	// die prop, die ich hier überwachen will ist map.get(mmsiToTrack), also die Spur für Schiff mmsiToTrack
+	// beim Registrieren will ich die bisherige Spur erhalten
+//	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+//		LOG.info("register "+listener + " for Change of Property "+propertyName+".");
+//		super.addPropertyChangeListener(propertyName, listener);
+//	}
+
 	// +register for mmsiToTrack
-	public List<AisStreamMessage> getVesselTrace(int mmsi) {
-		this.mmsiToTrack = mmsi;
-//		this.addPropertyChangeListener("mmsiToTrack", listener);
+	public List<AisStreamMessage> getVesselTrace(Integer mmsi, PropertyChangeListener listener) {
+		if(mmsi==null) {
+			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
+			// TODO remove painter
+			return null;
+		}
+		LOG.info("register "+listener + " for "+mmsi+", Change of Property "+MMSITOTRACK_PROPNAME+".");
+		if(mmsiToTrack==mmsi) {
+			// kein neuer painter, evtl neuer listener
+			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
+			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
+		} else {
+			// neuer painter, evtl neuer listener
+			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
+			mmsiToTrack = mmsi;
+			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
+		}
 		return map.get(mmsi);
 	}
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {

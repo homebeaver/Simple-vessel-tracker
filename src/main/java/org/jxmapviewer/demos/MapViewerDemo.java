@@ -8,6 +8,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -85,7 +87,7 @@ import swingset.AbstractDemo;
  * @author Martin Steiger
  * @author EUG https://github.com/homebeaver (integrate to SwingSet3)
  */
-public class MapViewerDemo extends AbstractDemo {
+public class MapViewerDemo extends AbstractDemo implements PropertyChangeListener {
 	
 	private static final long serialVersionUID = -4946197162374262488L;
 	private static final Logger LOG = Logger.getLogger(MapViewerDemo.class.getName());
@@ -181,36 +183,53 @@ public class MapViewerDemo extends AbstractDemo {
 			GeoPosition pos = getPosAndZoom();
 			mapViewer.setCenterPosition(pos);
 		});
-		mapViewer.addPropertyChangeListener("mmsiToTrack", pce -> {
-			@SuppressWarnings("unchecked")
-			List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
-			setShipStaticDataFields(ls);
-			// safe with all checks:
-//			Object o = pce.getNewValue();
-//			if(o instanceof List l) {
-//				for (Object item : l) {
-//					if(item instanceof AisStreamMessage asm) {
-//						if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
-//							AisMessage m = asm.getAisMessage();
-//							if(m instanceof ShipStaticData ssd) {
-//								nameField.setText(ssd.getName());
-//								imoField.setText(ssd.getImoNumber().toString());
-//							}
-//						}
-//					}
-//				}
-//			}
-		});
+//		mapViewer.addPropertyChangeListener("mmsiToTrack", pce -> {
+//			@SuppressWarnings("unchecked")
+//			List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
+//			setShipStaticDataFields(ls);
+//			// safe with all checks:
+////			Object o = pce.getNewValue();
+////			if(o instanceof List l) {
+////				for (Object item : l) {
+////					if(item instanceof AisStreamMessage asm) {
+////						if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
+////							AisMessage m = asm.getAisMessage();
+////							if(m instanceof ShipStaticData ssd) {
+////								nameField.setText(ssd.getName());
+////								imoField.setText(ssd.getImoNumber().toString());
+////							}
+////						}
+////					}
+////				}
+////			}
+//		});
 		
 		getPosAndZoom();
 		List<Painter<JXMapViewer>> painters = new ArrayList<>(); // besser LinkedList?
 		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
 		painters.add(addressLocationPainter);
 		painters.add(selectionPainter);
+/* TODO
+//  private RoutePainter routePainter = new RoutePainter(Color.RED);
+//	trackSlider.addChangeListener(changeEvent -> {
+//	routePainter.setMaxSize(trackSlider.getValue());
+//	repaint();
+//});
+ */
+		RoutePainter routePainter = new RoutePainter(Color.RED, RoutePainter.DEFAULT_TRACK);
+		painters.add(routePainter);
+		// <<<<<<<<<<<<<< DONE
 		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 		overlayPainter.setPainters(painters);
 		mapViewer.setOverlayPainter(overlayPainter);
 	}
+	
+	@Override
+	public void propertyChange(PropertyChangeEvent pce) {
+		List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
+		setShipStaticDataFields(ls);
+	}
+
 
     // from JXMapKit
 	private WaypointPainter<Waypoint> addressLocationPainter = new WaypointPainter<Waypoint>() {
@@ -289,6 +308,7 @@ public class MapViewerDemo extends AbstractDemo {
 	private JTextField typeField;
 	private JTextField dimensionField;
 	private JTextField destinationField;
+	private JTextField positionField;
 
 	private void setShipStaticDataFields(List<AisStreamMessage> ls) {
 		ls.forEach(asm -> {
@@ -306,6 +326,10 @@ public class MapViewerDemo extends AbstractDemo {
 				destinationField.setText(ssd.getDestination());
 			} else {
 				nameField.setText(asm.getMetaData().getShipName());
+				double lat = asm.getMetaData().getLatitude();
+				double lon = asm.getMetaData().getLongitude();
+				positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon));
+//				System.out.println(""+asm.getMetaData());
 			}
 		});
 	}
@@ -323,6 +347,7 @@ public class MapViewerDemo extends AbstractDemo {
                 ", t:4dlu:n, c:d:n" +  // typeField
                 ", t:4dlu:n, c:d:n" +  // dimensionField
                 ", t:4dlu:n, c:d:n" +  // destinationField
+                ", t:4dlu:n, c:d:n" +  // positionField
                 ", t:4dlu:n, c:d:n" // button
                 ); // rows
         PanelBuilder builder = new PanelBuilder(formLayout, centerControls);
@@ -409,6 +434,16 @@ public class MapViewerDemo extends AbstractDemo {
         destinationLabel.setText(getBundleString("destinationLabel.text", destinationLabel));
         LabelHandler.bindLabelFor(destinationLabel, destinationField);
         currentRow += 2;
+        
+        positionField = new JTextField(20);
+        positionField.setName("positionField");       
+        positionField.setText(getBundleString("positionField.text"));
+        JLabel positionLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		positionField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        positionLabel.setName("positionLabel");
+        positionLabel.setText(getBundleString("positionLabel.text", positionLabel));
+        LabelHandler.bindLabelFor(destinationLabel, positionField);
+        currentRow += 2;
         // ... TODO AIS-Flagge
 
 		crosshairButton = fileDemoButton("crosshairButton", getBundleString("crosshairButton.text"));
@@ -416,7 +451,7 @@ public class MapViewerDemo extends AbstractDemo {
 		builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
 		crosshairButton.addActionListener(ae -> {
 			LOG.info("Show TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
-			List<AisStreamMessage> v = mapViewer.getVesselTrace(219230000);
+			List<AisStreamMessage> v = mapViewer.getVesselTrace(219230000, MapViewerDemo.this);
 			if(v!=null) {
 				setShipStaticDataFields(v);
 			} else {
