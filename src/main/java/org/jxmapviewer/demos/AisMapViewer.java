@@ -2,7 +2,6 @@ package org.jxmapviewer.demos;
 
 import java.awt.Color;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +10,7 @@ import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.jdesktop.swingx.demos.svg.FeatheRcircle_blue;
+import org.jdesktop.swingx.demos.svg.FeatheRcrosshair;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
@@ -32,7 +32,7 @@ public class AisMapViewer extends JXMapViewer {
 	private static final long serialVersionUID = 8162164255394960216L;
 	private static final Logger LOG = Logger.getLogger(AisMapViewer.class.getName());
 
-	// message map per vessel with MMSI as key
+	// a list of messages per vessel with MMSI as vessel key
 	private Map<Integer, List<AisStreamMessage>> map;
 	CompoundPainter<JXMapViewer> overlayPainter;
 	
@@ -43,108 +43,58 @@ public class AisMapViewer extends JXMapViewer {
 	private Integer mmsiToTrack = null;
 
 	RoutePainter routePainter;
-	
-	// ist mmsiToTrack eine Java Bohne?
-//	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-//    public void addPropertyChangeListener(PropertyChangeListener listener) {
-//        this.pcs.addPropertyChangeListener(listener);
-//    }
-//
-//    public void removePropertyChangeListener(PropertyChangeListener listener) {
-//        this.pcs.removePropertyChangeListener(listener);
-//    }
+	WaypointPainter<Waypoint> crosshairPainter;
 
-	// bean that supports bound property "mmsiToTrack"
-	@Deprecated
-	public class VesselToTrack {
-		
-		private Integer mmsiToTrack;
-		List<AisStreamMessage> track = null;
-		
-		public VesselToTrack(Integer mmsi) {
-			mmsiToTrack = mmsi;
-		}
-		// vessel change support (vcs) statt pcs
-		private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
-		public void addPropertyChangeListener(PropertyChangeListener listener) {
-			pcs.addPropertyChangeListener(listener);
-		}
-
-		public void removePropertyChangeListener(PropertyChangeListener listener) {
-			pcs.removePropertyChangeListener(listener);
-		}
-
-//		private String value;
-//
-//		public String getValue() {
-//			return this.value;
-//		}
-
-		public void setValue(List<AisStreamMessage> newValue) {
-//			String oldValue = this.value;
-//			this.value = newValue;
-//			this.pcs.firePropertyChange("value", oldValue, newValue);
-			List<AisStreamMessage> oldValue = track;
-			track = newValue;
-			//firePropertyChange("mmsiToTrack", old, map.get(key));
-			pcs.firePropertyChange("mmsiToTrack", oldValue, newValue);
-		}
-
-//     [...]
-	}
- 
-	// painters ==> Map<Integer, WaypointPainter>
-	// List<WaypointPainter<Waypoint>>> braucht man für die Spur
-	// In dieser Version ohne Spur
 	/*
-	 * pro Schiff (MMSI) den letzen painter merken, damit kann man in overlayPainter
-	 * den letzten painter löschen:
+	 * pro Schiff (MMSI) den letzen shipLocationPainter merken, damit kann man in overlayPainter
+	 * den letzten shipLocationPainter löschen:
 	 *   overlayPainter.removePainter(painters.get(key));
 	 * bevor man für die neue Position einen neuen erstellt:
 	 * 	 overlayPainter.addPainter(shipLocationPainter);
 	 */
-	private Map<Integer, WaypointPainter<Waypoint>> painters;
-//	private Map<Integer, List<WaypointPainter<Waypoint>>> painters;
+	private Map<Integer, WaypointPainter<Waypoint>> locationPainters;
 	
 	public AisMapViewer() {
-    	super();
-		this.map = new HashMap<Integer, List<AisStreamMessage>>();
-		painters = new HashMap<>();
+		super();
+		map = new HashMap<Integer, List<AisStreamMessage>>();
+		locationPainters = new HashMap<>();
 		
 //		super.setOverlayPainter(overlayPainter); // XXX das funktioniert nicht
 	}
 	public int getNoOfVessels() {
 		return map.size();
 	}
-	
-	// damit überschreibe ich Container.addPropertyChangeListener
-	// die prop, die ich hier überwachen will ist map.get(mmsiToTrack), also die Spur für Schiff mmsiToTrack
-	// beim Registrieren will ich die bisherige Spur erhalten
-//	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
-//		LOG.info("register "+listener + " for Change of Property "+propertyName+".");
-//		super.addPropertyChangeListener(propertyName, listener);
-//	}
 
 	// +register for mmsiToTrack
 	public List<AisStreamMessage> getVesselTrace(Integer mmsi, PropertyChangeListener listener) {
 		if(mmsi==null) {
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			overlayPainter.removePainter(routePainter);
+			overlayPainter.removePainter(crosshairPainter);
 			return null;
 		}
 		LOG.info("register "+listener + " for "+mmsi+", Change of Property "+MMSITOTRACK_PROPNAME+".");
 		List<AisStreamMessage> ret = map.get(mmsi);
 		if(mmsiToTrack==mmsi) {
-			// kein neuer painter, evtl neuer listener
+			// kein neuer routePainter, evtl neuer listener
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
+			overlayPainter.removePainter(crosshairPainter);
+			crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
+			crosshairPainter.setRenderer(new VesselWaypointRenderer(FeatheRcrosshair.of(SizingConstants.L, SizingConstants.L)));
+			overlayPainter.addPainter(crosshairPainter);
 		} else {
-			// neuer painter, evtl neuer listener
+			// neuer routePainter, evtl neuer listener
 			overlayPainter.removePainter(routePainter);
 			routePainter = new RoutePainter(Color.RED);
 			routePainter.setTrack(ret);
 			overlayPainter.addPainter(routePainter);
+			if(ret!=null) {
+				overlayPainter.removePainter(crosshairPainter);
+				crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
+				crosshairPainter.setRenderer(new VesselWaypointRenderer(FeatheRcrosshair.of(SizingConstants.L, SizingConstants.L)));
+				overlayPainter.addPainter(crosshairPainter);
+			}
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			mmsiToTrack = mmsi;
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
@@ -277,10 +227,10 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 			
-			// den zuletzt erstellten Painter löschen in overlayPainter und aus painters
-			overlayPainter.removePainter(painters.get(key));
+			// den zuletzt erstellten shipLocationPainter löschen in overlayPainter und aus locationPainters
+			overlayPainter.removePainter(locationPainters.get(key));
 			overlayPainter.addPainter(shipLocationPainter);
-			painters.replace(key, shipLocationPainter); // den letzten painter wegwerfen/überschreiben
+			locationPainters.replace(key, shipLocationPainter); // den letzten painter wegwerfen/überschreiben
 		} else {
 			List<AisStreamMessage> waypoints = new Vector<AisStreamMessage>();
 			map.put(key, waypoints); // empty List waypoints 
@@ -293,8 +243,13 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 		}
 		if(map.get(key).add(msg) && mmsiToTrack!=null && key==mmsiToTrack) {
 			LOG.info("firePropertyChange mmsiToTrack="+mmsiToTrack+ " key= "+key+" old value#="+old.size());
-			firePropertyChange("mmsiToTrack", old, map.get(key));
-			routePainter.setTrack(map.get(key));
+			List<AisStreamMessage> l = map.get(key);
+			firePropertyChange(MMSITOTRACK_PROPNAME, old, l);
+			routePainter.setTrack(l);
+			overlayPainter.removePainter(crosshairPainter);
+			crosshairPainter = new VesselWaypointPainter(l.get(l.size()-1));
+			crosshairPainter.setRenderer(new VesselWaypointRenderer(FeatheRcrosshair.of(SizingConstants.L, SizingConstants.L)));
+			overlayPainter.addPainter(crosshairPainter);
 		}
 
 		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
@@ -316,7 +271,7 @@ data/aisstream.txt : vessels with track (more then 1 waypoints):
 
  */
 		int key = msg.getMetaData().getMMSI();
-		assert null==painters.get(key); // expected null
+		assert null==locationPainters.get(key); // expected null
 		if (msg.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
 			// POSITIONREPORT
 			// Pos + Kurs aus Msg ; > ohne Farbe
@@ -337,7 +292,7 @@ data/aisstream.txt : vessels with track (more then 1 waypoints):
 						+ ", cog="+pr.getCog() + ", type=?, shipLenght=`?");
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-				painters.put(key, shipLocationPainter);
+				locationPainters.put(key, shipLocationPainter);
 				overlayPainter.addPainter(shipLocationPainter);
 			}
 		} else if (msg.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
@@ -349,7 +304,7 @@ data/aisstream.txt : vessels with track (more then 1 waypoints):
 				icon.setRotation(scbpr.getCog()); // Kurs
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-				painters.put(key, shipLocationPainter);
+				locationPainters.put(key, shipLocationPainter);
 				overlayPainter.addPainter(shipLocationPainter);
 			}
 		} else {
@@ -366,7 +321,7 @@ data/aisstream.txt : vessels with track (more then 1 waypoints):
 				icon.setColorFilter(color -> ColorLegend.typeToColor(ssd.getType())); // ShipType => java Color
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-				painters.put(key, shipLocationPainter);
+				locationPainters.put(key, shipLocationPainter);
 				overlayPainter.addPainter(shipLocationPainter);
 			}
 		}
