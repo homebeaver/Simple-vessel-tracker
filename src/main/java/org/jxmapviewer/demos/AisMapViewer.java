@@ -14,6 +14,7 @@ import org.jdesktop.swingx.demos.svg.FeatheRcrosshair;
 import org.jdesktop.swingx.demos.svg.FeatheRnavigation_grey;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
+import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
@@ -27,7 +28,7 @@ import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 import io.github.homebeaver.aismodel.StandardClassBPositionReport;
 
-public class AisMapViewer extends JXMapViewer {
+public class AisMapViewer extends JXMapKit {
 
 	private static final long serialVersionUID = 8162164255394960216L;
 	private static final Logger LOG = Logger.getLogger(AisMapViewer.class.getName());
@@ -58,8 +59,6 @@ public class AisMapViewer extends JXMapViewer {
 		super();
 		map = new HashMap<Integer, List<AisStreamMessage>>();
 		locationPainters = new HashMap<>();
-		
-//		super.setOverlayPainter(overlayPainter); // XXX das funktioniert nicht
 	}
 	public int getNoOfVessels() {
 		return map.size();
@@ -103,7 +102,8 @@ public class AisMapViewer extends JXMapViewer {
 	}
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
 		overlayPainter = p;
-		super.setOverlayPainter(p);
+		super.getMainMap().setOverlayPainter(p);
+//		super.setOverlayPainter(p);
 	}
     public void addMessage(AisStreamMessage msg) {
 		int key = msg.getMetaData().getMMSI();
@@ -211,7 +211,7 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 			if(cog==null) {
 				icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 			} else {
-				int zoom = this.getZoom(); // value between 1 and 15
+				//int zoom = this.getZoom(); // value between 1 and 15
 				// ab zoom 6 kleinste icons XS==18
 				//int f = 432/48 = 9 Berechnung für zoom 5:
 				int iconsize = shipLenght==null ? 0 : shipLenght/9; // XXX
@@ -251,9 +251,10 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 			crosshairPainter.setRenderer(new VesselWaypointRenderer(FeatheRcrosshair.of(SizingConstants.L, SizingConstants.L)));
 			overlayPainter.addPainter(crosshairPainter);
 		}
-
-		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
-    }
+//
+//		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
+		super.getMainMap().setOverlayPainter(overlayPainter);	
+	}
 
 	private void display1Vessel(AisStreamMessage msg) {
 /*
