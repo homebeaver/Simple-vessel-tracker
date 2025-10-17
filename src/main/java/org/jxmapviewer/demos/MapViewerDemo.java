@@ -75,21 +75,22 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import dk.dma.ais.message.NavigationalStatus;
 import dk.dma.ais.message.ShipTypeCargo;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 import swingset.AbstractDemo;
 
 /**
- * A demo for the {@code JXMapViewer}.
+ * A simple vessel tracker using {@code JXMapViewer} and AISStream API
  *
- * @author Martin Steiger
- * @author EUG https://github.com/homebeaver (integrate to SwingSet3)
+ * @author EUG https://github.com/homebeaver
  */
 public class MapViewerDemo extends AbstractDemo implements PropertyChangeListener {
-	
-	private static final long serialVersionUID = -4946197162374262488L;
+
+	private static final long serialVersionUID = 8769857766982074854L;
 	private static final Logger LOG = Logger.getLogger(MapViewerDemo.class.getName());
 	private static final String DESCRIPTION = "A simple vessel tracker using JXMapViewer and AISStream API";
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
@@ -183,42 +184,12 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 			GeoPosition pos = getPosAndZoom();
 			mapViewer.setCenterPosition(pos);
 		});
-//		mapViewer.addPropertyChangeListener("mmsiToTrack", pce -> {
-//			@SuppressWarnings("unchecked")
-//			List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
-//			setShipStaticDataFields(ls);
-//			// safe with all checks:
-////			Object o = pce.getNewValue();
-////			if(o instanceof List l) {
-////				for (Object item : l) {
-////					if(item instanceof AisStreamMessage asm) {
-////						if(asm.getAisMessageType()==AisMessageTypes.SHIPSTATICDATA) {
-////							AisMessage m = asm.getAisMessage();
-////							if(m instanceof ShipStaticData ssd) {
-////								nameField.setText(ssd.getName());
-////								imoField.setText(ssd.getImoNumber().toString());
-////							}
-////						}
-////					}
-////				}
-////			}
-//		});
 		
 		getPosAndZoom();
 		List<Painter<JXMapViewer>> painters = new ArrayList<>(); // besser LinkedList?
-		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
+//		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
 		painters.add(addressLocationPainter);
 		painters.add(selectionPainter);
-/* TODO
-//  private RoutePainter routePainter = new RoutePainter(Color.RED);
-//	trackSlider.addChangeListener(changeEvent -> {
-//	routePainter.setMaxSize(trackSlider.getValue());
-//	repaint();
-//});
- */
-		RoutePainter routePainter = new RoutePainter(Color.RED, RoutePainter.DEFAULT_TRACK);
-		painters.add(routePainter);
-		// <<<<<<<<<<<<<< DONE
 		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 		overlayPainter.setPainters(painters);
 		mapViewer.setOverlayPainter(overlayPainter);
@@ -309,9 +280,15 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 	private JTextField dimensionField;
 	private JTextField destinationField;
 	private JTextField positionField;
+	private JTextField navStatusField;
 
 	private void setShipStaticDataFields(List<AisStreamMessage> ls) {
 		ls.forEach(asm -> {
+			// aus MetaData name und position (ohne Kurs)
+			nameField.setText(asm.getMetaData().getShipName());
+			double lat = asm.getMetaData().getLatitude();
+			double lon = asm.getMetaData().getLongitude();
+			positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon));
 			if (asm.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData) (asm.getAisMessage());
 				nameField.setText(ssd.getName());
@@ -324,11 +301,11 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 						+ " / " + ssd.getMaximumStaticDraught() + " m"
 						);
 				destinationField.setText(ssd.getDestination());
+			} else if (asm.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
+				PositionReport pr = (PositionReport) (asm.getAisMessage());
+				positionField.setText(String.format("Lat/Lon=(%.2f / %.2f) Cog=%.1f°", lat, lon, pr.getCog()));
+				navStatusField.setText(NavigationalStatus.get(pr.getNavigationalStatus()).toString()+String.format(", Sog=%.1fkn", pr.getSog()));
 			} else {
-				nameField.setText(asm.getMetaData().getShipName());
-				double lat = asm.getMetaData().getLatitude();
-				double lon = asm.getMetaData().getLongitude();
-				positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon));
 //				System.out.println(""+asm.getMetaData());
 			}
 		});
@@ -348,6 +325,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
                 ", t:4dlu:n, c:d:n" +  // dimensionField
                 ", t:4dlu:n, c:d:n" +  // destinationField
                 ", t:4dlu:n, c:d:n" +  // positionField
+                ", t:4dlu:n, c:d:n" +  // navStatusField
                 ", t:4dlu:n, c:d:n" // button
                 ); // rows
         PanelBuilder builder = new PanelBuilder(formLayout, centerControls);
@@ -372,11 +350,11 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         mmsiLabel.setText(getBundleString("mmsiLabel.text", mmsiLabel));
         mmsiField.addActionListener(ae -> {
         	//titledPanel.setTitle(titleField.getText());
-        });        
+        });
         currentRow += 2;
         
         nameField = new JTextField(20);
-        nameField.setName("nameField");       
+        nameField.setName("nameField");
         nameField.setText(getBundleString("nameField.text"));
         JLabel nameLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		nameField, cc.xywh(widgetColumn, currentRow, 1, 1));
@@ -386,7 +364,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         currentRow += 2;
         
         imoField = new JTextField(20);
-        imoField.setName("imoField");       
+        imoField.setName("imoField");
         imoField.setText(getBundleString("imoField.text"));
         JLabel imoLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		imoField, cc.xywh(widgetColumn, currentRow, 1, 1));
@@ -396,7 +374,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         currentRow += 2;
         
         callSignField = new JTextField(20);
-        callSignField.setName("callSignField");       
+        callSignField.setName("callSignField");
         callSignField.setText(getBundleString("callSignField.text"));
         JLabel callSignLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		callSignField, cc.xywh(widgetColumn, currentRow, 1, 1));
@@ -406,7 +384,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         currentRow += 2;
         
         typeField = new JTextField(20);
-        typeField.setName("typeField");       
+        typeField.setName("typeField");
         typeField.setText(getBundleString("typeField.text"));
         JLabel typeLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		typeField, cc.xywh(widgetColumn, currentRow, 1, 1));
@@ -416,7 +394,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         currentRow += 2;
         
         dimensionField = new JTextField(20);
-        dimensionField.setName("dimensionField");       
+        dimensionField.setName("dimensionField");
         dimensionField.setText(getBundleString("dimensionField.text"));
         JLabel dimensionLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		dimensionField, cc.xywh(widgetColumn, currentRow, 1, 1));
@@ -426,7 +404,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         currentRow += 2;
         
         destinationField = new JTextField(20);
-        destinationField.setName("destinationField");       
+        destinationField.setName("destinationField");
         destinationField.setText(getBundleString("destinationField.text"));
         JLabel destinationLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		destinationField, cc.xywh(widgetColumn, currentRow, 1, 1));
@@ -436,26 +414,38 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
         currentRow += 2;
         
         positionField = new JTextField(20);
-        positionField.setName("positionField");       
+        positionField.setName("positionField");
         positionField.setText(getBundleString("positionField.text"));
         JLabel positionLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		positionField, cc.xywh(widgetColumn, currentRow, 1, 1));
         positionLabel.setName("positionLabel");
         positionLabel.setText(getBundleString("positionLabel.text", positionLabel));
-        LabelHandler.bindLabelFor(destinationLabel, positionField);
+        LabelHandler.bindLabelFor(positionLabel, positionField);
         currentRow += 2;
-        // ... TODO AIS-Flagge
+        
+        navStatusField = new JTextField(20);
+        navStatusField.setName("navStatusField");
+        navStatusField.setText(getBundleString("navStatusField.text"));
+        JLabel navStatusLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
+        		navStatusField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        navStatusLabel.setName("navStatusLabel");
+        navStatusLabel.setText(getBundleString("navStatusLabel.text", navStatusLabel));
+        LabelHandler.bindLabelFor(navStatusLabel, navStatusField);
+        currentRow += 2;
+        // ... TODO AIS-Flagge 
 
 		crosshairButton = fileDemoButton("crosshairButton", getBundleString("crosshairButton.text"));
 		crosshairButton.setIcon(crosshair);
 		builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
 		crosshairButton.addActionListener(ae -> {
-			LOG.info("Show TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
-			List<AisStreamMessage> v = mapViewer.getVesselTrace(219230000, MapViewerDemo.this);
+			String mmsi = mmsiField.getText();
+			LOG.info("Show Vessel "+mmsi+" f.i. TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
+			// TODO java.lang.NumberFormatException
+			List<AisStreamMessage> v = mapViewer.getVesselTrace(Integer.parseInt(mmsi), MapViewerDemo.this);
 			if(v!=null) {
 				setShipStaticDataFields(v);
 			} else {
-				System.out.println("nix gefunden für TYCHO BRAHE");
+				System.out.println("nix gefunden für "+mmsi+" 219230000==TYCHO BRAHE");
 			}
 			
 		});
