@@ -1,5 +1,6 @@
 package org.jxmapviewer.demos;
 
+import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
@@ -41,6 +42,8 @@ public class AisMapViewer extends JXMapViewer {
 	 */
 	private Integer mmsiToTrack = null;
 
+	RoutePainter routePainter;
+	
 	// ist mmsiToTrack eine Java Bohne?
 //	private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 //    public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -52,6 +55,7 @@ public class AisMapViewer extends JXMapViewer {
 //    }
 
 	// bean that supports bound property "mmsiToTrack"
+	@Deprecated
 	public class VesselToTrack {
 		
 		private Integer mmsiToTrack;
@@ -126,21 +130,26 @@ public class AisMapViewer extends JXMapViewer {
 	public List<AisStreamMessage> getVesselTrace(Integer mmsi, PropertyChangeListener listener) {
 		if(mmsi==null) {
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
-			// TODO remove painter
+			overlayPainter.removePainter(routePainter);
 			return null;
 		}
 		LOG.info("register "+listener + " for "+mmsi+", Change of Property "+MMSITOTRACK_PROPNAME+".");
+		List<AisStreamMessage> ret = map.get(mmsi);
 		if(mmsiToTrack==mmsi) {
 			// kein neuer painter, evtl neuer listener
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 		} else {
 			// neuer painter, evtl neuer listener
+			overlayPainter.removePainter(routePainter);
+			routePainter = new RoutePainter(Color.RED);
+			routePainter.setTrack(ret);
+			overlayPainter.addPainter(routePainter);
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			mmsiToTrack = mmsi;
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 		}
-		return map.get(mmsi);
+		return ret; 
 	}
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
 		overlayPainter = p;
@@ -208,6 +217,7 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 //			LOG.info("mindestens zweite Nachricht für "+key + " "+msg.getAisMessageType());
 			AisMessage amsg = msg.getAisMessage();
 			Double cog = null; // Kurs
+			Integer heading = null; // True heading Degrees
 			Integer type = null; // Schiffstyp
 			Integer shipLenght = null;
 			Integer navStatus = null;
@@ -220,8 +230,10 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 				AisMessage nextamsg = next.getAisMessage();
 				if (nextamsg instanceof PositionReport pr) {
 					cog = pr.getCog();
+					heading = pr.getTrueHeading();
 				} else if (nextamsg instanceof StandardClassBPositionReport scbpr) {
 					cog = scbpr.getCog();
+					heading = scbpr.getTrueHeading();
 				} else if (nextamsg instanceof ShipStaticData ssd) {
 					type = ssd.getType();
 					shipLenght = ssd.getDimension().getLength();
@@ -229,16 +241,19 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 			}
 			if (amsg instanceof PositionReport pr) {
 				cog = pr.getCog();
+				heading = pr.getTrueHeading();
 				navStatus = pr.getNavigationalStatus();
 			} else if (amsg instanceof StandardClassBPositionReport scbpr) {
 				cog = scbpr.getCog();
+				heading = scbpr.getTrueHeading();
 			} else if (amsg instanceof ShipStaticData ssd) {
 				type = ssd.getType();
 				shipLenght = ssd.getDimension().getLength();
 			}
 			LOG.info(""+msg.getAisMessageType()+" "+key+": #="+n
 				+ " NavigationalStatus="+(navStatus==null ? "?" : NavigationalStatus.get(navStatus))
-				+ ", cog="+cog + ", type="+(type==null ? "?" : new ShipTypeCargo(type)) + ", shipLenght="+shipLenght);
+				+ ", cog="+cog + ", heading="+heading
+				+ ", type="+(type==null ? "?" : new ShipTypeCargo(type)) + ", shipLenght="+shipLenght);
 //			list.forEach( m -> { ... NICHT so
 
 			RadianceIcon icon;
@@ -279,6 +294,7 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 		if(map.get(key).add(msg) && mmsiToTrack!=null && key==mmsiToTrack) {
 			LOG.info("firePropertyChange mmsiToTrack="+mmsiToTrack+ " key= "+key+" old value#="+old.size());
 			firePropertyChange("mmsiToTrack", old, map.get(key));
+			routePainter.setTrack(map.get(key));
 		}
 
 		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
@@ -313,6 +329,7 @@ data/aisstream.txt : vessels with track (more then 1 waypoints):
 					//icon = FeatheRnavigation_grey.of(SizingConstants.M, SizingConstants.M); kleiner:
 					icon = FeatheRnavigation_grey.of(18, 18);
 					icon.setRotation(pr.getCog()); // Kurs
+					//icon.setRotation(pr.getTrueHeading()); // XXX ???
 				} else {
 					icon = FeatheRcircle_blue.of(SizingConstants.XS, SizingConstants.XS);
 				}
