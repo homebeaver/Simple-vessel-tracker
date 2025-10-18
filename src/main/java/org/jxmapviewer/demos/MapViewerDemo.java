@@ -119,7 +119,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 	private static final int DEFAULT_ZOOM = 10; // OSM MAX_ZOOM is 19;
 	private static final String DEFAULT_MAP = "København - Øresund";
 	private TileFactoryInfo info;
-	private AisMapViewer mapViewer;
+	private AisMapKit mapKit;
 
 	/**
 	 * Demo Constructor
@@ -140,49 +140,62 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 		File cacheDir = new File(System.getProperty("user.home") + File.separator + ".jxmapviewer2");
 		tileFactory.setLocalCache(new FileBasedLocalCache(cacheDir, false));
 
-		// Setup JXMapViewer
-		mapViewer = new AisMapViewer();
-		mapViewer.setName("mapViewer");
-		mapViewer.setTileFactory(tileFactory);
+		// Setup JXMapKit
+		mapKit = new AisMapKit();
+		mapKit.setName("mapKit");
+		mapKit.setTileFactory(tileFactory);
 
 		// Use 8 threads in parallel to load the tiles
 		tileFactory.setThreadPoolSize(8);
 
+	    mapKit.setMiniMapVisible(false);
+	    mapKit.setDataProviderCreditShown(true); // XXX ? funktioniert nich
+
 		// Set the zoom and focus to Øresund
-		mapViewer.setZoom(DEFAULT_ZOOM);
-		mapViewer.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
+		mapKit.setZoom(DEFAULT_ZOOM);
+		mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
+        // sync zoomSlider:
+        mapKit.getZoomSlider().addChangeListener(changeEvent -> {
+        	if(zoomSlider!=null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+        mapKit.getZoomOutButton().addChangeListener(changeEvent -> {
+        	if(zoomSlider!=null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
+        mapKit.getZoomInButton().addChangeListener(changeEvent -> {
+        	if(zoomSlider!=null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+        });
 
 		// Add interactions / verschieben , zoomen , select
 // "Use left mouse button to pan, mouse wheel to zoom and right mouse to select";
 // mia : class MouseInputAdapter extends MouseAdapter implements MouseInputListener
-		MouseInputListener mia = new PanMouseInputListener(mapViewer);
-		mapViewer.addMouseListener(mia);
-		mapViewer.addMouseMotionListener(mia);
+		MouseInputListener mia = new PanMouseInputListener(mapKit.getMainMap());
+		mapKit.getMainMap().addMouseListener(mia);
+		mapKit.getMainMap().addMouseMotionListener(mia);
 
-		mapViewer.addMouseListener(new CenterMapListener(mapViewer));
+		mapKit.getMainMap().addMouseListener(new CenterMapListener(mapKit.getMainMap()));
 
-		mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCursor(mapViewer));
+		mapKit.getMainMap().addMouseWheelListener(new ZoomMouseWheelListenerCursor(mapKit.getMainMap()));
 
-		mapViewer.addKeyListener(new PanKeyListener(mapViewer));
+		mapKit.getMainMap().addKeyListener(new PanKeyListener(mapKit.getMainMap()));
 
 		// Add painters:
-		SelectionAdapter sa = new SelectionAdapter(mapViewer);
-		mapViewer.addMouseMotionListener(sa); // SelectionAdapter to get the selected Rectangle
+		SelectionAdapter sa = new SelectionAdapter(mapKit.getMainMap());
+		mapKit.getMainMap().addMouseMotionListener(sa); // SelectionAdapter to get the selected Rectangle
 		SelectionPainter<JXMapViewer> selectionPainter = new SelectionPainter<>(sa);
-		mapViewer.addMouseListener(sa);
-		mapViewer.addMouseMotionListener(sa);
+		mapKit.getMainMap().addMouseListener(sa);
+		mapKit.getMainMap().addMouseMotionListener(sa);
 		addressLocationPainter.setRenderer(new DefaultWaypointRenderer(FeatheRmap_pin.of(SizingConstants.M, SizingConstants.M)));
 
-		add(mapViewer, BorderLayout.CENTER);
+		add(mapKit, BorderLayout.CENTER);
 //		add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
 
-		mapViewer.addPropertyChangeListener("zoom", pce -> {
+		mapKit.addPropertyChangeListener("zoom", pce -> {
 			LOG.info("---------------------pce:" + pce);
 			getPosAndZoom();
 		});
-		mapViewer.addPropertyChangeListener("center", pce -> {
+		mapKit.addPropertyChangeListener("center", pce -> {
 			GeoPosition pos = getPosAndZoom();
-			mapViewer.setCenterPosition(pos);
+			mapKit.setCenterPosition(pos);
 		});
 		
 		getPosAndZoom();
@@ -192,7 +205,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 		painters.add(selectionPainter);
 		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 		overlayPainter.setPainters(painters);
-		mapViewer.setOverlayPainter(overlayPainter);
+		mapKit.setOverlayPainter(overlayPainter);
 	}
 	
 	@Override
@@ -207,8 +220,8 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 		@Override
 		public Set<Waypoint> getWaypoints() {
 			Set<Waypoint> set = new HashSet<Waypoint>();
-			if (mapViewer.getAddressLocation() != null) {
-				set.add(new DefaultWaypoint(mapViewer.getAddressLocation()));
+			if (mapKit.getAddressLocation() != null) {
+				set.add(new DefaultWaypoint(mapKit.getAddressLocation()));
 			} else {
 				set.add(new DefaultWaypoint(0, 0));
 			}
@@ -217,9 +230,9 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 	};
 
 	private GeoPosition getPosAndZoom() {
-		double lat = mapViewer.getCenterPosition().getLatitude();
-		double lon = mapViewer.getCenterPosition().getLongitude();
-		int zoom = mapViewer.getZoom();
+		double lat = mapKit.getMainMap().getCenterPosition().getLatitude();
+		double lon = mapKit.getMainMap().getCenterPosition().getLongitude();
+		int zoom = mapKit.getMainMap().getZoom();
 		if (zoomSlider != null) {
 			zoomSlider.setValue(zoom);
 		}
@@ -441,7 +454,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 			String mmsi = mmsiField.getText();
 			LOG.info("Show Vessel "+mmsi+" f.i. TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
 			// TODO java.lang.NumberFormatException
-			List<AisStreamMessage> v = mapViewer.getVesselTrace(Integer.parseInt(mmsi), MapViewerDemo.this);
+			List<AisStreamMessage> v = mapKit.getVesselTrace(Integer.parseInt(mmsi), MapViewerDemo.this);
 			if(v!=null) {
 				setShipStaticDataFields(v);
 			} else {
@@ -471,8 +484,8 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 			@SuppressWarnings("unchecked")
 			DisplayInfo<GeoPosition> item = (DisplayInfo<GeoPosition>) positionChooserCombo.getSelectedItem();
 			LOG.info("Combo.SelectedItem=" + item.getDescription());
-			mapViewer.setAddressLocation(item.getValue());
-			mapViewer.setZoom(DEFAULT_ZOOM);
+			mapKit.setAddressLocation(item.getValue());
+			mapKit.setZoom(DEFAULT_ZOOM);
 			zoomSlider.setValue(DEFAULT_ZOOM);
 			positionChooserCombo.setSelectedIndex(index);
 		});
@@ -482,12 +495,12 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 	}
 
 	protected Container createZoomer() {
-		zoomSlider = new JSlider(JSlider.VERTICAL, info.getMinimumZoomLevel(), info.getMaximumZoomLevel(), mapViewer.getZoom());
+		zoomSlider = new JSlider(JSlider.VERTICAL, info.getMinimumZoomLevel(), info.getMaximumZoomLevel(), mapKit.getMainMap().getZoom());
 		zoomSlider.setPaintTicks(true);
 		zoomSlider.setMajorTickSpacing(1);
 		zoomSlider.addChangeListener(changeEvent -> {
 			// LOG.info(""+zoomSlider.getValue());
-			mapViewer.setZoom(zoomSlider.getValue());
+			mapKit.setZoom(zoomSlider.getValue());
 		});
 
 //		JPanel controls = new JPanel(new BorderLayout()); // ??? TODO new BoxLayout
@@ -527,7 +540,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 			// damit der Event Dispatch Thread (EDT) nicht blockiert wird:
 			// file aus GITHUB gebremst 50ms
 			try {
-				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapViewer, getCounter());
+				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapKit, getCounter());
 				ml.setSleep(50);
 				ml.execute();
 			} catch (MalformedURLException e) {
@@ -543,7 +556,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 			fileDemoButton.setEnabled(false);
 			// Starte Extra-Thread per SwingWorker,
 			// damit der Event Dispatch Thread (EDT) nicht blockiert wird:
-			MessageLoader ml = new MessageLoader("src/test/java/aisstream.txt", mapViewer, getCounter());
+			MessageLoader ml = new MessageLoader("src/test/java/aisstream.txt", mapKit, getCounter());
 			ml.setSleep(10);
 			ml.execute();
 		});
@@ -557,7 +570,7 @@ public class MapViewerDemo extends AbstractDemo implements PropertyChangeListene
 			if (liveButton.getIcon() == start) {
 				liveButton.setIcon(stop);
 				// Live:
-				ml = new MessageLoader((URL) null, mapViewer, getCounter());
+				ml = new MessageLoader((URL) null, mapKit, getCounter());
 				ml.execute();
 			} else {
 				liveButton.setIcon(start);

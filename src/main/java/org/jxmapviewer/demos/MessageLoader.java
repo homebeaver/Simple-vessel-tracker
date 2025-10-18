@@ -39,19 +39,19 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 	private static final Logger LOG = Logger.getLogger(MessageLoader.class.getName());
 	private String testdata;
 	private URL url;
-    private final AisMapViewer amv;
+    private final AisMapKit amv;
     private final JLabel counter;
     private long millis = -1;
 	private int cnt = 0;
 
-    public MessageLoader(String fileUrl, AisMapViewer amv, JLabel counter) {
+    public MessageLoader(String fileUrl, AisMapKit amv, JLabel counter) {
     	super();
         this.testdata = fileUrl;
         this.amv = amv;
         this.counter = counter;
 		this.cnt = 0; // zählt auch die null-Nachrichten
     }
-    public MessageLoader(URL url, AisMapViewer amv, JLabel counter) {
+    public MessageLoader(URL url, AisMapKit amv, JLabel counter) {
     	super();
         this.url = url;
         this.amv = amv;
