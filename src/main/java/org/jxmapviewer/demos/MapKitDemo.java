@@ -32,7 +32,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.MutableComboBoxModel;
@@ -42,7 +41,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputListener;
 
-import org.jdesktop.swingx.JXComboBox;
 import org.jdesktop.swingx.JXFrame;
 import org.jdesktop.swingx.JXFrame.StartPosition;
 import org.jdesktop.swingx.JXLabel;
@@ -55,10 +53,8 @@ import org.jdesktop.swingx.demos.svg.FeatheRcrosshair;
 import org.jdesktop.swingx.demos.svg.FeatheRmap_pin;
 import org.jdesktop.swingx.icon.PauseIcon;
 import org.jdesktop.swingx.icon.PlayIcon;
-//import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.icon.SizingConstants;
-//import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.cache.FileBasedLocalCache;
@@ -73,7 +69,6 @@ import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
-//import org.pushingpixels.trident.api.Timeline;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -171,15 +166,15 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		mapKit.setZoom(DEFAULT_ZOOM);
 		mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
 		// sync zoomSlider:
-		mapKit.getZoomSlider().addChangeListener(changeEvent -> {
-			if (zoomSlider != null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
-		});
-		mapKit.getZoomOutButton().addChangeListener(changeEvent -> {
-			if (zoomSlider != null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
-		});
-		mapKit.getZoomInButton().addChangeListener(changeEvent -> {
-			if (zoomSlider != null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
-		});
+//		mapKit.getZoomSlider().addChangeListener(changeEvent -> {
+//			if (zoomSlider != null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+//		});
+//		mapKit.getZoomOutButton().addChangeListener(changeEvent -> {
+//			if (zoomSlider != null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+//		});
+//		mapKit.getZoomInButton().addChangeListener(changeEvent -> {
+//			if (zoomSlider != null) zoomSlider.setValue(mapKit.getZoomSlider().getValue());
+//		});
 		mapKit.getMainMap().setRestrictOutsidePanning(true); // ???
 		mapKit.getMainMap().setHorizontalWrapped(false);
 
@@ -251,9 +246,9 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		double lat = mapKit.getMainMap().getCenterPosition().getLatitude();
 		double lon = mapKit.getMainMap().getCenterPosition().getLongitude();
 		int zoom = mapKit.getMainMap().getZoom();
-		if (zoomSlider != null) {
-			zoomSlider.setValue(zoom);
-		}
+//		if (zoomSlider != null) {
+//			zoomSlider.setValue(zoom);
+//		}
 		LOG.info(String.format("Lat/Lon=(%.2f / %.2f) - Zoom: %d", lat, lon, zoom));
 		return new GeoPosition(lat, lon);
 	}
@@ -262,7 +257,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	
 	// controller:
 	private JComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
-	private JSlider zoomSlider;
+//	private JSlider zoomSlider; // ohne zoomSlider im controller
 //	private static final String SLIDER = "zoomSlider";
 //    private JButton zoomOut;
 //    private JButton zoomIn;
@@ -284,10 +279,10 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 	/*
 	 * N: map selector 
-	 * W: Zoom 
+	 * W: Zoom (removed)
 	 * E: Start Demo+Live, Legende 
 	 * S: Status 
-	 * C: SHIPSTATICDATA + last Pos TODO
+	 * C: SHIPSTATICDATA + last Pos + Course
 	 */
 	@Override
 	public JXPanel getControlPane() {
@@ -298,7 +293,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			}
 		};
 		controls.add(createMapSelector(), BorderLayout.NORTH);
-		controls.add(createZoomer(), BorderLayout.WEST);
+//		controls.add(createZoomer(), BorderLayout.WEST);
 		controls.add(createControlBar(), BorderLayout.EAST);
 		controls.add(createStatusBar(), BorderLayout.SOUTH);
 		controls.add(createCenter(), BorderLayout.CENTER);
@@ -514,7 +509,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			LOG.info("Combo.SelectedItem=" + item.getDescription());
 			mapKit.setAddressLocation(item.getValue());
 			mapKit.setZoom(DEFAULT_ZOOM);
-			zoomSlider.setValue(DEFAULT_ZOOM);
+//			zoomSlider.setValue(DEFAULT_ZOOM);
 			positionChooserCombo.setSelectedIndex(index);
 		});
 		controls.add(positionChooserCombo);
@@ -547,27 +542,27 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return controls;
 	}
 
-	protected Container createZoomer() {
-		zoomSlider = new JSlider(JSlider.VERTICAL, info.getMinimumZoomLevel(), info.getMaximumZoomLevel(), mapKit.getMainMap().getZoom());
-		zoomSlider.setPaintTicks(true);
-		zoomSlider.setMajorTickSpacing(1);
-		zoomSlider.addChangeListener(changeEvent -> {
-			// LOG.info(""+zoomSlider.getValue());
-			mapKit.setZoom(zoomSlider.getValue());
-		});
-
-//		JPanel controls = new JPanel(new BorderLayout()); // ??? TODO new BoxLayout
-//		controls.add(new JLabel(getBundleString("zoomOut.text")), BorderLayout.NORTH);
-//		controls.add(zoomSlider, BorderLayout.WEST);
-//		controls.add(new JLabel(getBundleString("zoomIn.text")), BorderLayout.SOUTH);
-		// viel besser ist es nicht XXX
-		JPanel controls = new JPanel();
-		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
-		controls.add(new JLabel(getBundleString("zoomOut.text")));
-		controls.add(zoomSlider);
-		controls.add(new JLabel(getBundleString("zoomIn.text")));
-		return controls;
-	}
+//	protected Container createZoomer() {
+//		zoomSlider = new JSlider(JSlider.VERTICAL, info.getMinimumZoomLevel(), info.getMaximumZoomLevel(), mapKit.getMainMap().getZoom());
+//		zoomSlider.setPaintTicks(true);
+//		zoomSlider.setMajorTickSpacing(1);
+//		zoomSlider.addChangeListener(changeEvent -> {
+//			// LOG.info(""+zoomSlider.getValue());
+//			mapKit.setZoom(zoomSlider.getValue());
+//		});
+//
+////		JPanel controls = new JPanel(new BorderLayout()); // ??? TODO new BoxLayout
+////		controls.add(new JLabel(getBundleString("zoomOut.text")), BorderLayout.NORTH);
+////		controls.add(zoomSlider, BorderLayout.WEST);
+////		controls.add(new JLabel(getBundleString("zoomIn.text")), BorderLayout.SOUTH);
+//		// viel besser ist es nicht XXX
+//		JPanel controls = new JPanel();
+//		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+//		controls.add(new JLabel(getBundleString("zoomOut.text")));
+//		controls.add(zoomSlider);
+//		controls.add(new JLabel(getBundleString("zoomIn.text")));
+//		return controls;
+//	}
 
 	private JButton fileDemoButton(String name, String text) {
 		JButton b = new JButton();
