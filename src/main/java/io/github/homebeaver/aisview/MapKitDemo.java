@@ -267,7 +267,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	/*
 	 * N: map selector 
 	 * W: Zoom (removed)
-	 * E: Start Demo+Live, Legende 
+	 * E: Start Demo+Live, Legend 
 	 * S: Status 
 	 * C: SHIPSTATICDATA + last Pos + Course
 	 */
@@ -545,7 +545,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
 		// two Demo Buttons
 		toolBar.add(Box.createVerticalStrut(10));
-		JPanel grid = new JPanel(new GridLayout(3, 1, 10, 10));
+		JPanel buttonGrid = new JPanel(new GridLayout(3, 1, 10, 10)); // (int rows, int cols, int hgap, int vgap)
 		miniDemoButton = fileDemoButton("miniDemoButton", getBundleString("miniDemoButton.text"));
 		miniDemoButton.setDisabledIcon(playDisabled());
 		miniDemoButton.addActionListener(ae -> {
@@ -562,8 +562,8 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 				e.printStackTrace();
 			}
 		});
-		grid.add(miniDemoButton);
-//    	toolBar.add(Box.createVerticalStrut(10));
+		buttonGrid.add(miniDemoButton);
+
 		fileDemoButton = fileDemoButton("fileDemoButton", getBundleString("fileDemoButton.text"));
 		fileDemoButton.setDisabledIcon(playDisabled());
 		fileDemoButton.addActionListener(ae -> {
@@ -574,9 +574,8 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			ml.setSleep(10);
 			ml.execute();
 		});
-		grid.add(fileDemoButton);
+		buttonGrid.add(fileDemoButton);
 
-//    	toolBar.add(Box.createVerticalStrut(10));
 		liveButton = fileDemoButton("liveButton", getBundleString("liveButton.text"));
 		liveButton.setIcon(start);
 		liveButton.addActionListener(ae -> {
@@ -593,27 +592,20 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 				}
 			}
 		});
-//    	toolBar.add(Box.createHorizontalGlue());
-//    	toolBar.add(Box.createRigidArea(new Dimension(0, 10)));
-		grid.add(liveButton);
-		toolBar.add(grid);
+		buttonGrid.add(liveButton);
+		toolBar.add(buttonGrid);
+		toolBar.add(Box.createVerticalStrut(10));
 
-		toolBar.add(Box.createVerticalStrut(10));
-		toolBar.add(ColorLegend.SINGLETON.blueLabel());
-		toolBar.add(ColorLegend.SINGLETON.redLabel());
-		toolBar.add(ColorLegend.SINGLETON.greenLabel());
-		toolBar.add(ColorLegend.SINGLETON.orangeLabel());
-		toolBar.add(ColorLegend.SINGLETON.magentaLabel());
-		toolBar.add(ColorLegend.SINGLETON.cyanLabel());
-		toolBar.add(ColorLegend.SINGLETON.yellowLabel());
-		toolBar.add(ColorLegend.SINGLETON.greyLabel());
-//        JComponent bar = Box.createHorizontalBox();
-//        bar.add(tableStatus);
-//        tableRows = new JLabel("0");
-//        bar.add(tableRows);
-//        
-//        statusBar.add(bar);
-		toolBar.add(Box.createVerticalStrut(10));
+		JPanel legendGrid = new JPanel(new GridLayout(8, 1, 0, 0)); // (int rows, int cols, int hgap, int vgap)
+		legendGrid.add(ColorLegend.SINGLETON.blueLabel());
+		legendGrid.add(ColorLegend.SINGLETON.redLabel());
+		legendGrid.add(ColorLegend.SINGLETON.greenLabel());
+		legendGrid.add(ColorLegend.SINGLETON.orangeLabel());
+		legendGrid.add(ColorLegend.SINGLETON.magentaLabel());
+		legendGrid.add(ColorLegend.SINGLETON.cyanLabel());
+		legendGrid.add(ColorLegend.SINGLETON.yellowLabel());
+		legendGrid.add(ColorLegend.SINGLETON.greyLabel());
+		toolBar.add(legendGrid);
 		return toolBar;
 	}
 
