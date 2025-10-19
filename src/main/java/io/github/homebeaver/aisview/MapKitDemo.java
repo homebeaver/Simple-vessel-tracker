@@ -14,6 +14,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -98,9 +99,13 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	/**
 	 * main method allows us to run as a standalone demo.
 	 * 
-	 * @param args params
+	 * @param args params : laf to start with {nimbus,Metal+STEEL,Metal+OCEAN}
 	 */
 	public static void main(String[] args) {
+		if (args.length > 0) {
+			List<String> a = Arrays.asList(args);
+			LaFUtils.setLAFandTheme(a);
+		}
 		SwingUtilities.invokeLater(() -> {
 			JXFrame controller = new JXFrame("controller", exitOnClose);
 			AbstractDemo demo = new MapKitDemo(controller);
