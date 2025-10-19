@@ -1,0 +1,340 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>simple vessel tracker</name>
+  <description>Java vessel tracker using aistream.io and swingx (aka swingset3)</description>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <groupId>io.github.homebeaver</groupId>
+  <artifactId>vessel-tracker</artifactId>
+  <packaging>jar</packaging>
+  <url>https://github.com/homebeaver/Simple-vessel-tracker</url>
+  <developers>
+	<developer>
+		<name>Eugen H</name>
+	</developer>
+  </developers>
+
+  <scm>
+	<url>https://github.com:homebeaver/Simple-vessel-tracker</url>
+	<connection>scm:git:https://github.com/homebeaver/Simple-vessel-tracker.git</connection>
+	<developerConnection>scm:git:https://github.com/homebeaver/</developerConnection>
+  </scm>
+  
+  <inceptionYear>2025</inceptionYear>
+
+  <licenses>
+    <license>
+      <name>Apache License Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <dependencies.swingx.version>1.7.8</dependencies.swingx.version>
+  </properties>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <name>Central Repository OSSRH</name>
+      <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  
+  <build>
+    <resources>
+		<resource>
+			<directory>${basedir}/src/main/resources</directory>
+			<includes>
+				<include>**/*.*</include>
+			</includes>
+		</resource>
+		<!-- wg. loadSourceCode : 
+		<resource>
+			<directory>${basedir}/src/main/java</directory>
+			<includes>
+				<include>**/*Demo.java</include>
+			</includes>
+		</resource>
+		-->
+	</resources>
+	
+	<plugins>
+
+	<plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-jar-plugin</artifactId>
+		<version>3.2.2</version>
+		<configuration>
+			<archive>
+				<manifest>
+					<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+					<mainClass>
+						org.jxmapviewer.demos.MapKitDemo
+					</mainClass>
+				</manifest>
+			<!-- <manifestEntries>
+                    <url>${project.url}</url>
+                    <SplashScreen-Image>swingset/images/splash.png</SplashScreen-Image>
+                </manifestEntries>
+			-->
+			</archive>
+		</configuration>
+	</plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+        	<release>17</release>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+            
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+            <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+            
+	  <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-assembly-plugin</artifactId>
+		<version>3.3.0</version>
+            <configuration>
+                <descriptorRefs>
+                	<descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+				<archive>
+					<manifest>
+						<mainClass>org.jxmapviewer.demos.MapKitDemo</mainClass>
+					</manifest>
+				</archive>
+            </configuration>
+			<executions>
+				<execution>
+					<id>make-assembly</id>
+					<phase>package</phase>
+					<goals>
+						<goal>single</goal>
+					</goals>
+				</execution>
+			</executions>
+	  </plugin>
+		    
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.5.2</version>
+        <configuration>
+            <forkCount>1</forkCount>
+            <argLine>-enableassertions</argLine>
+            <systemProperties>
+                <property>
+                    <name>LocalStorage.dir</name>
+                    <value>${project.build.testOutputDirectory}</value>
+                </property>
+            </systemProperties>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.0</version>
+        <executions>
+            <execution>
+                <id>attach-sources</id>
+                <goals>
+                    <goal>jar-no-fork</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.3.2</version>
+        <executions>
+            <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                    <goal>jar</goal>
+                </goals>
+            </execution>
+        </executions>
+      </plugin>
+ 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>3.2.7</version>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+<!-- see https://central.sonatype.org/publish/publish-maven/#distribution-management-and-authentication -->
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.13</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+
+	</plugins>
+  </build>
+
+	<dependencies>
+
+<!-- used in package io.aisstream.app , org.openapitools.client.model , dk.dma.ais.* : -->
+    <dependency>
+      <groupId>org.java-websocket</groupId>
+      <artifactId>Java-WebSocket</artifactId>
+      <version>1.5.3</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.9.1</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20231013</version>
+	</dependency>
+	<!-- type dk.dma.enav.model.geometry.Position -->
+	<dependency>
+		<groupId>dk.dma.enav</groupId>
+		<artifactId>enav-model</artifactId>
+		<version>0.6</version>
+	</dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+    <!-- wg. javax.annotation.Nonnull cannot be resolved to a type : -->
+    <dependency>
+      <groupId>com.google.code.findbugs</groupId>
+      <artifactId>jsr305</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+
+		<!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+		<dependency>
+		    <groupId>javax.inject</groupId>
+		    <artifactId>javax.inject</artifactId>
+		    <version>1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.jhlabs</groupId>
+			<artifactId>filters</artifactId>
+			<version>2.0.235-1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.jdesktop/beansbinding ??? XXX -->
+		<dependency>
+		    <groupId>org.jdesktop</groupId>
+		    <artifactId>beansbinding</artifactId>
+		    <version>1.2.1</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/net.java.dev.timingframework/timingframework -->
+		<dependency>
+		    <groupId>net.java.dev.timingframework</groupId>
+		    <artifactId>timingframework</artifactId>
+		    <version>1.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-core</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-action</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-autocomplete</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-painters</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-mapviewer</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-graphics</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-common</artifactId>
+			<version>${dependencies.swingx.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.github.homebeaver</groupId>
+			<artifactId>swingx-testsupport</artifactId>
+			<version>${dependencies.swingx.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.jgoodies/forms -->
+		<dependency>
+		    <groupId>com.jgoodies</groupId>
+		    <artifactId>forms</artifactId>
+		    <version>1.2.1</version>
+		</dependency>
+
+	</dependencies>
+</project>
