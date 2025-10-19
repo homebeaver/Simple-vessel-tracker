@@ -38,8 +38,8 @@ import org.jdesktop.swingx.renderer.IconValue;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.jdesktop.swingx.renderer.StringValues;
 import org.jdesktop.swingx.treetable.TreeTableModel;
-import org.jxmapviewer.demos.MapKitDemo;
-//import org.jdesktop.swingxset.IntroPanelDemo;
+
+import io.github.homebeaver.aisview.MapKitDemo;
 
 /*
 TODO RootFrame <> JXRootPane extends JRootPane (A lightweight container used behind the scenes by JFrame, JDialog, JWindow, JApplet, and JInternalFrame.)
