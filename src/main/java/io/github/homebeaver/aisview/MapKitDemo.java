@@ -205,27 +205,13 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		});
 		
 		mapKit.addPropertyChangeListener("candidatesToTrack", pce -> {
+			@SuppressWarnings("unchecked")
 			Vector<MetaData> v = (Vector<MetaData>)pce.getNewValue();
-			LOG.info("candidatesToTrack>>>>>>>>>> new Value:" + pce.getNewValue());
-			//DefaultComboBoxModel<MetaData> m = (DefaultComboBoxModel<MetaData>)mmsiCombo.getModel();
-//			m.removeAllElements(); // <======== 212
-//			m.addAll((Collection<? extends MetaData>)pce.getNewValue());
-/*
-Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "io.github.homebeaver.aismodel.MetaData.getMMSI()" because "item" is null
-	at io.github.homebeaver.aisview.MapKitDemo.lambda$6(MapKitDemo.java:378)
-	at java.desktop/javax.swing.JComboBox.fireActionEvent(JComboBox.java:1294)
-	at java.desktop/javax.swing.JComboBox.contentsChanged(JComboBox.java:1367)
-	at java.desktop/javax.swing.JComboBox.intervalRemoved(JComboBox.java:1387)
-	at java.desktop/javax.swing.AbstractListModel.fireIntervalRemoved(AbstractListModel.java:188)
-	at java.desktop/javax.swing.DefaultComboBoxModel.removeAllElements(DefaultComboBoxModel.java:175)
-	at io.github.homebeaver.aisview.MapKitDemo.lambda$3(MapKitDemo.java:212)
- */
-			mmsiCombo.setSelectedIndex(-1);
 			mmsiCombo.setModel(new DefaultComboBoxModel<MetaData>(v));
-			if (v.size()==1) {
+			if (v.size()>0) {
 				mmsiCombo.setSelectedIndex(0);
 			}
-//			mmsiCombo.repaint();
+			// TODO BUG in JXComboBox: beim zweiten Aufklappen ist die Klappliste zu klein
 		});
 		
 		getPosAndZoom();
@@ -274,12 +260,11 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 	private JButton miniDemoButton; // data from GitHub
 	private JButton fileDemoButton; // data from local file
 	private JButton liveButton; // data from aisstream
-	private JButton crosshairButton; // show ship static data and trace
 	
 	static private RadianceIcon start = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
 	static private RadianceIcon stop = PauseIcon.of(RadianceIcon.M, RadianceIcon.M);
 	static private RadianceIcon play = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
-	static private RadianceIcon crosshair = Crosshair.of(RadianceIcon.M, RadianceIcon.M);
+	static private RadianceIcon crosshair = Crosshair.of(RadianceIcon.SMALL_ICON, RadianceIcon.SMALL_ICON);
 	static private RadianceIcon map = io.github.homebeaver.icon.Map.of(RadianceIcon.SMALL_ICON, RadianceIcon.SMALL_ICON);
 
 	static private RadianceIcon playDisabled() {
@@ -384,6 +369,7 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
 		// Create the combo chooser box:
 		mmsiCombo = new JXComboBox<MetaData>();
 		mmsiCombo.setName("mmsiCombo");
+		mmsiCombo.setComboBoxIcon(crosshair);
 		mmsiCombo.setModel(new DefaultComboBoxModel<MetaData>());
 		mmsiCombo.setAlignmentX(LEFT_ALIGNMENT);
 		mmsiCombo.addActionListener(ae -> {
@@ -489,23 +475,6 @@ Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot in
         currentRow += 2;
         // ... TODO AIS-Flagge 
 
-		crosshairButton = fileDemoButton("crosshairButton", getBundleString("crosshairButton.text"));
-		crosshairButton.setIcon(crosshair);
-		builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
-		crosshairButton.addActionListener(ae -> {
-			int mmsi = (Integer)mmsiCombo.getSelectedItem();
-//			String mmsi = mmsiField.getText();
-			LOG.info("Show Vessel "+mmsi+" f.i. TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
-			// TODO java.lang.NumberFormatException
-			List<AisStreamMessage> v = mapKit.getVesselTrace(mmsi, MapKitDemo.this);
-			if(v!=null) {
-				setShipStaticDataFields(v);
-			} else {
-				System.out.println("nix gefunden für "+mmsi+" 219230000==TYCHO BRAHE");
-			}
-			
-		});
-		
 		return centerControls;
 	}
 	
