@@ -213,13 +213,14 @@
 
 	<dependencies>
 
-	<!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core -->
+	<!-- https://mvnrepository.com/artifact/org.locationtech.jts/jts-core 
 	<dependency>
 		<groupId>org.locationtech.jts</groupId>
 		<artifactId>jts-core</artifactId>
 		<version>1.20.0</version>
 	</dependency>
-
+	-->
+	
 <!-- used in package io.aisstream.app , org.openapitools.client.model , dk.dma.ais.* : -->
     <dependency>
       <groupId>org.java-websocket</groupId>
