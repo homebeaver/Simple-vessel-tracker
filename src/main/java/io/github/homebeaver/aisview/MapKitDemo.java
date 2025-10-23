@@ -185,11 +185,11 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		mapKit.getMainMap().addKeyListener(new PanKeyListener(mapKit.getMainMap()));
 
 		// Add painters:
-		SelectionAdapter sa = new SelectionAdapter(mapKit.getMainMap());
+		SelectionAdapter sa = new SelectionAdapter(mapKit);
 		mapKit.getMainMap().addMouseMotionListener(sa); // SelectionAdapter to get the selected Rectangle
-		SelectionPainter<JXMapViewer> selectionPainter = new SelectionPainter<>(sa);
 		mapKit.getMainMap().addMouseListener(sa);
-		mapKit.getMainMap().addMouseMotionListener(sa);
+		SelectionPainter<JXMapViewer> selectionPainter = new SelectionPainter<>(sa);
+		
 		addressLocationPainter.setRenderer(new DefaultWaypointRenderer(MapPin.of(SizingConstants.M, SizingConstants.M)));
 
 		add(mapKit, BorderLayout.CENTER);
@@ -205,7 +205,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		});
 		
 		getPosAndZoom();
-		List<Painter<JXMapViewer>> painters = new ArrayList<>(); // besser LinkedList?
+		List<Painter<JXMapViewer>> painters = new ArrayList<>();
 //		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
 		painters.add(addressLocationPainter);
 		painters.add(selectionPainter);
@@ -288,7 +288,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	}
 
 	JXPanel centerControls;
-	private JTextField mmsiField;
+	private JXComboBox<Integer> mmsiCombo; // Integer Mmsi TODO besser etwa MetaData mit Mmsi und Name
 	private JTextField nameField;
 	private JTextField imoField;
 	private JTextField callSignField;
@@ -357,16 +357,36 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
         int labelColumn = 2;
         int widgetColumn = labelColumn + 2;
         int currentRow = 3;
-        mmsiField = new JTextField(20);
-        mmsiField.setName("mmsiField");
-        mmsiField.setText(getBundleString("mmsiField.text", "219230000"));
+		// Create the combo chooser box:
+		mmsiCombo = new JXComboBox<Integer>();
+		mmsiCombo.setName("mmsiCombo");
+		mmsiCombo.setModel(createMmsiCBM());
+		mmsiCombo.setAlignmentX(LEFT_ALIGNMENT);
+//		mmsiCombo.setComboBoxIcon(map);
+//		mmsiCombo.setBorder(BorderFactory.createEmptyBorder(5,50,10,50));
+
+		mmsiCombo.addActionListener(ae -> {
+			int index = mmsiCombo.getSelectedIndex();
+			Integer item = (Integer) mmsiCombo.getSelectedItem();
+//			LOG.info("Combo.SelectedItem=" + item.getDescription());
+//			mapKit.setAddressLocation(item.getValue());
+//			mapKit.setZoom(DEFAULT_ZOOM);
+//			zoomSlider.setValue(DEFAULT_ZOOM);
+			mmsiCombo.setSelectedIndex(index);
+		});
+//		controls.add(mmsiCombo);
+//		selectLabel.setLabelFor(mmsiCombo);
+		
+//        mmsiField = new JTextField(20);
+//        mmsiField.setName("mmsiField");
+//        mmsiField.setText(getBundleString("mmsiField.text", "219230000"));
         JLabel mmsiLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
-                mmsiField, cc.xywh(widgetColumn, currentRow, 1, 1));
+        		mmsiCombo, cc.xywh(widgetColumn, currentRow, 1, 1));
         mmsiLabel.setName("mmsiLabel");
         mmsiLabel.setText(getBundleString("mmsiLabel.text", mmsiLabel));
-        mmsiField.addActionListener(ae -> {
-        	//titledPanel.setTitle(titleField.getText());
-        });
+//        mmsiField.addActionListener(ae -> {
+//        	//titledPanel.setTitle(titleField.getText());
+//        });
         currentRow += 2;
         
         nameField = new JTextField(20);
@@ -454,10 +474,11 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		crosshairButton.setIcon(crosshair);
 		builder.add(crosshairButton, cc.xywh(widgetColumn, currentRow, 1, 1));
 		crosshairButton.addActionListener(ae -> {
-			String mmsi = mmsiField.getText();
+			int mmsi = (Integer)mmsiCombo.getSelectedItem();
+//			String mmsi = mmsiField.getText();
 			LOG.info("Show Vessel "+mmsi+" f.i. TYCHO BRAHE (IMO 9007116, MMSI 219230000).");
 			// TODO java.lang.NumberFormatException
-			List<AisStreamMessage> v = mapKit.getVesselTrace(Integer.parseInt(mmsi), MapKitDemo.this);
+			List<AisStreamMessage> v = mapKit.getVesselTrace(mmsi, MapKitDemo.this);
 			if(v!=null) {
 				setShipStaticDataFields(v);
 			} else {
@@ -609,6 +630,12 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return toolBar;
 	}
 
+	private ComboBoxModel<Integer> createMmsiCBM() {
+		MutableComboBoxModel<Integer> model = new DefaultComboBoxModel<Integer>();
+//		model.removeAllElements(); // undefined for interface MutableComboBoxModel
+//		model.addElement(Integer.valueOf(219230000));
+		return model;
+	}
 	private ComboBoxModel<DisplayInfo<GeoPosition>> createCBM() {
 		MutableComboBoxModel<DisplayInfo<GeoPosition>> model = new DefaultComboBoxModel<DisplayInfo<GeoPosition>>();
 		nameToGeoPosition.forEach((k, v) -> {
@@ -656,25 +683,6 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
         tableRows = new JLabel("0");
         bar.add(tableRows);
         bar.add(Box.createRigidArea(new Dimension(5, 22)));
-//        JPanel tb = new JPanel(new GridLayout(1,8, 0, 5));
-//    	toolBar.add(ColorLegend.SINGLETON.blueLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.redLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.greenLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.orangeLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.magentaLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.cyanLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.yellowLabel());
-//    	toolBar.add(ColorLegend.SINGLETON.greyLabel());
-// sieht nicht aus:
-//        tb.add(ColorLegend.SINGLETON.blueButton());
-//        tb.add(ColorLegend.SINGLETON.redButton());
-//        tb.add(ColorLegend.SINGLETON.greenButton());
-//        tb.add(ColorLegend.SINGLETON.orangeButton());
-//        tb.add(ColorLegend.SINGLETON.magentaButton());
-//        tb.add(ColorLegend.SINGLETON.cyanButton());
-//        tb.add(ColorLegend.SINGLETON.yellowButton());
-//        tb.add(ColorLegend.SINGLETON.greyButton());
-//        bar.add(tb);
 
         statusBar.add(bar);
         statusBar.add(Box.createHorizontalStrut(12));
@@ -691,7 +699,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			put("Eugene Oregon", new GeoPosition(44.058333, -123.068611));
 			put("London", new GeoPosition(51.5, 0));
 			put("Madeira (Trail)", new GeoPosition(32.81, -17.141)); // with track
-			put(DEFAULT_MAP, new GeoPosition(55.70, 12.54)); // // "København - Øresund"
+			put(DEFAULT_MAP, new GeoPosition(55.70, 12.54)); // "København - Øresund"
 		}
 	};
 
