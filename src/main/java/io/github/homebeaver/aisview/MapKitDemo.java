@@ -1,5 +1,3 @@
-/* created from jxmapviewer sample6_mapkit
-*/ 
 package io.github.homebeaver.aisview;
 
 import java.awt.BorderLayout;
@@ -20,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
@@ -79,6 +78,7 @@ import dk.dma.ais.message.NavigationalStatus;
 import dk.dma.ais.message.ShipTypeCargo;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.MetaData;
 import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 import io.github.homebeaver.icon.Crosshair;
@@ -196,12 +196,36 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 //		add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
 
 		mapKit.addPropertyChangeListener("zoom", pce -> {
-			LOG.info("---------------------pce:" + pce);
+			LOG.info("zoom ---------------------pce:" + pce);
 			getPosAndZoom();
 		});
 		mapKit.addPropertyChangeListener("center", pce -> {
 			GeoPosition pos = getPosAndZoom();
 			mapKit.setCenterPosition(pos);
+		});
+		
+		mapKit.addPropertyChangeListener("candidatesToTrack", pce -> {
+			Vector<MetaData> v = (Vector<MetaData>)pce.getNewValue();
+			LOG.info("candidatesToTrack>>>>>>>>>> new Value:" + pce.getNewValue());
+			//DefaultComboBoxModel<MetaData> m = (DefaultComboBoxModel<MetaData>)mmsiCombo.getModel();
+//			m.removeAllElements(); // <======== 212
+//			m.addAll((Collection<? extends MetaData>)pce.getNewValue());
+/*
+Exception in thread "AWT-EventQueue-0" java.lang.NullPointerException: Cannot invoke "io.github.homebeaver.aismodel.MetaData.getMMSI()" because "item" is null
+	at io.github.homebeaver.aisview.MapKitDemo.lambda$6(MapKitDemo.java:378)
+	at java.desktop/javax.swing.JComboBox.fireActionEvent(JComboBox.java:1294)
+	at java.desktop/javax.swing.JComboBox.contentsChanged(JComboBox.java:1367)
+	at java.desktop/javax.swing.JComboBox.intervalRemoved(JComboBox.java:1387)
+	at java.desktop/javax.swing.AbstractListModel.fireIntervalRemoved(AbstractListModel.java:188)
+	at java.desktop/javax.swing.DefaultComboBoxModel.removeAllElements(DefaultComboBoxModel.java:175)
+	at io.github.homebeaver.aisview.MapKitDemo.lambda$3(MapKitDemo.java:212)
+ */
+			mmsiCombo.setSelectedIndex(-1);
+			mmsiCombo.setModel(new DefaultComboBoxModel<MetaData>(v));
+			if (v.size()==1) {
+				mmsiCombo.setSelectedIndex(0);
+			}
+//			mmsiCombo.repaint();
 		});
 		
 		getPosAndZoom();
@@ -288,7 +312,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	}
 
 	JXPanel centerControls;
-	private JXComboBox<Integer> mmsiCombo; // Integer Mmsi TODO besser etwa MetaData mit Mmsi und Name
+	private JXComboBox<MetaData> mmsiCombo;
 	private JTextField nameField;
 	private JTextField imoField;
 	private JTextField callSignField;
@@ -358,35 +382,30 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
         int widgetColumn = labelColumn + 2;
         int currentRow = 3;
 		// Create the combo chooser box:
-		mmsiCombo = new JXComboBox<Integer>();
+		mmsiCombo = new JXComboBox<MetaData>();
 		mmsiCombo.setName("mmsiCombo");
-		mmsiCombo.setModel(createMmsiCBM());
+		mmsiCombo.setModel(new DefaultComboBoxModel<MetaData>());
 		mmsiCombo.setAlignmentX(LEFT_ALIGNMENT);
-//		mmsiCombo.setComboBoxIcon(map);
-//		mmsiCombo.setBorder(BorderFactory.createEmptyBorder(5,50,10,50));
-
 		mmsiCombo.addActionListener(ae -> {
 			int index = mmsiCombo.getSelectedIndex();
-			Integer item = (Integer) mmsiCombo.getSelectedItem();
-//			LOG.info("Combo.SelectedItem=" + item.getDescription());
-//			mapKit.setAddressLocation(item.getValue());
-//			mapKit.setZoom(DEFAULT_ZOOM);
-//			zoomSlider.setValue(DEFAULT_ZOOM);
-			mmsiCombo.setSelectedIndex(index);
+			if (index==-1) {
+				LOG.info("index==-1");
+			} else {
+				MetaData item = (MetaData) mmsiCombo.getSelectedItem();
+				LOG.info("Combo.SelectedItem=" + item.getMMSI() + " " + item.getShipName());
+				mmsiCombo.setSelectedIndex(index);
+				List<AisStreamMessage> v = mapKit.getVesselTrace(item.getMMSI(), MapKitDemo.this);
+				if(v!=null) {
+					setShipStaticDataFields(v);
+				} else {
+					System.out.println("nix gefunden für "+item.getMMSI()+" SelectedItem");
+				}
+			}
 		});
-//		controls.add(mmsiCombo);
-//		selectLabel.setLabelFor(mmsiCombo);
-		
-//        mmsiField = new JTextField(20);
-//        mmsiField.setName("mmsiField");
-//        mmsiField.setText(getBundleString("mmsiField.text", "219230000"));
         JLabel mmsiLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
         		mmsiCombo, cc.xywh(widgetColumn, currentRow, 1, 1));
         mmsiLabel.setName("mmsiLabel");
         mmsiLabel.setText(getBundleString("mmsiLabel.text", mmsiLabel));
-//        mmsiField.addActionListener(ae -> {
-//        	//titledPanel.setTitle(titleField.getText());
-//        });
         currentRow += 2;
         
         nameField = new JTextField(20);
@@ -630,12 +649,6 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return toolBar;
 	}
 
-	private ComboBoxModel<Integer> createMmsiCBM() {
-		MutableComboBoxModel<Integer> model = new DefaultComboBoxModel<Integer>();
-//		model.removeAllElements(); // undefined for interface MutableComboBoxModel
-//		model.addElement(Integer.valueOf(219230000));
-		return model;
-	}
 	private ComboBoxModel<DisplayInfo<GeoPosition>> createCBM() {
 		MutableComboBoxModel<DisplayInfo<GeoPosition>> model = new DefaultComboBoxModel<DisplayInfo<GeoPosition>>();
 		nameToGeoPosition.forEach((k, v) -> {

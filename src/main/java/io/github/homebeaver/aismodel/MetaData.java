@@ -85,9 +85,15 @@ public class MetaData {
 		return this;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getMMSI()).append(" ").append(getShipName());
+		return sb.toString();
+	}
+
 	private static final char COLON = ':';
 	private static final char COMMA = ',';
-	public String toString() {
+	public String toStringFull() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("class MetaData {");
 		sb.append(TIME_UTC).append(COLON).append(time_utc);

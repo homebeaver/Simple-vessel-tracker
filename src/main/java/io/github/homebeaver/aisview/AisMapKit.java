@@ -21,6 +21,7 @@ import dk.dma.ais.message.ShipTypeCargo;
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
+import io.github.homebeaver.aismodel.MetaData;
 import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 import io.github.homebeaver.aismodel.StandardClassBPositionReport;
@@ -38,6 +39,21 @@ public class AisMapKit extends JXMapKit {
 	CompoundPainter<JXMapViewer> overlayPainter;
 // in JXMapKit.mainMap :   private Painter<? super JXMapViewer> overlay;
 	
+	private static final String CANDIDATESTOTRACK_PROPNAME = "candidatesToTrack";
+	/**
+	 * there are a couple vessels as candidates to track (can be empty)
+	 */
+	private List<MetaData> candidatesToTrack = new Vector<MetaData>();
+	void setCandidatesToTrack(List<Integer> mmsiList) {
+		List<MetaData> old = this.candidatesToTrack;
+		List<MetaData> neu = new Vector<MetaData>();
+		mmsiList.forEach( i -> {
+			neu.add(map.get(i).get(0).getMetaData());
+		});
+		this.candidatesToTrack = neu;
+		firePropertyChange(CANDIDATESTOTRACK_PROPNAME, old, neu);
+	}
+	
 	private static final String MMSITOTRACK_PROPNAME = "mmsiToTrack";
 	/**
 	 * there is one vessel to track (or nothing)
@@ -54,7 +70,7 @@ public class AisMapKit extends JXMapKit {
 	 * bevor man für die neue Position einen neuen erstellt:
 	 * 	 overlayPainter.addPainter(shipLocationPainter);
 	 */
-	private Map<Integer, WaypointPainter<Waypoint>> locationPainters;
+	Map<Integer, WaypointPainter<Waypoint>> locationPainters;
 	
 	public AisMapKit() {
 		super();
