@@ -90,7 +90,23 @@ public class AisStreamMessage {
 			case AIDSTONAVIGATIONREPORT:
 //	TODO		res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
+			case ADDRESSEDBINARYMESSAGE:
+//	TODO		res.message = AddressedBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case BINARYACKNOWLEDGE:
+//	TODO		res.message = BinaryAcknowledge.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case GNSSBROADCASTBINARYMESSAGE:
+//	TODO		res.message = GnssBroadcastBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case INTERROGATION:
+//	TODO		res.message = Interrogation.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
 			default:
+				// Unhandled message type: GnssBroadcastBinaryMessage
+				// Unhandled message type: BinaryAcknowledge
+				// Unhandled message type: Interrogation
+				// Unhandled message type: AddressedBinaryMessage
 				System.out.println("Unhandled message type: " + res.messageType);
 			}
 		} catch (JSONException e) {
