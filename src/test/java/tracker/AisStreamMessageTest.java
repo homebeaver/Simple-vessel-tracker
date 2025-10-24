@@ -8,18 +8,18 @@ import java.util.Map;
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
-import io.github.homebeaver.aismodel.AisStreamMessage.MeldungenCallback;
+import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
 import io.github.homebeaver.aismodel.PositionReport;
 
-public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rename to AisStreamMessageTest
+public class AisStreamMessageTest implements AisStreamCallback<AisStreamMessage> { // rename to AisStreamMessageTest
 	
 	static final String TEST_DATA = "data/aisstream.txt";
 	static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/"+TEST_DATA;
 
 	public static void main(String[] args) throws URISyntaxException {
-//		URL url = StreamTest.class.getClassLoader().getResource(TEST_DATA);
-		URL url = StreamTest.class.getClassLoader().getResource("aisstream.txt");
-		StreamTest st = new StreamTest();
+//		URL url = AisStreamMessageTest.class.getClassLoader().getResource(TEST_DATA);
+		URL url = AisStreamMessageTest.class.getClassLoader().getResource("aisstream.txt");
+		AisStreamMessageTest st = new AisStreamMessageTest();
 //		AisStreamMessage.liesUrl(url, st);
 		AisStreamMessage.liesUrl(GITHUB_URL, st);
 		st.report();
@@ -31,7 +31,7 @@ public class StreamTest implements MeldungenCallback<AisStreamMessage> { // rena
 	
 	
 	@Override
-	public void ausgabeMeldung(AisStreamMessage msg) {
+	public void outMessage(AisStreamMessage msg) {
 		lines++;
 		if(msg==null) {
 			msgNull++;

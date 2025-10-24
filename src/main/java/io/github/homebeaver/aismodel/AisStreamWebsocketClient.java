@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
-import io.github.homebeaver.aismodel.AisStreamMessage.MeldungenCallback;
+import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
 
 /**
  * This example demonstrates how to create a websocket connection to a server. Only the most

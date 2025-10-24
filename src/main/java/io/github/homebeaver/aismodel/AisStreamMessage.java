@@ -103,18 +103,19 @@ public class AisStreamMessage {
 	 * Zwischenergebnissen waehrend der Verarbeitung, 
 	 * damit beliebige GUIs moeglich sind.
 	 */
-	public static interface MeldungenCallback<V> { // TODO umbenennen
-		void ausgabeMeldung(V v);
+	public static interface AisStreamCallback<V> {
+		void outMessage(V v);
 	}
-	public static class ConsoleCallback implements MeldungenCallback<AisStreamMessage> {
+	public static class ConsoleCallback implements AisStreamCallback<AisStreamMessage> {
 		@Override
-		public void ausgabeMeldung(AisStreamMessage msg) {
-			if(msg!=null)
-			System.out.println(""+msg.getAisMessageType() + msg.getMetaData());
+		public void outMessage(AisStreamMessage msg) {
+			if(msg!=null) {
+				System.out.println(""+msg.getAisMessageType() + " " + msg.getMetaData().toStringFull());
+			}
 		}
 	}
 
-	public static Boolean liesUrl(URL fileurl, MeldungenCallback<AisStreamMessage> meldungenCallback) {
+	public static Boolean liesUrl(URL fileurl, AisStreamCallback<AisStreamMessage> meldungenCallback) {
 		try {
 			System.out.println("starting with fileurl: " + fileurl);
 			File file = new File(fileurl.toURI());
@@ -125,11 +126,11 @@ public class AisStreamMessage {
 		}
 	}
 	// used in MessageLoader
-	public static Boolean liesUrl(BufferedReader reader, MeldungenCallback<AisStreamMessage> meldungenCallback) {
+	public static Boolean liesUrl(BufferedReader reader, AisStreamCallback<AisStreamMessage> meldungenCallback) {
 		try {
 			String line;
 			while ((line = reader.readLine()) != null) {
-				meldungenCallback.ausgabeMeldung(AisStreamMessage.fromJson(line));
+				meldungenCallback.outMessage(AisStreamMessage.fromJson(line));
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -138,7 +139,7 @@ public class AisStreamMessage {
 		}
 		return Boolean.TRUE;
 	}
-	public static Boolean liesUrl(String url, MeldungenCallback<AisStreamMessage> meldungenCallback) {
+	public static Boolean liesUrl(String url, AisStreamCallback<AisStreamMessage> meldungenCallback) {
 		System.out.println("starting with " + url);
 		try {
 			InputStream input = new URL(url).openStream();

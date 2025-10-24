@@ -1,7 +1,6 @@
 package io.github.homebeaver.aismodel;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -14,6 +13,8 @@ import java.util.logging.Logger;
 
 import org.json.JSONException;
 
+import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
+
 // XXX Singleton ?
 public class MessageReader {
 
@@ -24,14 +25,10 @@ public class MessageReader {
 	public static void mainX(String[] args) {
 		AisStreamMessage.liesUrl(GITHUB_URL, new AisStreamMessage.ConsoleCallback());
 	}
-	public static void mainXX(String[] args) {
-		URL url = MessageReader.class.getClassLoader().getResource("data/aisstream.txt");
-		// Resource-URL aus main
-		AisStreamMessage.liesUrl(url, new AisStreamMessage.ConsoleCallback());
-	}
 	public static void main(String[] args) {
+		// diese Testdaten sind nicht in github
 		String textdatei = ( args != null && args.length > 0 ) ? args[0] : "src/test/java/aisstream.txt";
-		System.out.println("starting with " + textdatei);
+		System.out.println("start mit " + textdatei);
 		try {
 			BufferedReader in = new BufferedReader( new InputStreamReader( new FileInputStream( textdatei ) ) );
 			AisStreamMessage.liesUrl(in, new AisStreamMessage.ConsoleCallback());
@@ -40,62 +37,23 @@ public class MessageReader {
 			e.printStackTrace();
 		}
 	}
+	public static void mainXX(String[] args) {
+		URL url = MessageReader.class.getClassLoader().getResource("data/aisstream.txt");
+		// Resource-URL aus main
+		AisStreamMessage.liesUrl(url, new AisStreamMessage.ConsoleCallback());
+	}
 
 	/*
 	 * Konkrete Implementierung der Callback-Klasse zur Ausgabe von
 	 * Zwischenergebnissen auf der Konsole.
 	 */
-	public static class KonsoleMeldungenCallback implements AisStreamMessage.MeldungenCallback<String> {
+	// zählt die MMSI XXX das wird nicht mehr verwendet TODO überprüfen
+	public static class KonsoleMeldungenCallback implements AisStreamMessage.AisStreamCallback<String> {
 		@Override
-		public void ausgabeMeldung(String s) {
+		public void outMessage(String s) {
 			System.out.println(s);
 		}
 	}
-
-	   public static void mainXXX( String[] args )
-	   {
-	      String textdatei = ( args != null && args.length > 0 ) ? args[0] : "src/test/java/de/torsten/horn/DateiLeserMitCallback.java";
-	      String charEncod = ( args != null && args.length > 1 ) ? args[1] : "ISO-8859-1";
-	      liesTextdatei( textdatei, charEncod, new KonsoleMeldungenCallback() );
-	   }
-	   
-	   /** "Arbeitsmethode" mit Callback zum Returnieren von Zwischenergebnissen waehrend der Verarbeitung. */
-	   public static Boolean liesTextdatei( String textdatei, String charEncod, AisStreamMessage.MeldungenCallback<String> meldungenCallback )
-	   {
-	      String ausgabeAbgrenzung = "------------------------------------------------------------------";
-	      meldungenCallback.ausgabeMeldung( "\n" + ausgabeAbgrenzung );
-
-	      if( textdatei == null || textdatei.trim().length() == 0 ) {
-	         meldungenCallback.ausgabeMeldung( "Fehler: Dateiname ist leer." );
-	         return Boolean.FALSE;
-	      }
-	      if( !(new File( textdatei )).exists() ) {
-	         meldungenCallback.ausgabeMeldung( "Fehler: Datei " + textdatei + " existiert nicht." );
-	         return Boolean.FALSE;
-	      }
-
-	      meldungenCallback.ausgabeMeldung( "Textdateianzeige" );
-	      meldungenCallback.ausgabeMeldung( "Textdatei:        " + textdatei );
-	      meldungenCallback.ausgabeMeldung( "Zeichenkodierung: " + charEncod );
-	      meldungenCallback.ausgabeMeldung( ausgabeAbgrenzung );
-
-	      try( BufferedReader in = new BufferedReader( new InputStreamReader( new FileInputStream( textdatei ), charEncod ) ) ) {
-	         String line;
-	         while( (line = in.readLine()) != null ) {
-	            meldungenCallback.ausgabeMeldung( line );
-	            // Zur Simulation berechnungsintensiver Aufgaben:
-	            Thread.sleep( 10 );
-	         }
-	      } catch( Exception ex ) {
-	         meldungenCallback.ausgabeMeldung( "Fehler-Exception: " + ex.getMessage() + "\n" + ex.toString() );
-	         return Boolean.FALSE;
-	      }
-
-	      meldungenCallback.ausgabeMeldung( ausgabeAbgrenzung );
-	      meldungenCallback.ausgabeMeldung( "Fertig." );
-	      meldungenCallback.ausgabeMeldung( ausgabeAbgrenzung );
-	      return Boolean.TRUE;
-	   }
 
 	private Map<Integer, List<AisStreamMessage>> map = null;
 
