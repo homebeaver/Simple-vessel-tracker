@@ -49,11 +49,6 @@ public class AisStreamMessage {
 		AisStreamMessage res = new AisStreamMessage();
 		try {
 			JSONObject jo = new JSONObject(messageJson);
-			Object error = jo.get(SERIALIZED_NAME_ERROR);
-			if (error instanceof String err) {
-				//System.out.println(error);
-				throw new JSONException(err);
-			}
 			res.messageType = AisMessageTypes.fromValue(jo.getString(SERIALIZED_NAME_MESSAGE_TYPE));
 //			System.out.println(">>>"+res.messageType.toString());
 			res.metaData = MetaData.fromJson(jo.getJSONObject(SERIALIZED_NAME_METADATA));
@@ -100,9 +95,16 @@ public class AisStreamMessage {
 			}
 		} catch (JSONException e) {
 			// {"error": "Api Key Is Not Valid"}
-//	    	logger.error("Error creating AisStreamMessage ", e);
-			System.out.println("Error creating AisStreamMessage "+ e
-					+"\n message:"+messageJson);
+			JSONObject jo = new JSONObject(messageJson);
+			Object error = jo.get(SERIALIZED_NAME_ERROR);
+			if (error instanceof String err) {
+				System.out.println(err);
+//				throw new JSONException(err);
+			} else {
+//		    	logger.error("Error creating AisStreamMessage ", e);
+				System.out.println("Error creating AisStreamMessage "+ e
+						+"\n message:"+messageJson);
+			}
 		}
 		return res.message==null ? null : res;
 	}
