@@ -27,6 +27,7 @@ import io.github.homebeaver.icon.Circle;
 import io.github.homebeaver.icon.Crosshair;
 import io.github.homebeaver.icon.Vessel;
 
+@Deprecated // ==> statdessen AisMapKit verwenden, dort ist Zoomer und MiniMap integriert
 public class AisMapViewer extends JXMapViewer {
 
 	private static final long serialVersionUID = 8162164255394960216L;
