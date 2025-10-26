@@ -16,7 +16,7 @@ import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
  */
 /*
 Änderungen zu orig git@github.com:aisstream/example.git subdir java
-- proj nature nicht maven, sondern schlicjt java
+- proj nature nicht maven, sondern schlicht java
 -- dadurch lib notwendig mit slf4j und Java-WebSocket jars
 - APIKey fest als string in OnOpen
 
@@ -29,6 +29,9 @@ https://deepwiki.com/aisstream
  North Atlantic    [[[-80, 0], [-10, 60]]]        North Atlantic region
  Mediterranean     [[[-6, 30], [36, 46]]]        Mediterranean Sea region
  The baltic sea stretches from 53°N to 66°N latitude and from 10°E to 30°E longitude
+ 
+ Overlapping Regions: 
+ If you define multiple overlapping bounding boxes, you may receive duplicate messages.
  
  Daten & RxJava:
  Static ship data from AIS reports as detected in the Australian region of interest in 2014:
@@ -48,19 +51,24 @@ public class AisStreamWebsocketClient extends WebSocketClient {
 //    SW: GeoPosition:[55.24311788040884, 11.612548828125] (55 14.587N, 011 36.753E)
 
     String apikey;
+    String boundingBoxes;
 
-    public AisStreamWebsocketClient(boolean connect, String apikey) throws URISyntaxException {
-        super(new URI(WSS_AISSTREAM_URI));
-        this.apikey = apikey;
-        if (connect) {
-        	this.connect();
-        }
-    }
+	public AisStreamWebsocketClient(boolean connect, AisStreamKey apikey) throws URISyntaxException {
+		this(connect, apikey, BALTICSEA);
+	}
+	public AisStreamWebsocketClient(boolean connect, AisStreamKey apikey, String boundingBox) throws URISyntaxException {
+		super(new URI(WSS_AISSTREAM_URI));
+		this.apikey = apikey.getKey();
+		this.boundingBoxes = boundingBox;
+		if (connect) {
+			this.connect();
+		}
+	}
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         // send subscription message upon connection
-        send("{\"APIKey\":\""+apikey+"\",\"BoundingBoxes\":"+OERESUND+"}");
+        send("{\"APIKey\":\""+apikey+"\",\"BoundingBoxes\":"+boundingBoxes+"}");
     }
 
     @Override
@@ -77,6 +85,9 @@ public class AisStreamWebsocketClient extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         // The close codes are documented in class org.java_websocket.framing.CloseFrame
+    	//   public static final int NORMAL = 1000;
+    	//                                    1004: Reserved
+    	//   public static final int ABNORMAL_CLOSE = 1006; ungültiger API-Key
         System.out.println(
                 "Connection closed by " + (remote ? "remote peer" : "us") + " Code: " + code + " Reason: " + reason);
     }
