@@ -102,11 +102,10 @@ public class AisStreamMessage {
 			case INTERROGATION:
 //	TODO		res.message = Interrogation.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
+			case ASSIGNEDMODECOMMAND:
+//	TODO		res.message = AssignedModeCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
 			default:
-				// Unhandled message type: GnssBroadcastBinaryMessage
-				// Unhandled message type: BinaryAcknowledge
-				// Unhandled message type: Interrogation
-				// Unhandled message type: AddressedBinaryMessage
 				System.out.println("Unhandled message type: " + res.messageType);
 			}
 		} catch (JSONException e) {
