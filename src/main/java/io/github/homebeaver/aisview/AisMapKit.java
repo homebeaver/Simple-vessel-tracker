@@ -233,7 +233,7 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 				int iconsize = shipLenght==null ? 0 : shipLenght/9; // XXX
 				if(iconsize<18) iconsize = 18;
 				icon = Vessel.of(iconsize, iconsize);
-				icon.setRotation(cog); // Kurs
+				icon.setRotation(Math.toRadians(cog)); // Kurs in rad
 			}
 			if(type!=null) {
 				int shiptype = type;
