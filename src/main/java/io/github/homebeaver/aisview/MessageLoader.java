@@ -124,7 +124,9 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		 */
 		SwingCallback smc = new SwingCallback();
 		AisStreamKeyProvider keyProvider = AisStreamKeyProvider.getInstance();
-		keyProvider.run(); // key aus konsole
+		if(keyProvider.getKey()==null) {
+			keyProvider.run(); // key aus konsole
+		}
 		AisStreamWebsocketClient client = new AisStreamWebsocketClient(true, keyProvider, boundingBox) {
 			@Override
 			public void onMessage(ByteBuffer message) {
