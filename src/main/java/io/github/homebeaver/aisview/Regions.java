@@ -89,12 +89,13 @@ public class Regions {
 
 // TODO Suezkanal , West- und Ostküste der USA , Karibik , Straße von Singapur , Ostsee , Istanbul
 
-		r = new Region();
-		r = r.name("Panama Canal").descriptionCenter("Panama") // Panamekanal
-			.boundingBox("[[[9.300, -80.000], [8.200, -79.000]]]") // NW, SE
-			.zoom(9)
-			.center(new GeoPosition(8,58,15, -80,27,5));
-		nameToRegion.put(r.name, r);
+// comment AisStream sendet nur sporadisch aus Panama (in 10min ca 15 Schiffe, keine im Kanal)
+//		r = new Region();
+//		r = r.name("Panama Canal").descriptionCenter("Panama") // Panamekanal
+//			.boundingBox("[[[9.450, -80.000], [8.200, -79.000]]]") // NW, SE
+//			.zoom(9)
+//			.center(new GeoPosition(8,58,15, -80,27,5));
+//		nameToRegion.put(r.name, r);
 
 		r = new Region();
 		r = r.name(DEFAULT_REGION).descriptionCenter("København")
