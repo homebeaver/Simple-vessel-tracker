@@ -20,7 +20,6 @@ public class Regions {
 	}
 
 	// The preferred size of the panel
-	// TODO in AbstractDemo entfernen
 	static int PREFERRED_WIDTH = 680;
 	static int PREFERRED_HEIGHT = 600;
 	public static final Dimension PREFERRED_SIZE = new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);

@@ -23,6 +23,7 @@ import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.util.Utilities;
 
+import io.github.homebeaver.aisview.Regions;
 import io.github.homebeaver.swingset.demo.MainJXframe;
 
 /**
@@ -37,10 +38,7 @@ public abstract class AbstractDemo extends JXPanel {
 	
 	protected static final boolean exitOnClose = true; // used in JXFrame of the demo
 	
-	// The preferred size of the demo
-    static int PREFERRED_WIDTH = 680;
-    static int PREFERRED_HEIGHT = 600;
-    public static final Dimension PREFERRED_SIZE = new Dimension(PREFERRED_WIDTH, PREFERRED_HEIGHT);
+    public static final Dimension PREFERRED_SIZE = Regions.PREFERRED_SIZE;
 
     // Premade convenience dimensions, for use wherever you need 'em.
     /** convenience dimension for horizontal gap */
