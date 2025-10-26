@@ -17,7 +17,9 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
+import io.aisstream.app.API_Key_Provider;
 import io.aisstream.app.App;
+import io.github.homebeaver.aismodel.AisStreamKeyProvider;
 import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.AisStreamWebsocketClient;
 
@@ -42,6 +44,7 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 
 	private static final Logger LOG = Logger.getLogger(MessageLoader.class.getName());
 	private String testdata;
+	private String boundingBox;
 	private URL url;
 	private final AisMapKit amv;
 	private final JLabel counter;
@@ -56,11 +59,12 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		this.cnt = 0; // zählt auch die null-Nachrichten
 	}
 
-	public MessageLoader(URL url, AisMapKit amv, JLabel counter) {
+	public MessageLoader(URL url, AisMapKit amv, JLabel counter, String boundingBox) {
 		super();
 		this.url = url;
 		this.amv = amv;
 		this.counter = counter;
+		this.boundingBox = boundingBox;
 		this.cnt = 0; // zählt auch die null-Nachrichten
 	}
 
@@ -119,7 +123,9 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		 * Das finale Return-Ergebnis kann in der "done()"-Methode per "get()" abgefragt werden.
 		 */
 		SwingCallback smc = new SwingCallback();
-		AisStreamWebsocketClient client = new AisStreamWebsocketClient(true, App.AN_APIKEY) {
+		AisStreamKeyProvider keyProvider = AisStreamKeyProvider.getInstance();
+		keyProvider.run(); // key aus konsole
+		AisStreamWebsocketClient client = new AisStreamWebsocketClient(true, keyProvider, boundingBox) {
 			@Override
 			public void onMessage(ByteBuffer message) {
 				String jsonString = StandardCharsets.UTF_8.decode(message).toString();

@@ -13,10 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -125,8 +123,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		});
 	}
 
-	private static final int DEFAULT_ZOOM = 10; // OSM MAX_ZOOM is 19;
-	private static final String DEFAULT_MAP = "København - Øresund";
+	private static final String DEFAULT_REGION = Regions.DEFAULT_REGION;
 	private TileFactoryInfo info;
 	private AisMapKit mapKit;
 
@@ -141,8 +138,8 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		super.setPreferredSize(PREFERRED_SIZE);
 		super.setBorder(new BevelBorder(BevelBorder.LOWERED));
 
-		// Create a TileFactoryInfo for OpenStreetMap
-		info = new OSMTileFactoryInfo();
+		// Create a TileFactoryInfo for OpenStreetMap TODO in swingx 
+		info = new OSMTileFactoryInfo("OpenStreetMap", "https://tile.openstreetmap.org");
 		DefaultTileFactory tileFactory = new DefaultTileFactory(info);
 
 		// Setup local file cache
@@ -161,12 +158,12 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		mapKit.setName("mapKit");
 		mapKit.setTileFactory(tileFactory);
 
-		// Use 8 threads in parallel to load the tiles
-		tileFactory.setThreadPoolSize(8);
+		// threads in parallel to load the tiles
+		tileFactory.setThreadPoolSize(2);
 
 		// Set the zoom and focus to Øresund
-		mapKit.setZoom(DEFAULT_ZOOM);
-		mapKit.setAddressLocation(nameToGeoPosition.get(DEFAULT_MAP));
+		mapKit.setZoom(Regions.getInstance().getZoom(DEFAULT_REGION));
+		mapKit.setAddressLocation(Regions.getInstance().getCenter(DEFAULT_REGION));
 
 		mapKit.getMainMap().setRestrictOutsidePanning(true); // ???
 		mapKit.getMainMap().setHorizontalWrapped(false);
@@ -256,7 +253,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	MessageLoader ml; // SwingWorker
 	
 	// controller:
-	private JXComboBox<DisplayInfo<GeoPosition>> positionChooserCombo;
+	private JXComboBox<DisplayInfo<Regions.Region>> positionChooserCombo;
 	private JButton miniDemoButton; // data from GitHub
 	private JButton fileDemoButton; // data from local file
 	private JButton liveButton; // data from aisstream
@@ -492,7 +489,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		controls.add(selectLabel);
 
 		// Create the combo chooser box:
-		positionChooserCombo = new JXComboBox<DisplayInfo<GeoPosition>>();
+		positionChooserCombo = new JXComboBox<DisplayInfo<Regions.Region>>();
 		positionChooserCombo.setName("positionChooserCombo");
 		positionChooserCombo.setModel(createCBM());
 		positionChooserCombo.setAlignmentX(LEFT_ALIGNMENT);
@@ -502,11 +499,10 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		positionChooserCombo.addActionListener(ae -> {
 			int index = positionChooserCombo.getSelectedIndex();
 			@SuppressWarnings("unchecked")
-			DisplayInfo<GeoPosition> item = (DisplayInfo<GeoPosition>) positionChooserCombo.getSelectedItem();
+			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
 			LOG.info("Combo.SelectedItem=" + item.getDescription());
-			mapKit.setAddressLocation(item.getValue());
-			mapKit.setZoom(DEFAULT_ZOOM);
-//			zoomSlider.setValue(DEFAULT_ZOOM);
+			mapKit.setAddressLocation(item.getValue().getGeoPosition());
+			mapKit.setZoom(item.getValue().getZoom());
 			positionChooserCombo.setSelectedIndex(index);
 		});
 		controls.add(positionChooserCombo);
@@ -563,7 +559,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			// damit der Event Dispatch Thread (EDT) nicht blockiert wird:
 			// file aus GITHUB gebremst 50ms
 			try {
-				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapKit, getCounter());
+				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapKit, getCounter(), null);
 				ml.setSleep(50);
 				ml.execute();
 			} catch (MalformedURLException e) {
@@ -592,7 +588,8 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			if (liveButton.getIcon() == start) {
 				liveButton.setIcon(stop);
 				// Live:
-				ml = new MessageLoader((URL) null, mapKit, getCounter());
+				DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+				ml = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
 				ml.execute();
 			} else {
 				liveButton.setIcon(start);
@@ -618,10 +615,10 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return toolBar;
 	}
 
-	private ComboBoxModel<DisplayInfo<GeoPosition>> createCBM() {
-		MutableComboBoxModel<DisplayInfo<GeoPosition>> model = new DefaultComboBoxModel<DisplayInfo<GeoPosition>>();
-		nameToGeoPosition.forEach((k, v) -> {
-			model.addElement(new DisplayInfo<GeoPosition>(k, v));
+	private ComboBoxModel<DisplayInfo<Regions.Region>> createCBM() {
+		MutableComboBoxModel<DisplayInfo<Regions.Region>> model = new DefaultComboBoxModel<DisplayInfo<Regions.Region>>();
+		Regions.getInstance().getRegions().forEach((k, v) -> {
+			model.addElement(new DisplayInfo<Regions.Region>(k, v));
 		});
 		return model;
 	}
@@ -670,19 +667,5 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
         statusBar.add(Box.createHorizontalStrut(12));
         return statusBar;
     }
-
-	@SuppressWarnings("serial")
-	private static final Map<String, GeoPosition> nameToGeoPosition = new HashMap<>() {
-		{
-			put("Berlin", new GeoPosition(52, 31, 0, 13, 24, 0));
-			put("Darmstadt", new GeoPosition(49, 52, 0, 8, 39, 0));
-			put("Frankfurt am Main", new GeoPosition(50.11, 8.68));
-			put("Java, Mt.Merapi", new GeoPosition(-7.541389, 110.446111));
-			put("Eugene Oregon", new GeoPosition(44.058333, -123.068611));
-			put("London", new GeoPosition(51.5, 0));
-			put("Madeira (Trail)", new GeoPosition(32.81, -17.141)); // with track
-			put(DEFAULT_MAP, new GeoPosition(55.70, 12.54)); // "København - Øresund"
-		}
-	};
 
 }
