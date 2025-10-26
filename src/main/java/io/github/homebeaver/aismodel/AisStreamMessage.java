@@ -105,6 +105,9 @@ public class AisStreamMessage {
 			case ASSIGNEDMODECOMMAND:
 //	TODO		res.message = AssignedModeCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
+			case STANDARDSEARCHANDRESCUEAIRCRAFTREPORT:
+//	TODO		res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
 			}
