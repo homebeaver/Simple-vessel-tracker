@@ -29,7 +29,7 @@ import io.github.homebeaver.icon.Circle;
 import io.github.homebeaver.icon.Crosshair;
 import io.github.homebeaver.icon.Vessel;
 
-public class AisMapKit extends JXMapKit {
+public class AisMapKit extends JYMapKit {
 	
 	private static final long serialVersionUID = 2068148279179047334L;
 	private static final Logger LOG = Logger.getLogger(AisMapKit.class.getName());
@@ -267,9 +267,9 @@ INFORMATION: -------------->247389200:  NavigationalStatus=Moored cog=141.2 type
 			crosshairPainter.setRenderer(new VesselWaypointRenderer(Crosshair.of(SizingConstants.L, SizingConstants.L)));
 			overlayPainter.addPainter(crosshairPainter);
 		}
-//
-//		super.setOverlayPainter(overlayPainter); // setOverlayPainter im ctor reicht nicht
-		super.getMainMap().setOverlayPainter(overlayPainter);	
+
+// setOverlayPainter im ctor reicht nicht
+		setOverlayPainter(overlayPainter);	
 	}
 
 	private void display1Vessel(AisStreamMessage msg) {

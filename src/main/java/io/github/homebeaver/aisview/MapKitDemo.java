@@ -24,7 +24,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -82,8 +81,6 @@ import io.github.homebeaver.aismodel.ShipStaticData;
 import io.github.homebeaver.icon.Crosshair;
 //import io.github.homebeaver.icon.Map;
 import io.github.homebeaver.icon.MapPin;
-import io.github.homebeaver.icon.Minus;
-import io.github.homebeaver.icon.Plus;
 import swingset.AbstractDemo;
 
 /**
@@ -140,6 +137,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 		// Create a TileFactoryInfo for OpenStreetMap TODO in swingx 
 		info = new OSMTileFactoryInfo("OpenStreetMap", "https://tile.openstreetmap.org");
+		// Overlay tiles https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png
 		DefaultTileFactory tileFactory = new DefaultTileFactory(info);
 
 		// Setup local file cache
@@ -147,15 +145,17 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		tileFactory.setLocalCache(new FileBasedLocalCache(cacheDir, false));
 
 		// Setup JXMapKit TODO RadianceIcons in JXMapKit verwenden
-		mapKit = new AisMapKit() {
-			protected Icon setZoomOutIcon() {
-				return Minus.of(RadianceIcon.XS, RadianceIcon.XS);
-			}
-			protected Icon setZoomInIcon() {
-				return Plus.of(RadianceIcon.XS, RadianceIcon.XS);
-			}
-		};
+		mapKit = new AisMapKit();
+//		{
+//			protected Icon setZoomOutIcon() {
+//				return Minus.of(RadianceIcon.XS, RadianceIcon.XS);
+//			}
+//			protected Icon setZoomInIcon() {
+//				return Plus.of(RadianceIcon.XS, RadianceIcon.XS);
+//			}
+//		};
 		mapKit.setName("mapKit");
+//		mapKit.setZoomSliderVisible(false); TODO ==> Control JCheckBox
 		mapKit.setTileFactory(tileFactory);
 
 		// threads in parallel to load the tiles
@@ -216,6 +216,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 //		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
 		painters.add(addressLocationPainter);
 		painters.add(selectionPainter);
+		painters.add(mapKit.getDataProviderCreditPainter());
 		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
 		overlayPainter.setPainters(painters);
 		mapKit.setOverlayPainter(overlayPainter);
