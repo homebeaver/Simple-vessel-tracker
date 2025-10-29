@@ -146,14 +146,6 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 		// Setup JXMapKit TODO RadianceIcons in JXMapKit verwenden
 		mapKit = new AisMapKit();
-//		{
-//			protected Icon setZoomOutIcon() {
-//				return Minus.of(RadianceIcon.XS, RadianceIcon.XS);
-//			}
-//			protected Icon setZoomInIcon() {
-//				return Plus.of(RadianceIcon.XS, RadianceIcon.XS);
-//			}
-//		};
 		mapKit.setName("mapKit");
 //		mapKit.setZoomSliderVisible(false); TODO ==> Control JCheckBox
 		mapKit.setTileFactory(tileFactory);
@@ -192,14 +184,15 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		add(mapKit, BorderLayout.CENTER);
 //		add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
 
-		mapKit.addPropertyChangeListener("zoom", pce -> {
-			LOG.info("zoom ---------------------pce:" + pce);
-			getPosAndZoom();
-		});
-		mapKit.addPropertyChangeListener("center", pce -> {
-			GeoPosition pos = getPosAndZoom();
-			mapKit.setCenterPosition(pos);
-		});
+//		mapKit.addPropertyChangeListener("zoom", pce -> {
+//			LOG.info("zoom ---------------------pce:" + pce);
+//			getPosAndZoom();
+//		});
+//		mapKit.addPropertyChangeListener("center", pce -> {
+//			LOG.info("center ---------------------pce:" + pce);
+//			GeoPosition pos = getPosAndZoom();
+//			mapKit.setCenterPosition(pos);
+//		});
 		
 		mapKit.addPropertyChangeListener("candidatesToTrack", pce -> {
 			@SuppressWarnings("unchecked")
@@ -211,7 +204,6 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			// TODO BUG in JXComboBox: beim zweiten Aufklappen ist die Klappliste zu klein
 		});
 		
-		getPosAndZoom();
 		List<Painter<JXMapViewer>> painters = new ArrayList<>();
 //		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
 		painters.add(addressLocationPainter);

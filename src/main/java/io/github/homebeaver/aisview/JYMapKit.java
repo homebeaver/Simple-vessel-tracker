@@ -11,8 +11,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -21,10 +20,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Painter;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.MouseInputListener;
 
@@ -33,6 +35,8 @@ import org.jdesktop.swingx.JXButton;
 import org.jdesktop.swingx.icon.PauseIcon;
 import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
+import org.jdesktop.swingx.icon.TrafficLightGreenIcon;
+import org.jdesktop.swingx.icon.TrafficLightYellowIcon;
 import org.jdesktop.swingx.painter.AbstractPainter;
 import org.jdesktop.swingx.painter.AlphaPainter;
 import org.jdesktop.swingx.painter.BusyPainter;
@@ -51,6 +55,7 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
+import io.github.homebeaver.aismodel.AisStreamKeyProvider;
 import io.github.homebeaver.icon.MapPin;
 import io.github.homebeaver.icon.Minus;
 import io.github.homebeaver.icon.Plus;
@@ -164,40 +169,34 @@ public class JYMapKit extends JPanel {
 
 		rebuildMainMapOverlay();
 
-        /*
-         * // adapter to move the minimap after the main map has moved 
-         * MouseInputAdapter ma = new MouseInputAdapter() {
-         * public void mouseReleased(MouseEvent e) { miniMap.setCenterPosition(mapCenterPosition); } };
-         * mainMap.addMouseMotionListener(ma); mainMap.addMouseListener(ma);
-         */
+// nicht notwendig:
+//		// adapter to move the minimap after the main map has moved 
+//		MouseInputAdapter ma = new MouseInputAdapter() {
+//			public void mouseReleased(MouseEvent e) {
+//				miniMap.setCenterPosition(mapCenterPosition);
+//			}
+//		};
+//		mainMap.addMouseMotionListener(ma);
+//		mainMap.addMouseListener(ma);
+//
+//		// "center" prop in JXMapViewer mainMap changed ==> adjust miniMap (funktioniert auch ohne)
+//		mainMap.addPropertyChangeListener("center", pce -> {
+//			LOG.info("miniMap.setCenterPosition pce:" + pce);
+//			Point2D mapCenter = (Point2D) pce.getNewValue();
+//			TileFactory tf = mainMap.getTileFactory();
+//			GeoPosition mapPos = tf.pixelToGeo(mapCenter, mainMap.getZoom());
+//			miniMap.setCenterPosition(mapPos);
+//		});
 
-		// "center" prop in JXMapViewer
-        mainMap.addPropertyChangeListener("center", new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                Point2D mapCenter = (Point2D) evt.getNewValue();
-                TileFactory tf = mainMap.getTileFactory();
-                GeoPosition mapPos = tf.pixelToGeo(mapCenter, mainMap.getZoom());
-                miniMap.setCenterPosition(mapPos);
-            }
-        });
-
-        // "centerPosition" prop in JXMapViewer
-        mainMap.addPropertyChangeListener("centerPosition", new PropertyChangeListener()
-        {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt)
-            {
-                mapCenterPosition = (GeoPosition) evt.getNewValue();
-                miniMap.setCenterPosition(mapCenterPosition);
-                Point2D pt = miniMap.getTileFactory().geoToPixel(mapCenterPosition, miniMap.getZoom());
-                miniMap.setCenter(pt);
-                miniMap.repaint();
-            }
-        });
-
+		// "centerPosition" prop in JXMapViewer mainMap changed ==> adjust miniMap
+		mainMap.addPropertyChangeListener("centerPosition", pce -> {
+			LOG.finest("miniMap.setCenterPosition + setCenter + repaint pce:" + pce);
+			mapCenterPosition = (GeoPosition) pce.getNewValue();
+			miniMap.setCenterPosition(mapCenterPosition);
+			Point2D pt = miniMap.getTileFactory().geoToPixel(mapCenterPosition, miniMap.getZoom());
+			miniMap.setCenter(pt);
+			miniMap.repaint();
+		});
 
         // Add interactions
         MouseInputListener mia = new PanMouseInputListener(mainMap);
@@ -364,10 +363,38 @@ public class JYMapKit extends JPanel {
 		liveButton.setBackgroundPainter(ap);
 		liveButton.setPreferredSize(new Dimension(48, 48));
 		liveButton.addActionListener(evt -> {
-			//zoomInButtonActionPerformed(evt);
+			liveButtonActionPerformed(evt);
 			busyLabel.setVisible(true); // initially not visible
-			LOG.info("TODO liveButton");
+			LOG.info("TODO liveButton this-Class="+JYMapKit.this.getClass()); // TODO Baustelle
 			if (liveButton.getIcon() == start) {
+				AisStreamKeyProvider keyProvider = AisStreamKeyProvider.getInstance();
+				if(keyProvider.getKey()==null) {
+		            String result = (String)JOptionPane.showInputDialog
+		                	( JYMapKit.this
+		, "Enter your AISStream API key:" // , getBundleString("inputquestion")      // getBundleString aus AbstractDemo Object message
+		                	, getUIString(OPTIONPANE_INPUT)         // String title, nls : "Eingabe" / Input
+		                	, JOptionPane.QUESTION_MESSAGE
+		                	// the Icon to display:
+		                	, UIManager.getLookAndFeel().getClass().getName().contains("Nimbus") ?
+		                			null : TrafficLightGreenIcon.of(RadianceIcon.BUTTON_ICON, RadianceIcon.BUTTON_ICON) //getMessageTypeIcon(JOptionPane.QUESTION_MESSAGE, RadianceIcon.BUTTON_ICON)
+		                	, null, null  // selectionValues, initialSelectionValue
+		                	);
+		                if ((result != null) && (result.length() > 0)) {
+		                	keyProvider.setKey(result);
+		                    JOptionPane.showMessageDialog
+		                    	( JYMapKit.this                                // parentComponent
+		                    	, result + ": " + "inputresponse"// getBundleString("inputresponse")  // Object message 
+		                    	, getUIString(OPTIONPANE_MESSAGE)                   // String title, nls : "Meldung" / Message
+		                    	, JOptionPane.INFORMATION_MESSAGE
+		                    	, UIManager.getLookAndFeel().getClass().getName().contains("Nimbus") ?
+		                    			null : TrafficLightYellowIcon.of(RadianceIcon.BUTTON_ICON, RadianceIcon.BUTTON_ICON) //getMessageTypeIcon(JOptionPane.INFORMATION_MESSAGE, RadianceIcon.BUTTON_ICON)
+		                        );
+		                    MessageLoader ml = new MessageLoader((URL) null, (AisMapKit)JYMapKit.this, (JLabel)null, (String)null);
+		    				ml.execute();
+		                } else {
+		                	LOG.info(" Start mini Demo");
+		                }
+				}
 				liveButton.setIcon(stop);
 				busyLabel.setBusy(true);
 			} else {
@@ -421,7 +448,7 @@ public class JYMapKit extends JPanel {
 		zoomOutButton.setPreferredSize(new Dimension(20, 20));
 		zoomOutButton.addActionListener(evt -> {
 			setZoom(mainMap.getZoom() + 1);
-//			zoomOutButtonActionPerformed(evt);
+			zoomOutButtonActionPerformed(evt);
 		});
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
@@ -475,7 +502,20 @@ public class JYMapKit extends JPanel {
 		add(mainMap, gridBagConstraints);
 	}
 
+	private static final String OPTIONPANE_TITLETEXT = "OptionPane.titleText";
+	private static final String OPTIONPANE_MESSAGE   = "OptionPane.messageDialogTitle";
+	private static final String OPTIONPANE_INPUT     = "OptionPane.inputDialogTitle";
+	private String getUIString(Object key) {
+		return UIManager.getString(key, getLocale());
+	}
+	private void liveButtonActionPerformed(ActionEvent evt) {
+		// TODO add your handling code here:
+		LOG.info("TODO:"+evt);
+	}
 	private void zoomInButtonActionPerformed(ActionEvent evt) {
+		// TODO add your handling code here:
+	}
+	private void zoomOutButtonActionPerformed(ActionEvent evt) {
 		// TODO add your handling code here:
 	}
 
