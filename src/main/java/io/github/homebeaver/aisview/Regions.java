@@ -9,6 +9,7 @@ import org.jxmapviewer.viewer.GeoPosition;
 public class Regions {
 
 	public static final String DEFAULT_REGION = "Øresund";
+	public static final String BALTICSEA = "Baltic Sea";
 
 	private static Regions instance = null; // SINGLETON
 
@@ -85,6 +86,20 @@ public class Regions {
 			.boundingBox("[[[51.670, -2.500], [48.000, 2.500]]]") // NW, SE
 			.zoom(10)
 			.center(new GeoPosition(51,8,0, 1,19,0));
+		nameToRegion.put(r.name, r);
+
+		r = new Region();
+		r = r.name("Mediterranean Sea").descriptionCenter("Malta") // Mittelmeer
+			.boundingBox("[[[30, -6], [46, 36]]]") // SW, NE
+			.zoom(14)
+			.center(new GeoPosition(35,54,0, 14,24,0));
+		nameToRegion.put(r.name, r);
+
+		r = new Region();
+		r = r.name(BALTICSEA).descriptionCenter("Bornholm") // Ostsee
+			.boundingBox("[[[53, 10], [66, 30]]]") // SW, NE
+			.zoom(12)
+			.center(new GeoPosition(55,8,0, 14,55,0));
 		nameToRegion.put(r.name, r);
 
 // TODO Suezkanal , West- und Ostküste der USA , Karibik , Straße von Singapur , Ostsee , Istanbul

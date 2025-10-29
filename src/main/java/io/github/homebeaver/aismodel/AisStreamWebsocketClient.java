@@ -9,6 +9,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
+import io.github.homebeaver.aisview.Regions;
 
 /**
  * This example demonstrates how to create a websocket connection to a server. Only the most
@@ -43,10 +44,10 @@ public class AisStreamWebsocketClient extends WebSocketClient {
 
 	private static final String WSS_AISSTREAM_URI = "wss://stream.aisstream.io/v0/stream";
 
-    private static final String GLOBAL = "[[[-90,-180],[90,180]]]";
-    private static final String MEDITERRANEAN = "[[[-6, 30], [36, 46]]]";
-    private static final String BALTICSEA = "[[[53, 10], [66, 30]]]";
-    private static final String OERESUND = "[[[56.15625856755953, 13.458251953125], [55.24311788040884, 11.612548828125]]] ";
+//    private static final String GLOBAL = "[[[-90,-180],[90,180]]]";
+//    private static final String MEDITERRANEAN = "[[[-6, 30], [36, 46]]]";
+    private static final String BALTICSEA = Regions.getInstance().getBoundingBox(Regions.BALTICSEA);
+//    private static final String OERESUND = "[[[56.15625856755953, 13.458251953125], [55.24311788040884, 11.612548828125]]] ";
 //    NE: GeoPosition:[56.15625856755953, 13.458251953125] (56 09.376N, 013 27.495E)
 //    SW: GeoPosition:[55.24311788040884, 11.612548828125] (55 14.587N, 011 36.753E)
 
@@ -59,7 +60,7 @@ public class AisStreamWebsocketClient extends WebSocketClient {
 	public AisStreamWebsocketClient(boolean connect, AisStreamKey apikey, String boundingBox) throws URISyntaxException {
 		super(new URI(WSS_AISSTREAM_URI));
 		this.apikey = apikey.getKey();
-		this.boundingBoxes = boundingBox;
+		this.boundingBoxes = boundingBox==null ? BALTICSEA : boundingBox;
 		if (connect) {
 			this.connect();
 		}
