@@ -120,7 +120,7 @@ public class DemoJXFrame extends JXFrame {
 		
 		// bei RootFrame: setJMenuBar:
 		if(this instanceof MainJXframe) {
-			LOG.info("\nthis:"+this);
+			LOG.info("this:"+this);
 			setJMenuBar(new JMenuBar());
 		}
 	}

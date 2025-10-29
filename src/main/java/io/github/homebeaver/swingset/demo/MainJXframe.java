@@ -115,45 +115,30 @@ public class MainJXframe extends DemoJXFrame {
 		super(TITLE);
 		frames = new ArrayList<JXFrame>();
 		frames.add(this);
-		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		LOG.info(TITLE+" frame ctor. frames#="+frames.size());
+		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		LOG.info(TITLE + " frame ctor. frames#=" + frames.size());
 
-    	// TODO
-/* Alternative 1:
-JSplitPane splitPane = null; ???
-        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, demotree, source+controller);
+		content = new JXPanel(new BorderLayout());
 
-Alternative 2: hier implementiert
-getContentPane(): BorderLayout ==> content
-WEST:   demoTree
-CENTER: JXPanel currentController
- - tabbedpane = new JTabbedPane(); mit
- - source
- - controller : currentController
-
-Alternative 3: DemoJXTasks statt demoTree
- */
-    	content = new JXPanel(new BorderLayout());
-    	
 		JComponent tpc = DemoJXTasks.getTaskPaneContainer();
 		tpc.setBackground(getBackground());
-    	content.add(new JScrollPane(tpc), BorderLayout.WEST);
+		content.add(new JScrollPane(tpc), BorderLayout.WEST);
 
-    	tabbedpane = new JTabbedPane();
-    	tabbedpane.add("source", new JXLabel("TODO enpty")); // TODO
+		tabbedpane = new JTabbedPane();
+		tabbedpane.add("source", new JXLabel("TODO enpty")); // TODO
 //    	currentController = new IntroPanelDemo(); ==>
-    	MapKitDemo mkd = new MapKitDemo(this);
-    	currentController = mkd.getControlPane();
-    	
-    	tabbedpane.add("controller", currentController);
-    	tabbedpane.setSelectedComponent(currentController);
-    	content.add(tabbedpane, BorderLayout.CENTER);
-    	getContentPane().add(content);
+		MapKitDemo mkd = new MapKitDemo(this);
+		currentController = mkd.getControlPane();
 
-    	// creates popupMenu accessible via keyboard
-    	createPopupMenu(content);
+		tabbedpane.add("controller", currentController);
+		tabbedpane.setSelectedComponent(currentController);
+		content.add(tabbedpane, BorderLayout.CENTER);
+		getContentPane().add(content);
 
+		// creates popupMenu accessible via keyboard
+		createPopupMenu(content);
 	}
+	
 	private JXTree demoTree = null;
 	private JMenu menu;
 
