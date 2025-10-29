@@ -190,7 +190,7 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 			cnt++;
 		});
 		LOG.fine("chunks#:" + chunks.size()+"/"+cnt+"/"+amv.getNoOfVessels());
-		counter.setText(""+amv.getNoOfVessels());
+		if (counter!=null) counter.setText(""+amv.getNoOfVessels());
 	}
 
 }
