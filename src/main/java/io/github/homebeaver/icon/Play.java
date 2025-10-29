@@ -1,4 +1,4 @@
-package org.jdesktop.swingx.demos.svg;
+package io.github.homebeaver.icon;
 
 import java.awt.*;
 import java.awt.geom.*;
@@ -12,7 +12,7 @@ import org.jdesktop.swingx.icon.RadianceIconUIResource;
  * This class has been automatically generated using 
  * <a href="https://jdesktop.wordpress.com/2022/09/25/svg-icons/">Radiance SVG converter</a>.
  */
-public class FeatheRplay_circle implements RadianceIcon {
+public class Play implements RadianceIcon {
     private Shape shape = null;
     private GeneralPath generalPath = null;
     private Paint paint = null;
@@ -154,7 +154,7 @@ g.setTransform(transformsStack.pop());
 	 * Creates a new transcoded SVG image. This is marked as private to indicate that app
 	 * code should be using the {@link #of(int, int)} method to obtain a pre-configured instance.
 	 */
-	private FeatheRplay_circle() {
+	private Play() {
         this.width = (int) getOrigWidth();
         this.height = (int) getOrigHeight();
 	}
@@ -231,7 +231,7 @@ g.setTransform(transformsStack.pop());
      * @return A new instance of this icon with specified dimensions.
      */
     public static RadianceIcon of(int width, int height) {
-       FeatheRplay_circle base = new FeatheRplay_circle();
+       Play base = new Play();
        base.width = width;
        base.height = height;
        return base;
@@ -245,7 +245,7 @@ g.setTransform(transformsStack.pop());
      * @return A new {@link UIResource} instance of this icon with specified dimensions.
      */
     public static RadianceIconUIResource uiResourceOf(int width, int height) {
-       FeatheRplay_circle base = new FeatheRplay_circle();
+       Play base = new Play();
        base.width = width;
        base.height = height;
        return new RadianceIconUIResource(base);
@@ -257,7 +257,7 @@ g.setTransform(transformsStack.pop());
      * @return Factory that returns instances of this icon on demand.
      */
     public static Factory factory() {
-        return FeatheRplay_circle::new;
+        return Play::new;
     }
 }
 
