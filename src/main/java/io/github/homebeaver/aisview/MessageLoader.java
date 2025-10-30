@@ -185,10 +185,15 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 			if (msg == null) {
 				LOG.fine("chunk is null");
 			} else {
-				amv.addMessage(msg);
+				if(amv==null) {
+					LOG.warning("AisMapKit is null msg:"+msg);
+				} else {
+					amv.addMessage(msg);
+				}
 			}
 			cnt++;
 		});
+		if(amv==null) return;
 		LOG.fine("chunks#:" + chunks.size()+"/"+cnt+"/"+amv.getNoOfVessels());
 		if (counter!=null) counter.setText(""+amv.getNoOfVessels());
 	}

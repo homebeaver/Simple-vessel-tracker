@@ -35,6 +35,7 @@ import javax.swing.MutableComboBoxModel;
 import javax.swing.Painter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputListener;
 
@@ -94,6 +95,15 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	private static final Logger LOG = Logger.getLogger(MapKitDemo.class.getName());
 	private static final String DESCRIPTION = "JXMapKit with a vessel tracker";
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
+	static final URL GITHUB_URL() {
+		try {
+			return new URL(GITHUB_URL);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * main method allows us to run as a standalone demo.
@@ -153,6 +163,15 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		// threads in parallel to load the tiles
 		tileFactory.setThreadPoolSize(2);
 
+		JPanel ss = mapKit.getStartStop();
+		if(ss instanceof StartStopComponent startStop) {
+//			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+//			swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
+			swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), null);
+			MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
+			ml.setSleep(50);
+			startStop.setSwingWorker(swingWorker, ml);
+		}
 		// Set the zoom and focus to Øresund
 		mapKit.setZoom(Regions.getInstance().getZoom(DEFAULT_REGION));
 		mapKit.setAddressLocation(Regions.getInstance().getCenter(DEFAULT_REGION));
@@ -243,13 +262,13 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return new GeoPosition(lat, lon);
 	}
 
-	MessageLoader ml; // SwingWorker
+	SwingWorker<?, ?> swingWorker; // MessageLoader
 	
 	// controller:
 	private JXComboBox<DisplayInfo<Regions.Region>> positionChooserCombo;
 	private JButton miniDemoButton; // data from GitHub
 	private JButton fileDemoButton; // data from local file
-	private JButton liveButton; // data from aisstream
+//	private JButton liveButton; // data from aisstream
 	
 	static private RadianceIcon start = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
 	static private RadianceIcon stop = PauseIcon.of(RadianceIcon.M, RadianceIcon.M);
@@ -551,14 +570,9 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			// Starte Extra-Thread per SwingWorker,
 			// damit der Event Dispatch Thread (EDT) nicht blockiert wird:
 			// file aus GITHUB gebremst 50ms
-			try {
-				MessageLoader ml = new MessageLoader(new URL(GITHUB_URL), mapKit, getCounter(), null);
-				ml.setSleep(50);
-				ml.execute();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
+			ml.setSleep(50);
+			ml.execute();
 		});
 		buttonGrid.add(miniDemoButton);
 
@@ -574,24 +588,13 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		});
 		buttonGrid.add(fileDemoButton);
 
-		liveButton = fileDemoButton("liveButton", getBundleString("liveButton.text"));
-		liveButton.setIcon(start);
-		liveButton.addActionListener(ae -> {
-			// Start->Stop
-			if (liveButton.getIcon() == start) {
-				liveButton.setIcon(stop);
-				// Live:
-				DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
-				ml = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
-				ml.execute();
-			} else {
-				liveButton.setIcon(start);
-				if (ml.cancel(true)) {
-					LOG.info("canceled.");
-				}
-			}
-		});
-		buttonGrid.add(liveButton);
+		StartStopComponent startStop = new StartStopComponent(getBundleString("liveButton.text"));
+//		DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+//		SwingWorker swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
+		MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
+		ml.setSleep(50);
+		startStop.setSwingWorker(swingWorker, ml);
+		buttonGrid.add(startStop);
 		toolBar.add(buttonGrid);
 		toolBar.add(Box.createVerticalStrut(10));
 
@@ -620,7 +623,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 //    private JComponent statusBarLeft;
 //    private JLabel actionStatus;
     private JLabel tableStatus;
-    private JLabel tableRows;
+    private JLabel tableRows = new JLabel("0");
     public JLabel getCounter() {
     	return tableRows;
     }
@@ -652,7 +655,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
         tableStatus.setText(getBundleString("rowCountLabel.text"));
         JComponent bar = Box.createHorizontalBox();
         bar.add(tableStatus);
-        tableRows = new JLabel("0");
+//        tableRows = new JLabel("0");
         bar.add(tableRows);
         bar.add(Box.createRigidArea(new Dimension(5, 22)));
 

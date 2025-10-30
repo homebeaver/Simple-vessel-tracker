@@ -1,7 +1,6 @@
 package io.github.homebeaver.aisview;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -10,8 +9,6 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
-import java.awt.geom.RoundRectangle2D;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -19,27 +16,15 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Painter;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.MouseInputListener;
 
-import org.jdesktop.swingx.JXBusyLabel;
-import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.icon.PauseIcon;
-import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
-import org.jdesktop.swingx.icon.TrafficLightGreenIcon;
-import org.jdesktop.swingx.icon.TrafficLightYellowIcon;
 import org.jdesktop.swingx.painter.AbstractPainter;
-import org.jdesktop.swingx.painter.AlphaPainter;
-import org.jdesktop.swingx.painter.BusyPainter;
 //import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -55,7 +40,6 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
-import io.github.homebeaver.aismodel.AisStreamKeyProvider;
 import io.github.homebeaver.icon.MapPin;
 import io.github.homebeaver.icon.Minus;
 import io.github.homebeaver.icon.Plus;
@@ -107,23 +91,6 @@ public class JYMapKit extends JPanel {
 		return Plus.of(RadianceIcon.XS, RadianceIcon.XS);
 	}
 
-	static private RadianceIcon start = startA();
-	static private RadianceIcon stop = stopA();
-	static private RadianceIcon startA() {
-		RadianceIcon ri = PlayIcon.of(RadianceIcon.ACTION_ICON, RadianceIcon.ACTION_ICON);
-		ri.setColorFilter(color -> new Color(0, 0, 0, 128));
-		return ri;
-	}
-	static private RadianceIcon stopA() {
-		RadianceIcon ri = PauseIcon.of(RadianceIcon.ACTION_ICON, RadianceIcon.ACTION_ICON);
-		ri.setColorFilter(color -> new Color(0, 0, 0, 128));
-		return ri;
-	}
-
-	private Icon setLiveIcon() {
-		return start;
-	}
-	
 	private void initZoomButtons() {
 		try {
 			this.zoomOutButton.setIcon(setZoomOutIcon());
@@ -135,13 +102,6 @@ public class JYMapKit extends JPanel {
 		try {
 			this.zoomInButton.setIcon(setZoomInIcon());
 			this.zoomInButton.setText("");
-		} catch (Throwable thr) {
-			LOG.warning(thr.getMessage());
-			thr.printStackTrace();
-		}
-		try {
-			this.liveButton.setIcon(setLiveIcon());
-			this.liveButton.setText("");
 		} catch (Throwable thr) {
 			LOG.warning(thr.getMessage());
 			thr.printStackTrace();
@@ -302,32 +262,12 @@ public class JYMapKit extends JPanel {
 		zoomChanging = false;
 	}
 
-	private Component busyLabel() {
-//		busyLabel = new JXBusyLabel(new Dimension(48, 48)); // simple
-		// complicated:
-		BusyPainter painter = new BusyPainter(ShapeFactory.createEllipticalPoint(10, 10),
-				new RoundRectangle2D.Float(10.0f, 2.0f, 35.0f, 35.0f, 10, 10) // trajectory
-		);
-		painter.setTrailLength(10);
-		painter.setPoints(31);
-		painter.setFrame(1);
-		Dimension dim = new Dimension(48, 48);
-		busyLabel = new JXBusyLabel(dim); // 100, 84
-		busyLabel.setPreferredSize(dim);
-		busyLabel.setBusyPainter(painter);
-		busyLabel.setBusy(false);
-		busyLabel.setVisible(false); // Schweif beim initialisieren vermeiden
-		return busyLabel;
-	}
-
 	private void initComponents() {
 		GridBagConstraints gridBagConstraints;
 
 		mainMap = new JXMapViewer();
 		miniMap = new JXMapViewer();
 		jPanel1 = new JPanel();
-		jPanel2 = new JPanel();
-		liveButton = new JXButton();
 		zoomInButton = new JButton();
 		zoomOutButton = new JButton();
 		zoomSlider = new JSlider();
@@ -347,76 +287,6 @@ public class JYMapKit extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		mainMap.add(miniMap, gridBagConstraints);
-
-		jPanel2.setOpaque(false);
-		jPanel2.setLayout(new GridBagLayout());
-//		jPanel2.setBorder(new javax.swing.border.BevelBorder(javax.swing.border.BevelBorder.LOWERED)); // to show the jPanel1
-
-		liveButton.setIcon(setLiveIcon());
-		liveButton.setMargin(new Insets(2, 2, 2, 2));
-		liveButton.setMaximumSize(new Dimension(48, 48));
-		liveButton.setMinimumSize(new Dimension(48, 48));
-		liveButton.setOpaque(false);
-		liveButton.setBackground(new Color(0, 0, 0, 5));
-		AlphaPainter<JComponent> ap = new AlphaPainter<>();
-		ap.setAlpha(255);
-		liveButton.setBackgroundPainter(ap);
-		liveButton.setPreferredSize(new Dimension(48, 48));
-		liveButton.addActionListener(evt -> {
-			liveButtonActionPerformed(evt);
-			busyLabel.setVisible(true); // initially not visible
-			LOG.info("TODO liveButton this-Class="+JYMapKit.this.getClass()); // TODO Baustelle
-			if (liveButton.getIcon() == start) {
-				AisStreamKeyProvider keyProvider = AisStreamKeyProvider.getInstance();
-				if(keyProvider.getKey()==null) {
-		            String result = (String)JOptionPane.showInputDialog
-		                	( JYMapKit.this
-		, "Enter your AISStream API key:" // , getBundleString("inputquestion")      // getBundleString aus AbstractDemo Object message
-		                	, getUIString(OPTIONPANE_INPUT)         // String title, nls : "Eingabe" / Input
-		                	, JOptionPane.QUESTION_MESSAGE
-		                	// the Icon to display:
-		                	, UIManager.getLookAndFeel().getClass().getName().contains("Nimbus") ?
-		                			null : TrafficLightGreenIcon.of(RadianceIcon.BUTTON_ICON, RadianceIcon.BUTTON_ICON) //getMessageTypeIcon(JOptionPane.QUESTION_MESSAGE, RadianceIcon.BUTTON_ICON)
-		                	, null, null  // selectionValues, initialSelectionValue
-		                	);
-		                if ((result != null) && (result.length() > 0)) {
-		                	keyProvider.setKey(result);
-		                    JOptionPane.showMessageDialog
-		                    	( JYMapKit.this                                // parentComponent
-		                    	, result + ": " + "inputresponse"// getBundleString("inputresponse")  // Object message 
-		                    	, getUIString(OPTIONPANE_MESSAGE)                   // String title, nls : "Meldung" / Message
-		                    	, JOptionPane.INFORMATION_MESSAGE
-		                    	, UIManager.getLookAndFeel().getClass().getName().contains("Nimbus") ?
-		                    			null : TrafficLightYellowIcon.of(RadianceIcon.BUTTON_ICON, RadianceIcon.BUTTON_ICON) //getMessageTypeIcon(JOptionPane.INFORMATION_MESSAGE, RadianceIcon.BUTTON_ICON)
-		                        );
-		                    MessageLoader ml = new MessageLoader((URL) null, (AisMapKit)JYMapKit.this, (JLabel)null, (String)null);
-		    				ml.execute();
-		                } else {
-		                	LOG.info(" Start mini Demo");
-		                }
-				}
-				liveButton.setIcon(stop);
-				busyLabel.setBusy(true);
-			} else {
-				liveButton.setIcon(start);
-				busyLabel.setBusy(false);
-			}
-		});
-		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		jPanel2.add(liveButton, gridBagConstraints);
-
-		gridBagConstraints = new GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		jPanel2.add(busyLabel(), gridBagConstraints);
 
 		jPanel1.setOpaque(false);
 		jPanel1.setLayout(new GridBagLayout());
@@ -493,7 +363,8 @@ public class JYMapKit extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.insets = new Insets(4, 4, 4, 4);
-		mainMap.add(jPanel2, gridBagConstraints);
+		startStop = new StartStopComponent(null);
+		mainMap.add(startStop, gridBagConstraints);
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -502,16 +373,6 @@ public class JYMapKit extends JPanel {
 		add(mainMap, gridBagConstraints);
 	}
 
-	private static final String OPTIONPANE_TITLETEXT = "OptionPane.titleText";
-	private static final String OPTIONPANE_MESSAGE   = "OptionPane.messageDialogTitle";
-	private static final String OPTIONPANE_INPUT     = "OptionPane.inputDialogTitle";
-	private String getUIString(Object key) {
-		return UIManager.getString(key, getLocale());
-	}
-	private void liveButtonActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
-		LOG.info("TODO:"+evt);
-	}
 	private void zoomInButtonActionPerformed(ActionEvent evt) {
 		// TODO add your handling code here:
 	}
@@ -519,7 +380,6 @@ public class JYMapKit extends JPanel {
 		// TODO add your handling code here:
 	}
 
-	@SuppressWarnings("unused")
 	private void zoomSliderStateChanged(ChangeEvent evt) {
 		if (!zoomChanging) {
 			setZoom(zoomSlider.getValue());
@@ -527,15 +387,16 @@ public class JYMapKit extends JPanel {
 	}
 
 	private JPanel jPanel1;
-	private JPanel jPanel2;
+	private JPanel startStop;
 	private JXMapViewer mainMap;
 	private JXMapViewer miniMap;
-	private JXButton liveButton;
-	private JXBusyLabel busyLabel = null;
 	private JButton zoomInButton;
 	private JButton zoomOutButton;
 	private JSlider zoomSlider;
 
+	public JPanel getStartStop() {
+		return startStop;
+	}
 	/**
 	 * Indicates if the mini-map is currently visible
 	 * 
