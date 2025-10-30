@@ -126,6 +126,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 			controller.getContentPane().add(demo.getControlPane());
 			controller.pack();
+			controller.setState(Frame.ICONIFIED);
 			controller.setVisible(true);
 		});
 	}
