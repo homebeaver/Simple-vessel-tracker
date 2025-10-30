@@ -17,8 +17,6 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.SwingWorker;
 
-import io.aisstream.app.API_Key_Provider;
-import io.aisstream.app.App;
 import io.github.homebeaver.aismodel.AisStreamKeyProvider;
 import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.AisStreamWebsocketClient;
@@ -34,7 +32,7 @@ import io.github.homebeaver.aismodel.AisStreamWebsocketClient;
  * 
  * MessageLoader muss als Subclass von SwingWorker doInBackground implementieren.
  */
-/**
+/*
  * @param <T> the result type returned by this {@code SwingWorker's}
  *        {@code doInBackground} and {@code get} methods
  * @param <V> the type used for carrying out intermediate results by this

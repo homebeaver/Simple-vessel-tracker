@@ -79,7 +79,7 @@
 					<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 					<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 					<mainClass>
-						org.jxmapviewer.demos.MapKitDemo
+						io.github.homebeaver.aisview.MapKitDemo
 					</mainClass>
 				</manifest>
 			<!-- <manifestEntries>
@@ -122,7 +122,7 @@
                 </descriptorRefs>
 				<archive>
 					<manifest>
-						<mainClass>org.jxmapviewer.demos.MapKitDemo</mainClass>
+						<mainClass>io.github.homebeaver.aisview.MapKitDemo</mainClass>
 					</manifest>
 				</archive>
             </configuration>
