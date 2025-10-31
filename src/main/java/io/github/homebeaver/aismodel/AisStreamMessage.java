@@ -83,10 +83,10 @@ public class AisStreamMessage {
 				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case BASESTATIONREPORT:
-			res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case DATALINKMANAGEMENTMESSAGE:
-//	TODO		res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case AIDSTONAVIGATIONREPORT:
 //	TODO		res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
