@@ -1,7 +1,8 @@
 package tracker;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,17 +12,25 @@ import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
 import io.github.homebeaver.aismodel.PositionReport;
 
-public class AisStreamMessageTest implements AisStreamCallback<AisStreamMessage> { // rename to AisStreamMessageTest
+public class AisStreamMessageTest implements AisStreamCallback<AisStreamMessage> {
 	
 	static final String TEST_DATA = "data/aisstream.txt";
+	static final String TEST_RESOURCE = "src/test/resources/"+TEST_DATA;
 	static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/"+TEST_DATA;
 
 	public static void main(String[] args) throws URISyntaxException {
 //		URL url = AisStreamMessageTest.class.getClassLoader().getResource(TEST_DATA);
-		URL url = AisStreamMessageTest.class.getClassLoader().getResource("aisstream.txt");
+//		URL url = AisStreamMessageTest.class.getClassLoader().getResource("aisstream.txt");
 		AisStreamMessageTest st = new AisStreamMessageTest();
 //		AisStreamMessage.liesUrl(url, st);
-		AisStreamMessage.liesUrl(GITHUB_URL, st);
+//		AisStreamMessage.liesUrl(GITHUB_URL, st);
+		try {
+//			AisStreamMessage.liesUrl(new FileInputStream("src/test/java/aisstream.txt"), st);
+			AisStreamMessage.liesUrl(new FileInputStream(TEST_RESOURCE), st);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		st.report();
 		
 	}

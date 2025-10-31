@@ -2,6 +2,7 @@ package io.github.homebeaver.aismodel;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -73,16 +74,16 @@ public class AisStreamMessage {
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
 				break;
 			case STANDARDCLASSBPOSITIONREPORT:
-//				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case EXTENDEDCLASSBPOSITIONREPORT:
-//	TODO		res.message = ExtendedClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = ExtendedClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case STATICDATAREPORT:
-//	TODO		res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case BASESTATIONREPORT:
-//	TODO		res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+			res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case DATALINKMANAGEMENTMESSAGE:
 //	TODO		res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
@@ -168,6 +169,18 @@ public class AisStreamMessage {
 		}
 		return Boolean.TRUE;
 	}
+
+	public static Boolean liesUrl(FileInputStream fis, AisStreamCallback<AisStreamMessage> meldungenCallback) {
+		try {
+			return liesUrl(new BufferedReader(new InputStreamReader(fis)), meldungenCallback);
+		} catch (Exception e) {
+			System.out.println("Exeption " + e);
+			return Boolean.FALSE;
+		} finally {
+			
+		}
+	}
+
 	public static Boolean liesUrl(String url, AisStreamCallback<AisStreamMessage> meldungenCallback) {
 		System.out.println("starting with " + url);
 		try {
