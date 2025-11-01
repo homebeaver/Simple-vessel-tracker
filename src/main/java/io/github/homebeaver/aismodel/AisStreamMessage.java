@@ -89,22 +89,22 @@ public class AisStreamMessage {
 				res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case AIDSTONAVIGATIONREPORT:
-//	TODO		res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case ADDRESSEDBINARYMESSAGE:
-//	TODO		res.message = AddressedBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = AddressedBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case BINARYACKNOWLEDGE:
-//	TODO		res.message = BinaryAcknowledge.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = BinaryAcknowledge.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case GNSSBROADCASTBINARYMESSAGE:
-//	TODO		res.message = GnssBroadcastBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = GnssBroadcastBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case INTERROGATION:
-//	TODO		res.message = Interrogation.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = Interrogation.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case ASSIGNEDMODECOMMAND:
-//	TODO		res.message = AssignedModeCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = AssignedModeCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case STANDARDSEARCHANDRESCUEAIRCRAFTREPORT:
 //	TODO		res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
