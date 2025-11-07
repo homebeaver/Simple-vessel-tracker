@@ -90,8 +90,9 @@ public class AisStreamMessage {
 			case ADDRESSEDSAFETYMESSAGE: // messageType 12
 				res.message = AddressedSafetyMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case UNKNOWNMESSAGE:
-//            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
+// Message 13: Safety related acknowledge; For Message 13 refer to description of Message 7
+			case SAFETYBROADCASTMESSAGE: // messageType 14
+				res.message = SafetyBroadcastMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case INTERROGATION: // messageType 15
 				res.message = Interrogation.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
@@ -116,6 +117,9 @@ public class AisStreamMessage {
 				break;
 			case AIDSTONAVIGATIONREPORT: // messageType 21
 				res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case UNKNOWNMESSAGE:
+//            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
 				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
