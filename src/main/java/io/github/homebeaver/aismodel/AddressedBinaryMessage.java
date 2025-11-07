@@ -13,63 +13,64 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
 //import org.openapitools.client.model.AddressedBinaryMessageApplicationID;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
-//import org.openapitools.client.JSON;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
- * AddressedBinaryMessage Message ID 6
+ * AddressedBinaryMessage Message ID 6 contains an Application specific messages
+ * <p>
+ * Rec. ITU-R M.1371-4 page 55:
+ * 5.3.1 Addressed Messages 6 and 12
+Addressed messages should have a destination user ID. The source station should anticipate an
+acknowledgement message (Message 7 or Message 13). If an acknowledgement is not received the
+station should retry the transmission. The station should wait 4 s before attempting retries. When a
+transmission is retried, the retransmit flag should be set to retransmitted. The number of retries
+should be 3, but it could be configurable between 0 and 3 retries by an external application via the
+presentation interface. When set to a different value by an external application, the number of
+retries should default to 3 retries after 8 min. The overall result of the data transfer should be
+forwarded to above layers. The acknowledgement should be between transport layers in two
+stations.
+Each data transfer packet on the presentation interface should have a unique packet identifier
+consisting of the message type (binary or safety related messages), the source-ID, the destination-
+ID, and a sequence number.
+The sequence number should be assigned in the appropriate presentation interface message which is
+input to the station.
+The destination station should return the same sequence number in its acknowledgement message
+on the presentation interface.
+The source station should not reuse a sequence number until it has been acknowledged or time-out
+has occurred.
+The acknowledgement should be put first in the data transfer queue both on the presentation
+interface and on the VDL.
+These acknowledgements are applicable only to the VDL. Other means must be employed for
+acknowledging applications.
+
+VDL : VHF data link
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class AddressedBinaryMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
+	/*
+	 * 0-3
+	 */
   public static final String SERIALIZED_NAME_SEQUENCEINTEGER = "Sequenceinteger";
   @SerializedName(SERIALIZED_NAME_SEQUENCEINTEGER)
   private Integer sequenceinteger;
@@ -101,100 +102,7 @@ public class AddressedBinaryMessage extends AisMessage {
 		super();
 	}
 
-//  public AddressedBinaryMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public AddressedBinaryMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public AddressedBinaryMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public AddressedBinaryMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
   public AddressedBinaryMessage sequenceinteger(Integer sequenceinteger) {
-    
     this.sequenceinteger = sequenceinteger;
     return this;
   }
@@ -342,13 +250,9 @@ public class AddressedBinaryMessage extends AisMessage {
     }
     AddressedBinaryMessage addressedBinaryMessage = (AddressedBinaryMessage) o;
     return Objects.equals(getMessageID(), addressedBinaryMessage.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), addressedBinaryMessage.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), addressedBinaryMessage.getUserID()) &&
-            Objects.equals(getValid(), addressedBinaryMessage.getValid()) &&
-//    return Objects.equals(this.messageID, addressedBinaryMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, addressedBinaryMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, addressedBinaryMessage.userID) &&
-//        Objects.equals(this.valid, addressedBinaryMessage.valid) &&
+           Objects.equals(getRepeatIndicator(), addressedBinaryMessage.getRepeatIndicator()) &&
+           Objects.equals(getUserID(), addressedBinaryMessage.getUserID()) &&
+           Objects.equals(getValid(), addressedBinaryMessage.getValid()) &&
         Objects.equals(this.sequenceinteger, addressedBinaryMessage.sequenceinteger) &&
         Objects.equals(this.destinationID, addressedBinaryMessage.destinationID) &&
         Objects.equals(this.retransmission, addressedBinaryMessage.retransmission) &&
@@ -371,10 +275,6 @@ public class AddressedBinaryMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    sequenceinteger: ").append(toIndentedString(sequenceinteger)).append("\n");
     sb.append("    destinationID: ").append(toIndentedString(destinationID)).append("\n");
     sb.append("    retransmission: ").append(toIndentedString(retransmission)).append("\n");
@@ -512,7 +412,7 @@ public class AddressedBinaryMessage extends AisMessage {
 			JSONObject data = jo.getJSONObject(SERIALIZED_NAME_APPLICATION_I_D);
 			abm = abm.applicationID(AddressedBinaryMessageApplicationID.fromJson(data));
 			abm = abm.binaryData(jo.getString(SERIALIZED_NAME_BINARY_DATA));
-			System.out.println(abm);
+//			System.out.println(abm);
 		} catch (JSONException e) {
 //			logger.error("Error creating AddressedBinaryMessage", e);
 			System.out.println("Error creating AddressedBinaryMessage " + e);

@@ -19,6 +19,10 @@ public class AisMessage {
 	 * 4 Base station report 
 	 * <p> 
 	 * 5 Static and voyage related data
+	 * <p> Application specific messages
+	 * <br> 6 Addressed binary message contains an Application specific messages
+	 * <br> 7 Binary acknowledge
+	 * <br> 8 Binary broadcast message contains an Application specific messages
 	 * <p> 
 	 * 18 Standard Class B equipment position report
 	 * <p> 

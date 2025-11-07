@@ -13,39 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-//import org.openapitools.client.model.AddressedBinaryMessageApplicationID;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -54,22 +41,7 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class BinaryBroadcastMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
-//
+
   public static final String SERIALIZED_NAME_SPARE = "Spare";
   @SerializedName(SERIALIZED_NAME_SPARE)
   private Integer spare;
@@ -86,100 +58,7 @@ public class BinaryBroadcastMessage extends AisMessage {
 		super();
 	}
 
-//  public BinaryBroadcastMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public BinaryBroadcastMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public BinaryBroadcastMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public BinaryBroadcastMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-
   public BinaryBroadcastMessage spare(Integer spare) {
-    
     this.spare = spare;
     return this;
   }
@@ -261,10 +140,6 @@ public class BinaryBroadcastMessage extends AisMessage {
             Objects.equals(getRepeatIndicator(), binaryBroadcastMessage.getRepeatIndicator()) &&
             Objects.equals(getUserID(), binaryBroadcastMessage.getUserID()) &&
             Objects.equals(getValid(), binaryBroadcastMessage.getValid()) &&
-//    return Objects.equals(this.messageID, binaryBroadcastMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, binaryBroadcastMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, binaryBroadcastMessage.userID) &&
-//        Objects.equals(this.valid, binaryBroadcastMessage.valid) &&
         Objects.equals(this.spare, binaryBroadcastMessage.spare) &&
         Objects.equals(this.applicationID, binaryBroadcastMessage.applicationID) &&
         Objects.equals(this.binaryData, binaryBroadcastMessage.binaryData);
@@ -284,10 +159,6 @@ public class BinaryBroadcastMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare: ").append(toIndentedString(spare)).append("\n");
     sb.append("    applicationID: ").append(toIndentedString(applicationID)).append("\n");
     sb.append("    binaryData: ").append(toIndentedString(binaryData)).append("\n");

@@ -64,11 +64,23 @@ public class AisStreamMessage {
 			}
  */
 			switch (res.messageType) {
-			case POSITIONREPORT:
+			case POSITIONREPORT: // messageType 1, 2, 3
 				res.message = PositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case SHIPSTATICDATA:
+			case BASESTATIONREPORT: // messageType 4
+				res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case SHIPSTATICDATA: // messageType 5
 				res.message = ShipStaticData.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case ADDRESSEDBINARYMESSAGE: // messageType 6
+				res.message = AddressedBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case BINARYACKNOWLEDGE: // messageType 7
+				res.message = BinaryAcknowledge.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case BINARYBROADCASTMESSAGE: // messageType 8
+				res.message = BinaryBroadcastMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case UNKNOWNMESSAGE:
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
@@ -82,20 +94,11 @@ public class AisStreamMessage {
 			case STATICDATAREPORT:
 				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case BASESTATIONREPORT:
-				res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
 			case DATALINKMANAGEMENTMESSAGE:
 				res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case AIDSTONAVIGATIONREPORT:
 				res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case ADDRESSEDBINARYMESSAGE:
-				res.message = AddressedBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case BINARYACKNOWLEDGE:
-				res.message = BinaryAcknowledge.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case GNSSBROADCASTBINARYMESSAGE:
 				res.message = GnssBroadcastBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
@@ -107,7 +110,7 @@ public class AisStreamMessage {
 				res.message = AssignedModeCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case STANDARDSEARCHANDRESCUEAIRCRAFTREPORT:
-//	TODO		res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);

@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -57,10 +45,21 @@ public class AddressedBinaryMessageApplicationID {
   @SerializedName(SERIALIZED_NAME_VALID)
   private Boolean valid;
 
+  /**
+   * Designated area code (DAC). 
+   * This code is based on the maritime identification digits (MID).
+   * Exceptions are 0 (test) and 1 (international). 
+   * Although the length is 10 bits, the DAC codes equal to or above 1000 are reserved for future use
+   */
   public static final String SERIALIZED_NAME_DESIGNATED_AREA_CODE = "DesignatedAreaCode";
   @SerializedName(SERIALIZED_NAME_DESIGNATED_AREA_CODE)
   private Integer designatedAreaCode;
 
+  /**
+   * Function identifier. 
+   * The meaning should be determined by the authority which is responsible for the area given 
+   * in the designated area code
+   */
   public static final String SERIALIZED_NAME_FUNCTION_IDENTIFIER = "FunctionIdentifier";
   @SerializedName(SERIALIZED_NAME_FUNCTION_IDENTIFIER)
   private Integer functionIdentifier;
