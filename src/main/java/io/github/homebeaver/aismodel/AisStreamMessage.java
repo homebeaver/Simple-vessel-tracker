@@ -82,35 +82,40 @@ public class AisStreamMessage {
 			case BINARYBROADCASTMESSAGE: // messageType 8
 				res.message = BinaryBroadcastMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
+			case STANDARDSEARCHANDRESCUEAIRCRAFTREPORT: // messageType 9
+				res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+// Message 10: UTC and date inquiry
+// Message 11: UTC/date response; For Message 11 refer to description of Message 4
+			case ADDRESSEDSAFETYMESSAGE: // messageType 12
+				res.message = AddressedSafetyMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
 			case UNKNOWNMESSAGE:
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
 				break;
-			case STANDARDCLASSBPOSITIONREPORT:
-				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case EXTENDEDCLASSBPOSITIONREPORT:
-				res.message = ExtendedClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case STATICDATAREPORT:
-				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case DATALINKMANAGEMENTMESSAGE:
-				res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case AIDSTONAVIGATIONREPORT:
-				res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case GNSSBROADCASTBINARYMESSAGE:
-				res.message = GnssBroadcastBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
-			case INTERROGATION:
+			case INTERROGATION: // messageType 15
 				res.message = Interrogation.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case ASSIGNEDMODECOMMAND:
+			case ASSIGNEDMODECOMMAND: // messageType 16
 				res.message = AssignedModeCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case STANDARDSEARCHANDRESCUEAIRCRAFTREPORT:
-				res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+			case GNSSBROADCASTBINARYMESSAGE: // messageType 17
+				res.message = GnssBroadcastBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case STANDARDCLASSBPOSITIONREPORT: // messageType 18
+				res.message = StandardClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case EXTENDEDCLASSBPOSITIONREPORT: // messageType 19
+				res.message = ExtendedClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case STATICDATAREPORT: // messageType 24
+				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case DATALINKMANAGEMENTMESSAGE: // messageType 20
+				res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case AIDSTONAVIGATIONREPORT: // messageType 21
+				res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
