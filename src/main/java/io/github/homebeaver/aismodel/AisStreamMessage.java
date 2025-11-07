@@ -109,14 +109,20 @@ public class AisStreamMessage {
 			case EXTENDEDCLASSBPOSITIONREPORT: // messageType 19
 				res.message = ExtendedClassBPositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case STATICDATAREPORT: // messageType 24
-				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
-				break;
 			case DATALINKMANAGEMENTMESSAGE: // messageType 20
 				res.message = DataLinkManagementMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case AIDSTONAVIGATIONREPORT: // messageType 21
 				res.message = AidsToNavigationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case CHANNELMANAGEMENT: // messageType 22
+				res.message = ChannelManagement.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case GROUPASSIGNMENTCOMMAND: // messageType 23
+				res.message = GroupAssignmentCommand.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case STATICDATAREPORT: // messageType 24
+				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case UNKNOWNMESSAGE:
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
