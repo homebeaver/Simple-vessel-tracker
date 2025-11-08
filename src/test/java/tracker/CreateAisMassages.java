@@ -12,9 +12,12 @@ import io.github.homebeaver.aisview.Regions;
 public class CreateAisMassages {
 
 	public static void main(String[] args) throws URISyntaxException {
-//		System.out.println("starting");
+		if (args.length > 0) {
+			AisStreamKeyProvider.getInstance().setKey(args[0]);;
+		} else {
+			AisStreamKeyProvider.getInstance().run();
+		}
 		
-		AisStreamKeyProvider.getInstance().run();
 		AisStreamWebsocketClient client = 
 			new AisStreamWebsocketClient(true, AisStreamKeyProvider.getInstance(),
 					Regions.getInstance().getBoundingBox("Global"));
