@@ -39,8 +39,11 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * BinaryAcknowledge Message ID 7
  * <p>
- * Message 7 should be used as an acknowledgement of up to four Message 6 messages received (see § 5.3.1, Annex 2) 
- * and should be transmitted on the channel, where the addressed message to be acknowledged was received.
+ * Message 7 should be used as an acknowledgement of up to four Message 6 (ADDRESSEDBINARYMESSAGE) messages 
+ * received (see § 5.3.1, Annex 2) and should be transmitted on the channel, 
+ * where the addressed message to be acknowledged was received.
+ * <p>
+ * Message 13 should be used as an acknowledgement of up to four Message 12 (ADDRESSEDSAFETYMESSAGE) messages
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class BinaryAcknowledge extends AisMessage {
@@ -260,7 +263,7 @@ public class BinaryAcknowledge extends AisMessage {
 			msg = msg.spare(jo.getInt(SERIALIZED_NAME_SPARE));
 			JSONObject data = jo.getJSONObject(SERIALIZED_NAME_DESTINATIONS);
 			msg = msg.destinations(BinaryAcknowledgeDestinations.fromJson(data));
-			System.out.println(msg);
+//			System.out.println(msg);
 		} catch (JSONException e) {
 //			logger.error("Error creating DataLinkManagementMessage", e);
 			System.out.println("Error creating DataLinkManagementMessage " + e);

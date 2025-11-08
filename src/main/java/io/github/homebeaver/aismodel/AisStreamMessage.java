@@ -67,7 +67,7 @@ public class AisStreamMessage {
 			case POSITIONREPORT: // messageType 1, 2, 3
 				res.message = PositionReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-			case BASESTATIONREPORT: // messageType 4
+			case BASESTATIONREPORT: // messageType 4 : UTC and position report from base station
 				res.message = BaseStationReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case SHIPSTATICDATA: // messageType 5
@@ -88,7 +88,7 @@ public class AisStreamMessage {
 			case COORDINATEDUTCINQUIRY: // messageType 10
 				res.message = CoordinatedUTCInquiry.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-// Message 11: UTC/date response; For Message 11 refer to description of Message 4
+// Message 11: UTC and position response from mobile station; For Message 11 refer to description of Message 4
 			case ADDRESSEDSAFETYMESSAGE: // messageType 12
 				res.message = AddressedSafetyMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
