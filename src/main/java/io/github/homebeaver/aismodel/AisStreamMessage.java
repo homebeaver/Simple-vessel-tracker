@@ -85,7 +85,9 @@ public class AisStreamMessage {
 			case STANDARDSEARCHANDRESCUEAIRCRAFTREPORT: // messageType 9
 				res.message = StandardSearchAndRescueAircraftReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
-// Message 10: UTC and date inquiry
+			case COORDINATEDUTCINQUIRY: // messageType 10
+				res.message = CoordinatedUTCInquiry.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
 // Message 11: UTC/date response; For Message 11 refer to description of Message 4
 			case ADDRESSEDSAFETYMESSAGE: // messageType 12
 				res.message = AddressedSafetyMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
@@ -123,6 +125,15 @@ public class AisStreamMessage {
 				break;
 			case STATICDATAREPORT: // messageType 24
 				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case SINGLESLOTBINARYMESSAGE: // messageType 25
+//	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case MULTISLOTBINARYMESSAGE: // messageType 26
+//	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				break;
+			case LONGRANGEAISBROADCASTMESSAGE: // messageType 27
+//	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case UNKNOWNMESSAGE:
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
