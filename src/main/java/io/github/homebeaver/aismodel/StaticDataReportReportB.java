@@ -13,39 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-//import org.openapitools.client.model.ShipStaticDataDimension;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -472,31 +459,11 @@ public class StaticDataReportReportB {
 			.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE))
 			.spare(jo.getInt(SERIALIZED_NAME_SPARE));
 		} catch (JSONException e) {
-//	    	logger.error("Error creating ShipStaticDataDimension", e);
-			System.out.println("Error creating StaticDataReportReportA " + e);
+//	    	logger.error("Error creating StaticDataReportReportB", e);
+			System.out.println("Error creating StaticDataReportReportB " + e);
 		}
 		return res;
 	}
 
-
- /**
-  * Create an instance of StaticDataReportReportB given an JSON string
-  *
-  * @param jsonString JSON string
-  * @return An instance of StaticDataReportReportB
-  * @throws IOException if the JSON string is invalid with respect to StaticDataReportReportB
-  */
-//  public static StaticDataReportReportB fromJson(String jsonString) throws IOException {
-//    return JSON.getGson().fromJson(jsonString, StaticDataReportReportB.class);
-//  }
-
- /**
-  * Convert an instance of StaticDataReportReportB to an JSON string
-  *
-  * @return JSON string
-  */
-//  public String toJson() {
-//    return JSON.getGson().toJson(this);
-//  }
 }
 

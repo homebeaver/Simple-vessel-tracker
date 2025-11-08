@@ -112,7 +112,7 @@ public class AisMessageTest {
 				e.printStackTrace();
 			}
 			String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
-			LOG.info(msg.metaData.getTimeUtc() + " == "+dt.toLocalDate()+" "+dt.toLocalTime()+" "+hms);
+			LOG.fine(msg.metaData.getTimeUtc() + " == "+dt.toLocalDate()+" "+dt.toLocalTime()+" "+hms);
 			Assert.assertTrue(timeUtc.startsWith(""+dt.toLocalDate()+" "+hms));
 			// Die nanos sind mit oder ohne führende Nullen, Beispiele
 			// 2025-10-30 20:13:32.089506495 +0000 UTC
@@ -173,6 +173,26 @@ public class AisMessageTest {
 				Assert.assertFalse(ack.getDestinations().get3().getDestinationID()==0);
 			} else {
 				Assert.assertTrue(ack.getDestinations().get3().getDestinationID()==0);
+			}
+		});
+	}
+
+	@Test
+	public void testStaticDataReport() {
+		asmt.msgByMessageID.forEach((k, msg) -> {
+			if(k!=24) return;
+			Assert.assertEquals(AisMessageTypes.STATICDATAREPORT, msg.messageType);
+			AisMessage amsg = msg.message;
+			Assert.assertTrue(amsg instanceof StaticDataReport);
+			StaticDataReport sdr = (StaticDataReport)amsg;
+			if(sdr.getPartNumber()) {
+				Assert.assertFalse(sdr.getReportA().getValid());
+				Assert.assertTrue(sdr.getReportB().getValid()); // ReportB existiert
+				Assert.assertFalse(sdr.getReportB().getShipType()==0);
+			} else {
+				Assert.assertTrue(sdr.getReportA().getValid());
+				Assert.assertFalse(sdr.getReportB().getValid());
+				Assert.assertTrue(sdr.getReportB().getShipType()==0);
 			}
 		});
 	}

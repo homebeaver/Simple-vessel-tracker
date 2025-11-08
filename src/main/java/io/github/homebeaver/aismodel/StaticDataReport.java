@@ -13,45 +13,32 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-//import org.openapitools.client.model.StaticDataReportReportA;
-//import org.openapitools.client.model.StaticDataReportReportB;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
 /**
- * AIS message 24 - Class B "CS" static data, Additional data assigned to an MMSI Part A: Name Part B: Static Data
+ * AIS message 24 - Class B "CS" static data, 
+ * Additional data assigned to an MMSI Part A: Name Part B: Static Data
  * <p>
  * Static data report as defined by ITU-R M.1371-4
  */
@@ -65,26 +52,15 @@ In case of an interrogation for a Class B "CS" on a Message 24, the response sho
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class StaticDataReport extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_RESERVED = "Reserved";
   @SerializedName(SERIALIZED_NAME_RESERVED)
   private Integer reserved;
 
+  /**
+   * Identifier for the message part number; always 0 (false) for Part A
+   * TRUE => for Part B
+   */
   public static final String SERIALIZED_NAME_PART_NUMBER = "PartNumber";
   @SerializedName(SERIALIZED_NAME_PART_NUMBER)
   private Boolean partNumber;
@@ -97,104 +73,11 @@ public class StaticDataReport extends AisMessage {
   @SerializedName(SERIALIZED_NAME_REPORT_B)
   private StaticDataReportReportB reportB;
 
-  public StaticDataReport() {
-	  super();
-  }
-
-//  public StaticDataReport messageID(Integer messageID) {
-//
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public StaticDataReport repeatIndicator(Integer repeatIndicator) {
-//
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public StaticDataReport userID(Integer userID) {
-//
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public StaticDataReport valid(Boolean valid) {
-//
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-
+	public StaticDataReport() {
+		super();
+	}
 
   public StaticDataReport reserved(Integer reserved) {
-
     this.reserved = reserved;
     return this;
   }
@@ -296,24 +179,20 @@ public class StaticDataReport extends AisMessage {
     }
     StaticDataReport staticDataReport = (StaticDataReport) o;
     return Objects.equals(getMessageID(), staticDataReport.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), staticDataReport.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), staticDataReport.getUserID()) &&
-            Objects.equals(getValid(), staticDataReport.getValid()) &&
-//    return Objects.equals(this.messageID, staticDataReport.messageID) &&
-//        Objects.equals(this.repeatIndicator, staticDataReport.repeatIndicator) &&
-//        Objects.equals(this.userID, staticDataReport.userID) &&
-//        Objects.equals(this.valid, staticDataReport.valid) &&
+           Objects.equals(getRepeatIndicator(), staticDataReport.getRepeatIndicator()) &&
+           Objects.equals(getUserID(), staticDataReport.getUserID()) &&
+           Objects.equals(getValid(), staticDataReport.getValid()) &&
         Objects.equals(this.reserved, staticDataReport.reserved) &&
         Objects.equals(this.partNumber, staticDataReport.partNumber) &&
         Objects.equals(this.reportA, staticDataReport.reportA) &&
         Objects.equals(this.reportB, staticDataReport.reportB);
   }
 
-  @Override
-  public int hashCode() {
-	return Objects.hash(getMessageID(), getRepeatIndicator(), getUserID(), getValid(), 
-			reserved, partNumber, reportA, reportB);
-  }
+	@Override
+	public int hashCode() {
+		return Objects.hash(getMessageID(), getRepeatIndicator(), getUserID(), getValid(), 
+		reserved, partNumber, reportA, reportB);
+	}
 
   @Override
   public String toString() {
@@ -323,10 +202,6 @@ public class StaticDataReport extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    reserved: ").append(toIndentedString(reserved)).append("\n");
     sb.append("    partNumber: ").append(toIndentedString(partNumber)).append("\n");
     sb.append("    reportA: ").append(toIndentedString(reportA)).append("\n");
@@ -451,27 +326,26 @@ public class StaticDataReport extends AisMessage {
  */
 	public static StaticDataReport fromJson(JSONObject jo) {
 		AisMessage res = new StaticDataReport();
-		StaticDataReport ps = null;
+		StaticDataReport sdr = null;
 		// Extract individual fields from JSONObject
 		try {
 			res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
 			res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
 			res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
 			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-			ps = (StaticDataReport) res;
-			ps = ps.partNumber(jo.getBoolean(SERIALIZED_NAME_PART_NUMBER));
+			sdr = (StaticDataReport) res;
+			sdr = sdr.partNumber(jo.getBoolean(SERIALIZED_NAME_PART_NUMBER));
 			JSONObject ra = jo.getJSONObject(SERIALIZED_NAME_REPORT_A);
-			ps = ps.reportA(StaticDataReportReportA.fromJson(ra));
+			sdr = sdr.reportA(StaticDataReportReportA.fromJson(ra));
 			JSONObject rb = jo.getJSONObject(SERIALIZED_NAME_REPORT_B);
-			ps = ps.reportB(StaticDataReportReportB.fromJson(rb));
-			ps = ps.reserved(jo.getInt(SERIALIZED_NAME_RESERVED));
-			System.out.println(ps);
+			sdr = sdr.reportB(StaticDataReportReportB.fromJson(rb));
+			sdr = sdr.reserved(jo.getInt(SERIALIZED_NAME_RESERVED));
+//			System.out.println(sdr);
 		} catch (JSONException e) {
 	//        logger.error("Error creating StaticDataReport", e);
 			System.out.println("Error creating StaticDataReport " + e);
 		}
-		return ps;
+		return sdr;
 	}
 
 }
-
