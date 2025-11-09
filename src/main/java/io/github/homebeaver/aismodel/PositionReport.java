@@ -52,11 +52,11 @@ public class PositionReport extends AisMessage {
    * 6 = aground (auf Grund)
    * 7 = engaged in fishing 
    * 8 = under way sailing 
-   * 9 = reserved for future amendment of navigational status for ships carrying DG, HS, or MP, or IMO hazard
-   * or pollutant category C, high speed craft (HSC), 
+   * 9 = reserved for future amendment of navigational status for 
+   * ships carrying DG, HS, or MP, or IMO hazard or pollutant category C, high speed craft (HSC), 
    * 10 = reserved for future amendment of navigational status for
-   * ships carrying dangerous goods (DG), harmful substances (HS) or marine pollutants (MP), or IMO hazard or
-   * pollutant category A, wing in grand (WIG); 
+   * ships carrying dangerous goods (DG), harmful substances (HS) or marine pollutants (MP), 
+   * or IMO hazard or pollutant category A, wing in grand (WIG); 
    * 11-13 = reserved for future use 14 = AIS-SART (active) 
    * 15 = not defined = default (also used by AIS-SART under test)
    */
@@ -246,31 +246,27 @@ public class PositionReport extends AisMessage {
   }
 
 
-  public PositionReport sog(Double sog) {
-    
-    this.sog = sog;
-    return this;
-  }
+	public PositionReport sog(Double sog) {
+		this.sog = sog;
+		return this;
+	}
 
-   /**
-   * Get sog
-   * @return sog
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get sog
+	 * 
+	 * @return sog
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Double getSog() {
+		return sog;
+	}
 
-  public Double getSog() {
-    return sog;
-  }
-
-
-  public void setSog(Double sog) {
-    this.sog = sog;
-  }
-
+	public void setSog(Double sog) {
+		this.sog = sog;
+	}
 
   public PositionReport positionAccuracy(Boolean positionAccuracy) {
-    
     this.positionAccuracy = positionAccuracy;
     return this;
   }
@@ -337,32 +333,27 @@ public class PositionReport extends AisMessage {
     this.latitude = latitude;
   }
 
+	public PositionReport cog(Double cog) {
+		this.cog = cog;
+		return this;
+	}
 
-  public PositionReport cog(Double cog) {
-    
-    this.cog = cog;
-    return this;
-  }
+	/**
+	 * Get cog
+	 * 
+	 * @return cog
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Double getCog() {
+		return cog;
+	}
 
-   /**
-   * Get cog
-   * @return cog
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Double getCog() {
-    return cog;
-  }
-
-
-  public void setCog(Double cog) {
-    this.cog = cog;
-  }
-
+	public void setCog(Double cog) {
+		this.cog = cog;
+	}
 
   public PositionReport trueHeading(Integer trueHeading) {
-    
     this.trueHeading = trueHeading;
     return this;
   }

@@ -143,28 +143,25 @@ public class ExtendedClassBPositionReport extends AisMessage {
   }
 
 
-  public ExtendedClassBPositionReport sog(Double sog) {
-    
-    this.sog = sog;
-    return this;
-  }
+	public ExtendedClassBPositionReport sog(Double sog) {
+		this.sog = sog;
+		return this;
+	}
 
-   /**
-   * Get sog
-   * @return sog
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get sog
+	 * 
+	 * @return sog
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Double getSog() {
+		return sog;
+	}
 
-  public Double getSog() {
-    return sog;
-  }
-
-
-  public void setSog(Double sog) {
-    this.sog = sog;
-  }
-
+	public void setSog(Double sog) {
+		this.sog = sog;
+	}
 
   public ExtendedClassBPositionReport positionAccuracy(Boolean positionAccuracy) {
     
@@ -235,31 +232,27 @@ public class ExtendedClassBPositionReport extends AisMessage {
   }
 
 
-  public ExtendedClassBPositionReport cog(Double cog) {
-    
-    this.cog = cog;
-    return this;
-  }
+	public ExtendedClassBPositionReport cog(Double cog) {
+		this.cog = cog;
+		return this;
+	}
 
-   /**
-   * Get cog
-   * @return cog
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get cog
+	 * 
+	 * @return cog
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Double getCog() {
+		return cog;
+	}
 
-  public Double getCog() {
-    return cog;
-  }
-
-
-  public void setCog(Double cog) {
-    this.cog = cog;
-  }
-
+	public void setCog(Double cog) {
+		this.cog = cog;
+	}
 
   public ExtendedClassBPositionReport trueHeading(Integer trueHeading) {
-    
     this.trueHeading = trueHeading;
     return this;
   }

@@ -148,16 +148,19 @@ public class AisMessageTest {
 				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)amsg;
 				Assert.assertEquals(lo, pr.getLongitude());
 				Assert.assertEquals(la, pr.getLatitude());
+				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
 			} else if (k==18) {
 				Assert.assertTrue(amsg instanceof StandardClassBPositionReport);
 				StandardClassBPositionReport pr = (StandardClassBPositionReport)amsg;
 				Assert.assertEquals(lo, pr.getLongitude());
 				Assert.assertEquals(la, pr.getLatitude());
+				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
 			} else {
 				Assert.assertTrue(amsg instanceof PositionReport);
 				PositionReport pr = (PositionReport)amsg;
 				Assert.assertEquals(lo, pr.getLongitude());
 				Assert.assertEquals(la, pr.getLatitude());
+				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
 			}
 		});
 	}
