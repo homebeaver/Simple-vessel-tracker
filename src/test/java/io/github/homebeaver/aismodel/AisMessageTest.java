@@ -156,54 +156,40 @@ staticSetup fertig, types#=18
 	@Test
 	public void testUserId() {
 		LOG.info("The user ID should be the MMSI...");
-		asmt.msgByMessageID.forEach((k, msg) -> {
-			Integer mmsi = msg.metaData.getMMSI();
-			Integer userId =  msg.message.getUserID();
-			Assert.assertEquals(mmsi, userId);
-		});
+		asmt.msgByMessageID.forEach((k, msg) -> testUserId(msg) );
 		asmt.msgByType.forEach((k, msgList) -> {
-			msgList.forEach( msg -> {
-				Integer mmsi = msg.metaData.getMMSI();
-				Integer userId =  msg.message.getUserID();
-				Assert.assertEquals(mmsi, userId);
-			});
+			msgList.forEach( msg -> testUserId(msg) );
 		});
+	}
+	private void testUserId(AisStreamMessage msg) {
+		Integer mmsi = msg.metaData.getMMSI();
+		Integer userId =  msg.message.getUserID();
+		Assert.assertEquals(mmsi, userId);
 	}
 	
 	@Test
 	public void testTtimeUtc() {
 		LOG.info("extract MetaData.timeUtc to LocalDateTime...");
-		asmt.msgByMessageID.forEach((k, msg) -> {
-			String timeUtc =msg.metaData.getTimeUtc();
-			LocalDateTime dt = null;
-			try {
-				dt = MetaData.convertStringToLocalDateTime(timeUtc);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
-			LOG.fine(msg.metaData.getTimeUtc() + " == "+dt.toLocalDate()+" "+dt.toLocalTime()+" "+hms);
-			Assert.assertTrue(timeUtc.startsWith(""+dt.toLocalDate()+" "+hms));
-			// Die nanos sind mit oder ohne führende Nullen, Beispiele
-			// 2025-10-30 20:13:32.089506495 +0000 UTC
-			// 2025-10-30 19:42:57.13756116 +0000 UTC
-		});
+		asmt.msgByMessageID.forEach((k, msg) -> testTtimeUtc(msg) );
 		asmt.msgByType.forEach((k, msgList) -> {
-			msgList.forEach( msg -> {
-				String timeUtc =msg.metaData.getTimeUtc();
-				LocalDateTime dt = null;
-				try {
-					dt = MetaData.convertStringToLocalDateTime(timeUtc);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
-				LOG.fine(msg.metaData.getTimeUtc() + " == "+dt.toLocalDate()+" "+dt.toLocalTime()+" "+hms);
-				Assert.assertTrue(timeUtc.startsWith(""+dt.toLocalDate()+" "+hms));
-			});
+			msgList.forEach( msg -> testTtimeUtc(msg) );
 		});
+	}
+	private void testTtimeUtc(AisStreamMessage msg) {
+		String timeUtc = msg.metaData.getTimeUtc();
+		LocalDateTime dt = null;
+		try {
+			dt = MetaData.convertStringToLocalDateTime(timeUtc);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
+		LOG.fine(msg.metaData.getTimeUtc() + " == "+dt.toLocalDate()+" "+dt.toLocalTime()+" "+hms);
+		Assert.assertTrue(timeUtc.startsWith(""+dt.toLocalDate()+" "+hms));
+		// Die nanos sind mit oder ohne führende Nullen, Beispiele
+		// 2025-10-30 20:13:32.089506495 +0000 UTC
+		// 2025-10-30 19:42:57.13756116 +0000 UTC
 	}
 
 	@Test
@@ -214,58 +200,52 @@ staticSetup fertig, types#=18
 			// 1,2,3 = PositionReport
 			// 18 = Standard position report for Class B shipborne mobile equipment
 			// 19 = Extended Class B equipment position report
-			Double lo = msg.metaData.getLongitude();
-			Double la = msg.metaData.getLatitude();
-			AisMessage amsg = msg.message;
 			if (k==19) {
-				Assert.assertTrue(amsg instanceof ExtendedClassBPositionReport);
-				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)amsg;
-				Assert.assertEquals(lo, pr.getLongitude());
-				Assert.assertEquals(la, pr.getLatitude());
-				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+				testExtendedClassBPositionReport(msg);
 			} else if (k==18) {
-				Assert.assertTrue(amsg instanceof StandardClassBPositionReport);
-				StandardClassBPositionReport pr = (StandardClassBPositionReport)amsg;
-				Assert.assertEquals(lo, pr.getLongitude());
-				Assert.assertEquals(la, pr.getLatitude());
-				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+				testStandardClassBPositionReport(msg);
 			} else {
-				Assert.assertTrue(amsg instanceof PositionReport);
-				PositionReport pr = (PositionReport)amsg;
-				Assert.assertEquals(lo, pr.getLongitude());
-				Assert.assertEquals(la, pr.getLatitude());
-				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+				testPositionReport(msg);
 			}
 		});
 		asmt.msgByType.forEach((k, msgList) -> {
-			if (k==AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT) msgList.forEach( msg -> {
-				Double lo = msg.metaData.getLongitude();
-				Double la = msg.metaData.getLatitude();
-				AisMessage amsg = msg.message;
-				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)amsg;
-				Assert.assertEquals(lo, pr.getLongitude());
-				Assert.assertEquals(la, pr.getLatitude());
-				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
-			});
-			else if (k==AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) msgList.forEach( msg -> {
-				Double lo = msg.metaData.getLongitude();
-				Double la = msg.metaData.getLatitude();
-				AisMessage amsg = msg.message;
-				StandardClassBPositionReport pr = (StandardClassBPositionReport)amsg;
-				Assert.assertEquals(lo, pr.getLongitude());
-				Assert.assertEquals(la, pr.getLatitude());
-				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
-			});
-			else if (k==AisMessageTypes.POSITIONREPORT) msgList.forEach( msg -> {
-				Double lo = msg.metaData.getLongitude();
-				Double la = msg.metaData.getLatitude();
-				AisMessage amsg = msg.message;
-				PositionReport pr = (PositionReport)amsg;
-				Assert.assertEquals(lo, pr.getLongitude());
-				Assert.assertEquals(la, pr.getLatitude());
-				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
-			});
+			if (k==AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT) {
+				msgList.forEach( msg -> testExtendedClassBPositionReport(msg) );
+			}
+			else if (k==AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
+				msgList.forEach( msg -> testStandardClassBPositionReport(msg) );
+			}
+			else if (k==AisMessageTypes.POSITIONREPORT) {
+				msgList.forEach( msg -> testPositionReport(msg) );
+			}
 		});
+	}
+	private void testExtendedClassBPositionReport(AisStreamMessage msg) {
+		Double lo = msg.metaData.getLongitude();
+		Double la = msg.metaData.getLatitude();
+		AisMessage amsg = msg.message;
+		ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)amsg;
+		Assert.assertEquals(lo, pr.getLongitude());
+		Assert.assertEquals(la, pr.getLatitude());
+		Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+	}
+	private void testStandardClassBPositionReport(AisStreamMessage msg) {
+		Double lo = msg.metaData.getLongitude();
+		Double la = msg.metaData.getLatitude();
+		AisMessage amsg = msg.message;
+		StandardClassBPositionReport pr = (StandardClassBPositionReport)amsg;
+		Assert.assertEquals(lo, pr.getLongitude());
+		Assert.assertEquals(la, pr.getLatitude());
+		Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+	}
+	private void testPositionReport(AisStreamMessage msg) {
+		Double lo = msg.metaData.getLongitude();
+		Double la = msg.metaData.getLatitude();
+		AisMessage amsg = msg.message;
+		PositionReport pr = (PositionReport)amsg;
+		Assert.assertEquals(lo, pr.getLongitude());
+		Assert.assertEquals(la, pr.getLatitude());
+		Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
 	}
 
 	@Test
@@ -278,32 +258,29 @@ staticSetup fertig, types#=18
 			Assert.assertEquals(AisMessageTypes.BASESTATIONREPORT, msg.messageType);
 			// station is not a ship:
 			Assert.assertEquals("", msg.metaData.getShipName());
-			AisMessage amsg = msg.message;
 			if (k==11) {
 				// When mobile station is transmitting a message, 
 				// it should always set the repeat indicator to default = 0.
-				Assert.assertEquals(Integer.valueOf(0), amsg.getRepeatIndicator());
+				Assert.assertEquals(Integer.valueOf(0), msg.message.getRepeatIndicator());
 			}
-			Assert.assertTrue(amsg instanceof BaseStationReport);
-			BaseStationReport bsr = (BaseStationReport)amsg;
-			Double lo = msg.metaData.getLongitude();
-			Double la = msg.metaData.getLatitude();
-			Assert.assertEquals(lo, bsr.getLongitude());
-			Assert.assertEquals(la, bsr.getLatitude());
+			testBaseStationReport(msg);
 		});
 		asmt.msgByType.forEach((k, msgList) -> {
-			if (k==AisMessageTypes.BASESTATIONREPORT) msgList.forEach( msg -> {
-				Double lo = msg.metaData.getLongitude();
-				Double la = msg.metaData.getLatitude();
-				AisMessage amsg = msg.message;
-				BaseStationReport bsr = (BaseStationReport)amsg;
-				Assert.assertEquals(lo, bsr.getLongitude());
-				Assert.assertEquals(la, bsr.getLatitude());
-				if (amsg.getMessageID()==11) {
-					Assert.assertEquals(Integer.valueOf(0), amsg.getRepeatIndicator());
-				}
-			});
+			if (k==AisMessageTypes.BASESTATIONREPORT) {
+				msgList.forEach( msg -> testBaseStationReport(msg) );
+			}
 		});
+	}
+	private void testBaseStationReport(AisStreamMessage msg) {
+		Double lo = msg.metaData.getLongitude();
+		Double la = msg.metaData.getLatitude();
+		AisMessage amsg = msg.message;
+		BaseStationReport bsr = (BaseStationReport)amsg;
+		Assert.assertEquals(lo, bsr.getLongitude());
+		Assert.assertEquals(la, bsr.getLatitude());
+		if (amsg.getMessageID()==11) {
+			Assert.assertEquals(Integer.valueOf(0), amsg.getRepeatIndicator());
+		}
 	}
 
 	@Test
@@ -314,56 +291,37 @@ staticSetup fertig, types#=18
 			// 7 = acknowledgement of up to four Message 6 (ADDRESSEDBINARYMESSAGE) messages
 			// 13= acknowledgement of up to four Message 12 (ADDRESSEDSAFETYMESSAGE) messages
 			Assert.assertEquals(AisMessageTypes.BINARYACKNOWLEDGE, msg.messageType);
-			AisMessage amsg = msg.message;
-			Assert.assertTrue(amsg instanceof BinaryAcknowledge);
-			BinaryAcknowledge ack = (BinaryAcknowledge)amsg;
-			if(ack.getDestinations().get0().getValid()) {
-				Assert.assertFalse(ack.getDestinations().get0().getDestinationID()==0);
-			} else {
-				Assert.assertTrue(ack.getDestinations().get0().getDestinationID()==0);
-			}
-			if(ack.getDestinations().get1().getValid()) {
-				Assert.assertFalse(ack.getDestinations().get1().getDestinationID()==0);
-			} else {
-				Assert.assertTrue(ack.getDestinations().get1().getDestinationID()==0);
-			}
-			if(ack.getDestinations().get2().getValid()) {
-				Assert.assertFalse(ack.getDestinations().get2().getDestinationID()==0);
-			} else {
-				Assert.assertTrue(ack.getDestinations().get2().getDestinationID()==0);
-			}
-			if(ack.getDestinations().get3().getValid()) {
-				Assert.assertFalse(ack.getDestinations().get3().getDestinationID()==0);
-			} else {
-				Assert.assertTrue(ack.getDestinations().get3().getDestinationID()==0);
-			}
+			testBinaryAcknowledge(msg);
 		});
 		asmt.msgByType.forEach((k, msgList) -> {
-			if (k==AisMessageTypes.BINARYACKNOWLEDGE) msgList.forEach( msg -> {
-				AisMessage amsg = msg.message;
-				BinaryAcknowledge ack = (BinaryAcknowledge)amsg;
-				if(ack.getDestinations().get0().getValid()) {
-					Assert.assertFalse(ack.getDestinations().get0().getDestinationID()==0);
-				} else {
-					Assert.assertTrue(ack.getDestinations().get0().getDestinationID()==0);
-				}
-				if(ack.getDestinations().get1().getValid()) {
-					Assert.assertFalse(ack.getDestinations().get1().getDestinationID()==0);
-				} else {
-					Assert.assertTrue(ack.getDestinations().get1().getDestinationID()==0);
-				}
-				if(ack.getDestinations().get2().getValid()) {
-					Assert.assertFalse(ack.getDestinations().get2().getDestinationID()==0);
-				} else {
-					Assert.assertTrue(ack.getDestinations().get2().getDestinationID()==0);
-				}
-				if(ack.getDestinations().get3().getValid()) {
-					Assert.assertFalse(ack.getDestinations().get3().getDestinationID()==0);
-				} else {
-					Assert.assertTrue(ack.getDestinations().get3().getDestinationID()==0);
-				}
-			});
+			if (k==AisMessageTypes.BINARYACKNOWLEDGE) {
+				msgList.forEach( msg -> testBinaryAcknowledge(msg) );
+			}
 		});
+	}
+	private void testBinaryAcknowledge(AisStreamMessage msg) {
+		AisMessage amsg = msg.message;
+		BinaryAcknowledge ack = (BinaryAcknowledge)amsg;
+		if(ack.getDestinations().get0().getValid()) {
+			Assert.assertFalse(ack.getDestinations().get0().getDestinationID()==0);
+		} else {
+			Assert.assertTrue(ack.getDestinations().get0().getDestinationID()==0);
+		}
+		if(ack.getDestinations().get1().getValid()) {
+			Assert.assertFalse(ack.getDestinations().get1().getDestinationID()==0);
+		} else {
+			Assert.assertTrue(ack.getDestinations().get1().getDestinationID()==0);
+		}
+		if(ack.getDestinations().get2().getValid()) {
+			Assert.assertFalse(ack.getDestinations().get2().getDestinationID()==0);
+		} else {
+			Assert.assertTrue(ack.getDestinations().get2().getDestinationID()==0);
+		}
+		if(ack.getDestinations().get3().getValid()) {
+			Assert.assertFalse(ack.getDestinations().get3().getDestinationID()==0);
+		} else {
+			Assert.assertTrue(ack.getDestinations().get3().getDestinationID()==0);
+		}
 	}
 
 	/*
@@ -382,7 +340,9 @@ staticSetup fertig, types#=18
 			testStaticDataReport(msg);
 		});
 		asmt.msgByType.forEach((k, msgList) -> {
-			if (k==AisMessageTypes.STATICDATAREPORT) msgList.forEach( msg -> testStaticDataReport(msg) );
+			if (k==AisMessageTypes.STATICDATAREPORT) {
+				msgList.forEach( msg -> testStaticDataReport(msg) );
+			}
 		});
 	}
 	private void testStaticDataReport(AisStreamMessage msg) {
