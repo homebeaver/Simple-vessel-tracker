@@ -251,12 +251,11 @@ Type Code 	Description
   @SerializedName(SERIALIZED_NAME_SPARE)
   private Boolean spare;
 
-  public ShipStaticData() { 
-	  super();
-  }
+	public ShipStaticData() {
+		super();
+	}
 
   public ShipStaticData aisVersion(Integer aisVersion) {
-    
     this.aisVersion = aisVersion;
     return this;
   }
@@ -748,31 +747,11 @@ Type Code 	Description
 			ssd = ssd.destination(jo.getString(SERIALIZED_NAME_DESTINATION));
 			ssd = ssd.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
 			// XXX spare
-//			System.out.println(res);
+//			System.out.println(ssd);
 		} catch (JSONException e) {
 //    	logger.error("Error creating ShipStaticData", e);
 		}
 		return ssd;
 	}
 
- /**
-  * Create an instance of ShipStaticData given an JSON string
-  *
-  * @param jsonString JSON string
-  * @return An instance of ShipStaticData
-  * @throws IOException if the JSON string is invalid with respect to ShipStaticData
-  */
-//  public static ShipStaticData fromJson(String jsonString) throws IOException {
-//    return JSON.getGson().fromJson(jsonString, ShipStaticData.class);
-//  }
-
- /**
-  * Convert an instance of ShipStaticData to an JSON string
-  *
-  * @return JSON string
-  */
-//  public String toJson() {
-//    return JSON.getGson().toJson(this);
-//  }
 }
-

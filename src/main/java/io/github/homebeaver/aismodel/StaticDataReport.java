@@ -46,9 +46,11 @@ import io.swagger.annotations.ApiModelProperty;
 M.1371-4 :
 3.22 Message 24: Static data report
 Message 24 Part A and Part B may be used by any AIS station to associate a MMSI with a name.
-Message 24 Part A and Part B should be used by Class B "CS" shipborne mobile equipment. The message consists of two parts.
+Message 24 Part A and Part B should be used by Class B "CS" shipborne mobile equipment. 
+	The message consists of two parts.
 Message 24B should be transmitted within 1 min following Message 24A.
-In case of an interrogation for a Class B "CS" on a Message 24, the response should include Part A and Part B.
+In case of an interrogation for a Class B "CS" (Carrier sense) on a Message 24, 
+the response should include Part A and Part B.
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class StaticDataReport extends AisMessage {

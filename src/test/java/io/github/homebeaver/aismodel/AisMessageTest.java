@@ -49,6 +49,7 @@ public class AisMessageTest {
 		LOG.fine("AisStreamMessageTest:" + asmt);
 		try {
 			// in liesUrl wird outMessage gerufen
+//			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/global.txt"), asmt);
 			AisStreamMessage.liesUrl(new FileInputStream("src/test/java/aisstream2.txt"), asmt);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -64,8 +65,8 @@ public class AisMessageTest {
 
 	@Test
 	public void testCounter() {
-		LOG.info("I expect 27 messages, one per line:");
-		Assert.assertEquals(27, asmt.lines);
+		LOG.info("I expect 29 messages, one per line:");
+		Assert.assertEquals(29, asmt.lines);
 		Assert.assertEquals(2, asmt.msgNull);
 		Assert.assertEquals(21, asmt.msgByMessageID.size());
 
@@ -82,12 +83,24 @@ public class AisMessageTest {
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(11)); // BaseStationReport
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(12));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(13));
+		// 14 SAFETYBROADCASTMESSAGE - noch keine gefunden
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(15));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(16));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(17));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(18));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(19));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(20));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(21));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(22));
+		// 23 GROUPASSIGNMENTCOMMAND - noch keine gefunden
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(24)); // StaticDataReport
 		// welche MessageID fehlen
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(8));
-		// 14 SAFETYBROADCASTMESSAGE - noch keine gefunden
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(14));
-		// 22 GROUPASSIGNMENTCOMMAND - noch keine gefunden
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(23));
+		Assert.assertFalse(asmt.msgByMessageID.containsKey(25));
+		Assert.assertFalse(asmt.msgByMessageID.containsKey(26));
+		Assert.assertFalse(asmt.msgByMessageID.containsKey(27));
 	}
 
 	@Test
@@ -177,6 +190,13 @@ public class AisMessageTest {
 		});
 	}
 
+	/*
+	 * typischerweise sendet ein Schiff zuerst STATICDATAREPORT mit ReportA, also mit Namen;
+	 * innerhalb einer Minute sollte ReportB folgen
+	 * "... Message 24B should be transmitted within 1 min following Message 24A."
+	 * (das wird hier aber nicht geprüft)
+	 * MetaData.ShipName ist nur bei 24A gesetzt, nicht bei 24B
+	 */
 	@Test
 	public void testStaticDataReport() {
 		asmt.msgByMessageID.forEach((k, msg) -> {
@@ -190,7 +210,8 @@ public class AisMessageTest {
 				Assert.assertTrue(sdr.getReportB().getValid()); // ReportB existiert
 				Assert.assertFalse(sdr.getReportB().getShipType()==0);
 			} else {
-				Assert.assertTrue(sdr.getReportA().getValid());
+				Assert.assertTrue(sdr.getReportA().getValid());  // ReportA existiert
+				Assert.assertEquals(sdr.getReportA().getName(), msg.getMetaData().getShipName());
 				Assert.assertFalse(sdr.getReportB().getValid());
 				Assert.assertTrue(sdr.getReportB().getShipType()==0);
 			}
