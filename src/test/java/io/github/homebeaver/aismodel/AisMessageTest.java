@@ -4,8 +4,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.junit.Assert;
@@ -17,31 +20,36 @@ import io.github.homebeaver.aismodel.AisStreamMessage.AisStreamCallback;
 
 public class AisMessageTest {
 
-    private static final Logger LOG = Logger.getLogger(AisMessageTest.class.getName());
+	private static final Logger LOG = Logger.getLogger(AisMessageTest.class.getName());
 
-    static AisStreamMessageTest asmt;
-    static class AisStreamMessageTest implements AisStreamCallback<AisStreamMessage> {
+	static AisStreamMessageTest asmt;
 
-    	int lines = 0; // == messages
-    	int msgNull = 0; // == UnknownMessage
-    	Map<Integer, AisStreamMessage> msgByMessageID = new HashMap<Integer, AisStreamMessage>();
+	static class AisStreamMessageTest implements AisStreamCallback<AisStreamMessage> {
+
+		int lines = 0; // == messages
+		int msgNull = 0; // == UnknownMessage
+		Map<Integer, AisStreamMessage> msgByMessageID = new HashMap<>();
+		List<AisStreamMessage> listOfMsg = new Vector<>();
+		Map<AisMessageTypes, List<AisStreamMessage>> msgByType = new HashMap<>();
+
 		@Override
 		public void outMessage(AisStreamMessage msg) {
 			lines++;
-			if(msg==null) {
-				LOG.info("line "+lines + " is null");
+			if (msg == null) {
+				LOG.info("line " + lines + " is null");
 				msgNull++;
 			} else {
+				assert listOfMsg.add(msg);
 				Integer mid = msg.message.getMessageID();
-				LOG.info("MessageID="+mid+", messageType:"+msg.messageType);
+				LOG.info("MessageID=" + mid + ", messageType:" + msg.messageType);
 				AisStreamMessage old = msgByMessageID.put(mid, msg);
-				if(old!=null) {
+				if (old != null) {
 					// msg überschreibt old
 				}
 			}
 		}
-    	
-    }
+
+	}
 
 	@BeforeClass
 	public static void staticSetup() {
@@ -49,26 +57,69 @@ public class AisMessageTest {
 		LOG.fine("AisStreamMessageTest:" + asmt);
 		try {
 			// in liesUrl wird outMessage gerufen
-//			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/dover.txt"), asmt);
+//			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/global.txt"), asmt);
 			AisStreamMessage.liesUrl(new FileInputStream("src/test/java/aisstream2.txt"), asmt);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		LOG.info("staticSetup fertig");
+		for (AisStreamMessage m : asmt.listOfMsg) {
+			asmt.msgByType.computeIfAbsent(m.getAisMessageType(), k -> new ArrayList<>()).add(m);
+		}
+		asmt.listOfMsg.clear();
+		asmt.msgByType.forEach( (type, v) -> {
+			System.out.println("#"+v.size() + "\t "+type);
+		});
+		System.out.println("staticSetup fertig, types#="+asmt.msgByType.size());
+/* Dover:
+#  54	 BinaryAcknowledge
+# 201	 BaseStationReport
+# 617	 ShipStaticData
+#   3	 ExtendedClassBPositionReport
+# 884	 StandardClassBPositionReport
+#3438	 PositionReport
+# 106	 AidsToNavigationReport
+# 666	 AddressedBinaryMessage
+# 833	 DataLinkManagementMessage
+# 433	 StaticDataReport
+#   4	 Interrogation
+staticSetup fertig, types#=11
+
+Global:
+# 3054	 AidsToNavigationReport
+# 7916	 DataLinkManagementMessage
+#  351	 BinaryAcknowledge
+#11717	 ShipStaticData
+# 1243	 StandardSearchAndRescueAircraftReport
+#   16	 AddressedSafetyMessage
+#  546	 AssignedModeCommand
+#  241	 ChannelManagement
+#14416	 StandardClassBPositionReport
+#    4	 SafetyBroadcastMessage
+#  285	 GnssBroadcastBinaryMessage
+#61149	 PositionReport
+#  430	 Interrogation
+#    7	 CoordinatedUTCInquiry
+# 2836	 BaseStationReport
+# 7169	 StaticDataReport
+#   32	 ExtendedClassBPositionReport
+# 1224	 AddressedBinaryMessage
+staticSetup fertig, types#=18
+ */
 	}
 
 	@Before
 	public void setup() {
-		LOG.info("setup fertig");
+		LOG.fine("setup fertig");
 	}
 
 	@Test
 	public void testCounter() {
-		LOG.info("I expect 29 messages, one per line:");
-		Assert.assertEquals(29, asmt.lines);
+		LOG.info("I expect 30 messages, one per line...");
+		Assert.assertEquals(30, asmt.lines);
 		Assert.assertEquals(2, asmt.msgNull);
-		Assert.assertEquals(21, asmt.msgByMessageID.size());
+		Assert.assertEquals(22, asmt.msgByMessageID.size());
+		Assert.assertEquals(18, asmt.msgByType.size());
 
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(1)); // PositionReport 3x
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(2));
@@ -76,14 +127,14 @@ public class AisMessageTest {
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(4)); // BaseStationReport
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(5));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(6));
-		Assert.assertTrue(asmt.msgByMessageID.containsKey(7));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(7)); // BinaryAcknowledge
 		// 8 BINARYBROADCASTMESSAGE - noch keine gefunden
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(9)); // StandardSearchAndRescueAircraftReport
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(10));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(11)); // BaseStationReport
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(12));
-		Assert.assertTrue(asmt.msgByMessageID.containsKey(13));
-		// 14 SAFETYBROADCASTMESSAGE - noch keine gefunden
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(13)); // BinaryAcknowledge
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(14));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(15));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(16));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(17));
@@ -96,7 +147,6 @@ public class AisMessageTest {
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(24)); // StaticDataReport
 		// welche MessageID fehlen
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(8));
-		Assert.assertFalse(asmt.msgByMessageID.containsKey(14));
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(23));
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(25));
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(26));
@@ -105,16 +155,24 @@ public class AisMessageTest {
 
 	@Test
 	public void testUserId() {
-		// The user ID should be the MMSI
+		LOG.info("The user ID should be the MMSI...");
 		asmt.msgByMessageID.forEach((k, msg) -> {
 			Integer mmsi = msg.metaData.getMMSI();
 			Integer userId =  msg.message.getUserID();
 			Assert.assertEquals(mmsi, userId);
 		});
+		asmt.msgByType.forEach((k, msgList) -> {
+			msgList.forEach( msg -> {
+				Integer mmsi = msg.metaData.getMMSI();
+				Integer userId =  msg.message.getUserID();
+				Assert.assertEquals(mmsi, userId);
+			});
+		});
 	}
 	
 	@Test
 	public void testTtimeUtc() {
+		LOG.info("extract MetaData.timeUtc to LocalDateTime...");
 		asmt.msgByMessageID.forEach((k, msg) -> {
 			String timeUtc =msg.metaData.getTimeUtc();
 			LocalDateTime dt = null;
@@ -131,10 +189,26 @@ public class AisMessageTest {
 			// 2025-10-30 20:13:32.089506495 +0000 UTC
 			// 2025-10-30 19:42:57.13756116 +0000 UTC
 		});
+		asmt.msgByType.forEach((k, msgList) -> {
+			msgList.forEach( msg -> {
+				String timeUtc =msg.metaData.getTimeUtc();
+				LocalDateTime dt = null;
+				try {
+					dt = MetaData.convertStringToLocalDateTime(timeUtc);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
+				LOG.fine(msg.metaData.getTimeUtc() + " == "+dt.toLocalDate()+" "+dt.toLocalTime()+" "+hms);
+				Assert.assertTrue(timeUtc.startsWith(""+dt.toLocalDate()+" "+hms));
+			});
+		});
 	}
 
 	@Test
 	public void testPositionReports() {
+		LOG.info("Longitude+Latitude equals to MetaData and COG...");
 		asmt.msgByMessageID.forEach((k, msg) -> {
 			if(k!=1 && k!=2 && k!=3 && k!=18 && k!=19) return;
 			// 1,2,3 = PositionReport
@@ -163,10 +237,40 @@ public class AisMessageTest {
 				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
 			}
 		});
+		asmt.msgByType.forEach((k, msgList) -> {
+			if (k==AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT) msgList.forEach( msg -> {
+				Double lo = msg.metaData.getLongitude();
+				Double la = msg.metaData.getLatitude();
+				AisMessage amsg = msg.message;
+				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)amsg;
+				Assert.assertEquals(lo, pr.getLongitude());
+				Assert.assertEquals(la, pr.getLatitude());
+				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+			});
+			else if (k==AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) msgList.forEach( msg -> {
+				Double lo = msg.metaData.getLongitude();
+				Double la = msg.metaData.getLatitude();
+				AisMessage amsg = msg.message;
+				StandardClassBPositionReport pr = (StandardClassBPositionReport)amsg;
+				Assert.assertEquals(lo, pr.getLongitude());
+				Assert.assertEquals(la, pr.getLatitude());
+				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+			});
+			else if (k==AisMessageTypes.POSITIONREPORT) msgList.forEach( msg -> {
+				Double lo = msg.metaData.getLongitude();
+				Double la = msg.metaData.getLatitude();
+				AisMessage amsg = msg.message;
+				PositionReport pr = (PositionReport)amsg;
+				Assert.assertEquals(lo, pr.getLongitude());
+				Assert.assertEquals(la, pr.getLatitude());
+				Assert.assertTrue(pr.getCog()>=0 && pr.getCog()<=3600);
+			});
+		});
 	}
 
 	@Test
 	public void testBaseStationReport() {
+		LOG.info("Longitude+Latitude equals to MetaData and RepeatIndicator for mobile stations...");
 		asmt.msgByMessageID.forEach((k, msg) -> {
 			if(k!=4 && k!=11) return;
 			// 4 = UTC and position report from base station
@@ -187,10 +291,24 @@ public class AisMessageTest {
 			Assert.assertEquals(lo, bsr.getLongitude());
 			Assert.assertEquals(la, bsr.getLatitude());
 		});
+		asmt.msgByType.forEach((k, msgList) -> {
+			if (k==AisMessageTypes.BASESTATIONREPORT) msgList.forEach( msg -> {
+				Double lo = msg.metaData.getLongitude();
+				Double la = msg.metaData.getLatitude();
+				AisMessage amsg = msg.message;
+				BaseStationReport bsr = (BaseStationReport)amsg;
+				Assert.assertEquals(lo, bsr.getLongitude());
+				Assert.assertEquals(la, bsr.getLatitude());
+				if (amsg.getMessageID()==11) {
+					Assert.assertEquals(Integer.valueOf(0), amsg.getRepeatIndicator());
+				}
+			});
+		});
 	}
 
 	@Test
 	public void testBinaryAcknowledge() {
+		LOG.info("valid Destinations have DestinationID...");
 		asmt.msgByMessageID.forEach((k, msg) -> {
 			if(k!=7 && k!=13) return;
 			// 7 = acknowledgement of up to four Message 6 (ADDRESSEDBINARYMESSAGE) messages
@@ -219,6 +337,32 @@ public class AisMessageTest {
 			} else {
 				Assert.assertTrue(ack.getDestinations().get3().getDestinationID()==0);
 			}
+		});
+		asmt.msgByType.forEach((k, msgList) -> {
+			if (k==AisMessageTypes.BINARYACKNOWLEDGE) msgList.forEach( msg -> {
+				AisMessage amsg = msg.message;
+				BinaryAcknowledge ack = (BinaryAcknowledge)amsg;
+				if(ack.getDestinations().get0().getValid()) {
+					Assert.assertFalse(ack.getDestinations().get0().getDestinationID()==0);
+				} else {
+					Assert.assertTrue(ack.getDestinations().get0().getDestinationID()==0);
+				}
+				if(ack.getDestinations().get1().getValid()) {
+					Assert.assertFalse(ack.getDestinations().get1().getDestinationID()==0);
+				} else {
+					Assert.assertTrue(ack.getDestinations().get1().getDestinationID()==0);
+				}
+				if(ack.getDestinations().get2().getValid()) {
+					Assert.assertFalse(ack.getDestinations().get2().getDestinationID()==0);
+				} else {
+					Assert.assertTrue(ack.getDestinations().get2().getDestinationID()==0);
+				}
+				if(ack.getDestinations().get3().getValid()) {
+					Assert.assertFalse(ack.getDestinations().get3().getDestinationID()==0);
+				} else {
+					Assert.assertTrue(ack.getDestinations().get3().getDestinationID()==0);
+				}
+			});
 		});
 	}
 

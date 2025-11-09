@@ -13,61 +13,34 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
 /**
- * BaseStationReport Message ID 4 Position, UTC, date and current slot number of base station
+ * BaseStationReport Message ID 4 or 11 Position, UTC, date and current slot number of base station
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class BaseStationReport extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_UTC_YEAR = "UtcYear";
   @SerializedName(SERIALIZED_NAME_UTC_YEAR)
@@ -93,6 +66,12 @@ public class BaseStationReport extends AisMessage {
   @SerializedName(SERIALIZED_NAME_UTC_SECOND)
   private Integer utcSecond;
 
+  /**
+   * 1 = high (≤10 m)
+   * 0 = low (>10 m), default
+   * The PA flag should be determined in accordance with Table 47 on page 103
+https://www.e-navigation.nl/sites/default/files/R-REC-M.1371-4-201004-I%21%21PDF-E_0.pdf
+   */
   public static final String SERIALIZED_NAME_POSITION_ACCURACY = "PositionAccuracy";
   @SerializedName(SERIALIZED_NAME_POSITION_ACCURACY)
   private Boolean positionAccuracy;
@@ -105,6 +84,21 @@ public class BaseStationReport extends AisMessage {
   @SerializedName(SERIALIZED_NAME_LATITUDE)
   private Double latitude;
 
+  /**
+   * Type of electronic position fixing device
+Use of differential corrections is defined by field position accuracy above:
+0 = undefined (default)
+1 = global positioning system (GPS)
+2 = GNSS (GLONASS)
+3 = combined GPS/GLONASS
+4 = Loran-C
+5 = Chayka
+6 = integrated navigation system
+7 = surveyed
+8 = Galileo
+9-14 = not used
+15 = internal GNSS
+   */
   public static final String SERIALIZED_NAME_FIX_TYPE = "FixType";
   @SerializedName(SERIALIZED_NAME_FIX_TYPE)
   private Integer fixType;
@@ -121,105 +115,20 @@ public class BaseStationReport extends AisMessage {
   @SerializedName(SERIALIZED_NAME_RAIM)
   private Boolean raim;
 
+  /**
+   * SOTDMA (Self organized time division multiple access) communication state
+   * <p>
+   * The communication state provides the following functions:
+   * – it contains information used by the slot allocation algorithm in the SOTDMA concept;
+   * – it also indicates the synchronization state.
+   */
   public static final String SERIALIZED_NAME_COMMUNICATION_STATE = "CommunicationState";
   @SerializedName(SERIALIZED_NAME_COMMUNICATION_STATE)
   private Integer communicationState;
 
-  public BaseStationReport() { 
-	  super();
-  }
-
-//  public BaseStationReport messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public BaseStationReport repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public BaseStationReport userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public BaseStationReport valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-
+	public BaseStationReport() {
+		super();
+	}
 
   public BaseStationReport utcYear(Integer utcYear) {
     
@@ -554,13 +463,9 @@ public class BaseStationReport extends AisMessage {
     }
     BaseStationReport baseStationReport = (BaseStationReport) o;
     return Objects.equals(getMessageID(), baseStationReport.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), baseStationReport.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), baseStationReport.getUserID()) &&
-            Objects.equals(getValid(), baseStationReport.getValid()) &&
-//    return Objects.equals(this.messageID, baseStationReport.messageID) &&
-//        Objects.equals(this.repeatIndicator, baseStationReport.repeatIndicator) &&
-//        Objects.equals(this.userID, baseStationReport.userID) &&
-//        Objects.equals(this.valid, baseStationReport.valid) &&
+           Objects.equals(getRepeatIndicator(), baseStationReport.getRepeatIndicator()) &&
+           Objects.equals(getUserID(), baseStationReport.getUserID()) &&
+           Objects.equals(getValid(), baseStationReport.getValid()) &&
         Objects.equals(this.utcYear, baseStationReport.utcYear) &&
         Objects.equals(this.utcMonth, baseStationReport.utcMonth) &&
         Objects.equals(this.utcDay, baseStationReport.utcDay) &&
@@ -591,10 +496,6 @@ public class BaseStationReport extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    utcYear: ").append(toIndentedString(utcYear)).append("\n");
     sb.append("    utcMonth: ").append(toIndentedString(utcMonth)).append("\n");
     sb.append("    utcDay: ").append(toIndentedString(utcDay)).append("\n");
@@ -741,55 +642,35 @@ public class BaseStationReport extends AisMessage {
  */
 	public static BaseStationReport fromJson(JSONObject jo) {
 		AisMessage res = new BaseStationReport();
-		BaseStationReport ssd = null;
+		BaseStationReport bsr = null;
 		// Extract individual fields from JSONObject
 		try {
 			res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
 			res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
 			res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
 			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-			ssd = (BaseStationReport) res;
-			ssd = ssd.utcYear(jo.getInt(SERIALIZED_NAME_UTC_YEAR));
-			ssd = ssd.utcMonth(jo.getInt(SERIALIZED_NAME_UTC_MONTH));
-			ssd = ssd.utcDay(jo.getInt(SERIALIZED_NAME_UTC_DAY));
-			ssd = ssd.utcHour(jo.getInt(SERIALIZED_NAME_UTC_HOUR));
-			ssd = ssd.utcMinute(jo.getInt(SERIALIZED_NAME_UTC_MINUTE));
-			ssd = ssd.utcSecond(jo.getInt(SERIALIZED_NAME_UTC_SECOND));
-			ssd = ssd.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
-			ssd = ssd.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
-			ssd = ssd.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
-			ssd = ssd.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
-			ssd = ssd.longRangeEnable(jo.getBoolean(SERIALIZED_NAME_LONG_RANGE_ENABLE));
+			bsr = (BaseStationReport) res;
+			bsr = bsr.utcYear(jo.getInt(SERIALIZED_NAME_UTC_YEAR));
+			bsr = bsr.utcMonth(jo.getInt(SERIALIZED_NAME_UTC_MONTH));
+			bsr = bsr.utcDay(jo.getInt(SERIALIZED_NAME_UTC_DAY));
+			bsr = bsr.utcHour(jo.getInt(SERIALIZED_NAME_UTC_HOUR));
+			bsr = bsr.utcMinute(jo.getInt(SERIALIZED_NAME_UTC_MINUTE));
+			bsr = bsr.utcSecond(jo.getInt(SERIALIZED_NAME_UTC_SECOND));
+			bsr = bsr.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+			bsr = bsr.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+			bsr = bsr.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+			bsr = bsr.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
+			bsr = bsr.longRangeEnable(jo.getBoolean(SERIALIZED_NAME_LONG_RANGE_ENABLE));
 			// XXX spare
-			ssd = ssd.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
-			ssd = ssd.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-//			System.out.println(res);
+			bsr = bsr.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+			bsr = bsr.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
+//			System.out.println(bsr);
 		} catch (JSONException e) {
-//    	logger.error("Error creating BaseStationReport", e);
+//			logger.error("Error creating BaseStationReport", e);
 			System.out.println("Error creating BaseStationReport " + e);
 		}
-		return ssd;
+		return bsr;
 	}
 
-
-  /**
-  * Create an instance of BaseStationReport given an JSON string
-  *
-  * @param jsonString JSON string
-  * @return An instance of BaseStationReport
-  * @throws IOException if the JSON string is invalid with respect to BaseStationReport
-  */
-//  public static BaseStationReport fromJson(String jsonString) throws IOException {
-//    return JSON.getGson().fromJson(jsonString, BaseStationReport.class);
-//  }
-
- /**
-  * Convert an instance of BaseStationReport to an JSON string
-  *
-  * @return JSON string
-  */
-//  public String toJson() {
-//    return JSON.getGson().toJson(this);
-//  }
 }
 
