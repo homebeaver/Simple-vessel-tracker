@@ -119,7 +119,7 @@ public class AisMessageTest {
 			String timeUtc =msg.metaData.getTimeUtc();
 			LocalDateTime dt = null;
 			try {
-				dt = MetaData.convertStringToDate(timeUtc);
+				dt = MetaData.convertStringToLocalDateTime(timeUtc);
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

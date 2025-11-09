@@ -1,5 +1,10 @@
 package io.github.homebeaver.aismodel;
 
+import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -11,6 +16,11 @@ public class MetaData {
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
 	public static final String TIME_UTC = "time_utc";
+
+	public static LocalDateTime convertStringToLocalDateTime(String time_utc) throws ParseException {
+		DateTimeFormatter formatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss.n Z z").toFormatter();
+		return LocalDateTime.parse(time_utc, formatter);
+	}
 
 	private int mmsi;
 	private String mmsi_string;
@@ -55,6 +65,9 @@ public class MetaData {
 //	public Position getPosition() {
 //		return position;
 //	}
+	public String getTimeUtc() {
+		return time_utc;
+	}
 
 	public MetaData mmsi(int mmsi) {
 		this.mmsi = mmsi;
