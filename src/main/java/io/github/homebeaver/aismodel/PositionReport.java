@@ -677,54 +677,36 @@ public class PositionReport extends AisMessage {
     }
   }
 
-  public static PositionReport fromJson(JSONObject jo) {
-	  AisMessage res = new PositionReport();
-	  PositionReport ps = null;
-    // Extract individual fields from JSONObject
-    try {
-        res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
-        res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
-        res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
-        res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-        ps = (PositionReport)res;
-        ps = ps.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
-        ps = ps.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
-        ps = ps.sog(jo.getDouble(SERIALIZED_NAME_SOG));
-        ps = ps.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
-        ps = ps.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
-        ps = ps.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
-        ps = ps.cog(jo.getDouble(SERIALIZED_NAME_COG));
-        ps = ps.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
-        ps = ps.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
-        ps = ps.specialManoeuvreIndicator(jo.getInt(SERIALIZED_NAME_SPECIAL_MANOEUVRE_INDICATOR));
-      // XXX spare 
-        ps = ps.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
-        ps = ps.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-//      System.out.println(ps);
-    } catch (JSONException e) {
-//        logger.error("Error creating ShipStaticData", e);
-    }
-    return ps;
-  }
+	public static PositionReport fromJson(JSONObject jo) {
+		AisMessage res = new PositionReport();
+		PositionReport pr = null;
+		// Extract individual fields from JSONObject
+		try {
+			res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
+			res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
+			res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
+			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
+			pr = (PositionReport) res;
+			pr = pr.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
+			pr = pr.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
+			pr = pr.sog(jo.getDouble(SERIALIZED_NAME_SOG));
+			pr = pr.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+			pr = pr.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+			pr = pr.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+			pr = pr.cog(jo.getDouble(SERIALIZED_NAME_COG));
+			pr = pr.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
+			pr = pr.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
+			pr = pr.specialManoeuvreIndicator(jo.getInt(SERIALIZED_NAME_SPECIAL_MANOEUVRE_INDICATOR));
+			// XXX spare
+			pr = pr.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+			pr = pr.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
+//			System.out.println(ps);
+		} catch (JSONException e) {
+//			logger.error("Error creating PositionReport", e);
+			System.out.println("Error creating PositionReport " + e);
+		}
+		return pr;
+	}
 
- /**
-  * Create an instance of PositionReport given an JSON string
-  *
-  * @param jsonString JSON string
-  * @return An instance of PositionReport
-  * @throws IOException if the JSON string is invalid with respect to PositionReport
-  */
-//  public static PositionReport fromJson(String jsonString) throws IOException {
-//    return JSON.getGson().fromJson(jsonString, PositionReport.class);
-//  }
-
- /**
-  * Convert an instance of PositionReport to an JSON string
-  *
-  * @return JSON string
-  */
-//  public String toJson() {
-//    return JSON.getGson().toJson(this);
-//  }
 }
 

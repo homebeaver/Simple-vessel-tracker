@@ -811,31 +811,31 @@ public class StandardClassBPositionReport extends AisMessage {
  */
 public static StandardClassBPositionReport fromJson(JSONObject jo) {
 	AisMessage res = new StandardClassBPositionReport();
-	StandardClassBPositionReport ps = null;
+	StandardClassBPositionReport pr = null;
 	// Extract individual fields from JSONObject
 	try {
 		res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
 		res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
 		res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
 		res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-		ps = (StandardClassBPositionReport) res;
-		ps = ps.assignedMode(jo.getBoolean(SERIALIZED_NAME_ASSIGNED_MODE));
-		ps = ps.classBBand(jo.getBoolean(SERIALIZED_NAME_CLASS_B_BAND));
-		ps = ps.classBDisplay(jo.getBoolean(SERIALIZED_NAME_CLASS_B_DISPLAY));
-		ps = ps.classBDsc(jo.getBoolean(SERIALIZED_NAME_CLASS_B_DSC));
-		ps = ps.classBMsg22(jo.getBoolean(SERIALIZED_NAME_CLASS_B_MSG22));
-		ps = ps.classBUnit(jo.getBoolean(SERIALIZED_NAME_CLASS_B_UNIT));
-		ps = ps.cog(jo.getDouble(SERIALIZED_NAME_COG));
-		ps = ps.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-		ps = ps.communicationStateIsItdma(jo.getBoolean(SERIALIZED_NAME_COMMUNICATION_STATE_IS_ITDMA));
-		ps = ps.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
-		ps = ps.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
-		ps = ps.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
-		ps = ps.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
-		ps = ps.sog(jo.getDouble(SERIALIZED_NAME_SOG));
+		pr = (StandardClassBPositionReport) res;
+		pr = pr.assignedMode(jo.getBoolean(SERIALIZED_NAME_ASSIGNED_MODE));
+		pr = pr.classBBand(jo.getBoolean(SERIALIZED_NAME_CLASS_B_BAND));
+		pr = pr.classBDisplay(jo.getBoolean(SERIALIZED_NAME_CLASS_B_DISPLAY));
+		pr = pr.classBDsc(jo.getBoolean(SERIALIZED_NAME_CLASS_B_DSC));
+		pr = pr.classBMsg22(jo.getBoolean(SERIALIZED_NAME_CLASS_B_MSG22));
+		pr = pr.classBUnit(jo.getBoolean(SERIALIZED_NAME_CLASS_B_UNIT));
+		pr = pr.cog(jo.getDouble(SERIALIZED_NAME_COG));
+		pr = pr.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
+		pr = pr.communicationStateIsItdma(jo.getBoolean(SERIALIZED_NAME_COMMUNICATION_STATE_IS_ITDMA));
+		pr = pr.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+		pr = pr.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+		pr = pr.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+		pr = pr.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+		pr = pr.sog(jo.getDouble(SERIALIZED_NAME_SOG));
 		// XXX Spare1 Spare2
-		ps = ps.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
-		ps = ps.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
+		pr = pr.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
+		pr = pr.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
 // diese Felder sind in PositionReport aber nicht in StandardClassBPositionReport
 //      ps = ps.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
 //      ps = ps.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
@@ -846,7 +846,7 @@ public static StandardClassBPositionReport fromJson(JSONObject jo) {
 //		logger.error("Error creating StandardClassBPositionReport", e);
 		System.out.println("Error creating StandardClassBPositionReport " + e);
 	}
-	return ps;
+	return pr;
 }
 
 }

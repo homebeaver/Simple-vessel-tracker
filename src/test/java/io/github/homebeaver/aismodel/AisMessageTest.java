@@ -49,7 +49,7 @@ public class AisMessageTest {
 		LOG.fine("AisStreamMessageTest:" + asmt);
 		try {
 			// in liesUrl wird outMessage gerufen
-//			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/global.txt"), asmt);
+//			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/dover.txt"), asmt);
 			AisStreamMessage.liesUrl(new FileInputStream("src/test/java/aisstream2.txt"), asmt);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -130,6 +130,35 @@ public class AisMessageTest {
 			// Die nanos sind mit oder ohne führende Nullen, Beispiele
 			// 2025-10-30 20:13:32.089506495 +0000 UTC
 			// 2025-10-30 19:42:57.13756116 +0000 UTC
+		});
+	}
+
+	@Test
+	public void testPositionReports() {
+		asmt.msgByMessageID.forEach((k, msg) -> {
+			if(k!=1 && k!=2 && k!=3 && k!=18 && k!=19) return;
+			// 1,2,3 = PositionReport
+			// 18 = Standard position report for Class B shipborne mobile equipment
+			// 19 = Extended Class B equipment position report
+			Double lo = msg.metaData.getLongitude();
+			Double la = msg.metaData.getLatitude();
+			AisMessage amsg = msg.message;
+			if (k==19) {
+				Assert.assertTrue(amsg instanceof ExtendedClassBPositionReport);
+				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)amsg;
+				Assert.assertEquals(lo, pr.getLongitude());
+				Assert.assertEquals(la, pr.getLatitude());
+			} else if (k==18) {
+				Assert.assertTrue(amsg instanceof StandardClassBPositionReport);
+				StandardClassBPositionReport pr = (StandardClassBPositionReport)amsg;
+				Assert.assertEquals(lo, pr.getLongitude());
+				Assert.assertEquals(la, pr.getLatitude());
+			} else {
+				Assert.assertTrue(amsg instanceof PositionReport);
+				PositionReport pr = (PositionReport)amsg;
+				Assert.assertEquals(lo, pr.getLongitude());
+				Assert.assertEquals(la, pr.getLatitude());
+			}
 		});
 	}
 

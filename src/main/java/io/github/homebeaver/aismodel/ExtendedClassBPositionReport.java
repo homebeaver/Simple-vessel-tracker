@@ -13,62 +13,40 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-//import org.openapitools.client.model.ShipStaticDataDimension;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
 /**
- * ExtendedClassBPositionReport Message ID 19
+ * ExtendedClassBPositionReport Message ID 19: Extended Class B equipment position report
+ * <p>
+ * This message should be used by Class B shipborne mobile equipment. 
+ * This message should be transmitted once every 6 min in two slots allocated by the use of Message 18 
+ * in the ITDMA communication state. 
+ * This message should be transmitted immediately after the following parameter values change: 
+ * dimension of ship/reference for position or type of electronic position fixing device.
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class ExtendedClassBPositionReport extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_SPARE1 = "Spare1";
   @SerializedName(SERIALIZED_NAME_SPARE1)
@@ -138,102 +116,10 @@ public class ExtendedClassBPositionReport extends AisMessage {
   @SerializedName(SERIALIZED_NAME_SPARE3)
   private Integer spare3;
 
-  public ExtendedClassBPositionReport() { 
-	  super();
-  }
+	public ExtendedClassBPositionReport() {
+		super();
+	}
 
-//  public ExtendedClassBPositionReport messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public ExtendedClassBPositionReport repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public ExtendedClassBPositionReport userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public ExtendedClassBPositionReport valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
   public ExtendedClassBPositionReport spare1(Integer spare1) {
     
     this.spare1 = spare1;
@@ -639,10 +525,6 @@ public class ExtendedClassBPositionReport extends AisMessage {
             Objects.equals(getRepeatIndicator(), extendedClassBPositionReport.getRepeatIndicator()) &&
             Objects.equals(getUserID(), extendedClassBPositionReport.getUserID()) &&
             Objects.equals(getValid(), extendedClassBPositionReport.getValid()) &&
-//    return Objects.equals(this.messageID, extendedClassBPositionReport.messageID) &&
-//        Objects.equals(this.repeatIndicator, extendedClassBPositionReport.repeatIndicator) &&
-//        Objects.equals(this.userID, extendedClassBPositionReport.userID) &&
-//        Objects.equals(this.valid, extendedClassBPositionReport.valid) &&
         Objects.equals(this.spare1, extendedClassBPositionReport.spare1) &&
         Objects.equals(this.sog, extendedClassBPositionReport.sog) &&
         Objects.equals(this.positionAccuracy, extendedClassBPositionReport.positionAccuracy) &&
@@ -676,10 +558,6 @@ public class ExtendedClassBPositionReport extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare1: ").append(toIndentedString(spare1)).append("\n");
     sb.append("    sog: ").append(toIndentedString(sog)).append("\n");
     sb.append("    positionAccuracy: ").append(toIndentedString(positionAccuracy)).append("\n");
@@ -841,41 +719,41 @@ public class ExtendedClassBPositionReport extends AisMessage {
  */
 public static ExtendedClassBPositionReport fromJson(JSONObject jo) {
 	AisMessage res = new ExtendedClassBPositionReport();
-	ExtendedClassBPositionReport ps = null;
+	ExtendedClassBPositionReport pr = null;
 	// Extract individual fields from JSONObject
 	try {
 		res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
 		res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
 		res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
 		res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-		ps = (ExtendedClassBPositionReport) res;
-		ps = ps.assignedMode(jo.getBoolean(SERIALIZED_NAME_ASSIGNED_MODE));
-		ps = ps.cog(jo.getDouble(SERIALIZED_NAME_COG));
+		pr = (ExtendedClassBPositionReport) res;
+		pr = pr.assignedMode(jo.getBoolean(SERIALIZED_NAME_ASSIGNED_MODE));
+		pr = pr.cog(jo.getDouble(SERIALIZED_NAME_COG));
 		JSONObject dimensions = jo.getJSONObject(SERIALIZED_NAME_DIMENSION);
-		ps = ps.dimension(ShipStaticDataDimension.fromJson(dimensions));
-		ps = ps.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
-		ps = ps.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
-		ps = ps.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
-		ps = ps.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
-		ps = ps.name(jo.getString(SERIALIZED_NAME_NAME));
-		ps = ps.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
-		ps = ps.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
-		ps = ps.sog(jo.getDouble(SERIALIZED_NAME_SOG));
+		pr = pr.dimension(ShipStaticDataDimension.fromJson(dimensions));
+		pr = pr.dte(jo.getBoolean(SERIALIZED_NAME_DTE));
+		pr = pr.fixType(jo.getInt(SERIALIZED_NAME_FIX_TYPE));
+		pr = pr.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+		pr = pr.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+		pr = pr.name(jo.getString(SERIALIZED_NAME_NAME));
+		pr = pr.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+		pr = pr.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+		pr = pr.sog(jo.getDouble(SERIALIZED_NAME_SOG));
 //      // XXX Spare1 Spare2 Spare3
-		ps = ps.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
-		ps = ps.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
-		ps = ps.type(jo.getInt(SERIALIZED_NAME_TYPE));
+		pr = pr.timestamp(jo.getInt(SERIALIZED_NAME_TIMESTAMP));
+		pr = pr.trueHeading(jo.getInt(SERIALIZED_NAME_TRUE_HEADING));
+		pr = pr.type(jo.getInt(SERIALIZED_NAME_TYPE));
 // diese Felder sind in PositionReport aber nicht in ExtendedClassBPositionReport
 //      ps = ps.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
 //      ps = ps.rateOfTurn(jo.getInt(SERIALIZED_NAME_RATE_OF_TURN));
 //      ps = ps.specialManoeuvreIndicator(jo.getInt(SERIALIZED_NAME_SPECIAL_MANOEUVRE_INDICATOR));
 //        ps = ps.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-		System.out.println(ps);
+//		System.out.println(pr);
 	} catch (JSONException e) {
-//      logger.error("Error creating ExtendedClassBPositionReport", e);
+//		logger.error("Error creating ExtendedClassBPositionReport", e);
 		System.out.println("Error creating ExtendedClassBPositionReport " + e);
 	}
-	return ps;
+	return pr;
 }
 
 }
