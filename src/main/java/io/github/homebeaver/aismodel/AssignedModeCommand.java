@@ -13,62 +13,41 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-//import org.openapitools.client.model.AssignedModeCommandCommands;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
 /**
  * AssignedModeCommand Message ID 16
+ * <p>
+ * Assignment should be transmitted by a base station when operating as a controlling entity. 
+ * Other stations can be assigned a transmission schedule, other than the currently used one. 
+ * If a station is assigned a schedule, it will also enter assigned mode.
+ * <p>
+ * Two stations can be assigned simultaneously.
+
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class AssignedModeCommand extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_SPARE = "Spare";
   @SerializedName(SERIALIZED_NAME_SPARE)
@@ -82,100 +61,7 @@ public class AssignedModeCommand extends AisMessage {
 		super();
 	}
 
-//  public AssignedModeCommand messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public AssignedModeCommand repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public AssignedModeCommand userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public AssignedModeCommand valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
   public AssignedModeCommand spare(Integer spare) {
-    
     this.spare = spare;
     return this;
   }
@@ -186,7 +72,6 @@ public class AssignedModeCommand extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSpare() {
     return spare;
   }
@@ -198,7 +83,6 @@ public class AssignedModeCommand extends AisMessage {
 
 
   public AssignedModeCommand commands(AssignedModeCommandCommands commands) {
-    
     this.commands = commands;
     return this;
   }
@@ -209,7 +93,6 @@ public class AssignedModeCommand extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public AssignedModeCommandCommands getCommands() {
     return commands;
   }
@@ -234,10 +117,6 @@ public class AssignedModeCommand extends AisMessage {
            Objects.equals(getRepeatIndicator(), assignedModeCommand.getRepeatIndicator()) &&
            Objects.equals(getUserID(), assignedModeCommand.getUserID()) &&
            Objects.equals(getValid(), assignedModeCommand.getValid()) &&
-//    return Objects.equals(this.messageID, assignedModeCommand.messageID) &&
-//        Objects.equals(this.repeatIndicator, assignedModeCommand.repeatIndicator) &&
-//        Objects.equals(this.userID, assignedModeCommand.userID) &&
-//        Objects.equals(this.valid, assignedModeCommand.valid) &&
         Objects.equals(this.spare, assignedModeCommand.spare) &&
         Objects.equals(this.commands, assignedModeCommand.commands);
   }
@@ -256,10 +135,6 @@ public class AssignedModeCommand extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare: ").append(toIndentedString(spare)).append("\n");
     sb.append("    commands: ").append(toIndentedString(commands)).append("\n");
     sb.append("}");
@@ -378,7 +253,7 @@ public class AssignedModeCommand extends AisMessage {
 			msg = msg.spare(jo.getInt(SERIALIZED_NAME_SPARE));
 			JSONObject cmd = jo.getJSONObject(SERIALIZED_NAME_COMMANDS);
 			msg = msg.commands(AssignedModeCommandCommands.fromJson(cmd));
-			System.out.println(msg);
+//			System.out.println(msg);
 		} catch (JSONException e) {
 //			logger.error("Error creating AssignedModeCommand", e);
 			System.out.println("Error creating AssignedModeCommand " + e);
