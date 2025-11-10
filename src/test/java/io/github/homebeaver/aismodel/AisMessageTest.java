@@ -341,8 +341,8 @@ INFORMATION: 11:18:54 2025-11-08 11:18:54.044748621 class BaseStationReport {
 		});
 	}
 	private void testAidsToNavigationReport(AisStreamMessage msg) {
-		// AtoN AIS station is not a ship:
-//		Assert.assertEquals("", msg.metaData.getShipName());
+		// AtoN AIS station is not a ship: TODO diese Annahme ist nicht korrekt
+//		Assert.assertEquals("", msg.metaData.getShipName()); // ShipName vorhanden
 		// Longitude+Latitude equals to MetaData
 		Double lo = msg.metaData.getLongitude();
 		Double la = msg.metaData.getLatitude();
@@ -351,9 +351,9 @@ INFORMATION: 11:18:54 2025-11-08 11:18:54.044748621 class BaseStationReport {
 		Assert.assertEquals(lo, atN.getLongitude());
 		Assert.assertEquals(la, atN.getLatitude());
 //		Assert.assertNotEquals("", atN.getName());
-		// XXX der atN.getName() kann leer sein und nicht mit ShipName übereinstimmen
-//		if(!msg.metaData.getShipName().isEmpty()) {
-//			System.out.println("##"+msg.metaData + msg.message); // hat trotzdem einen Namen
+		// der atN.getName() kann leer sein und nicht mit ShipName übereinstimmen XXX warum?
+//		if(!msg.metaData.getShipName().equals(atN.getName())) {
+//			System.out.println("##"+msg.metaData.toStringFull() + msg.message);
 //		}
 	}
 

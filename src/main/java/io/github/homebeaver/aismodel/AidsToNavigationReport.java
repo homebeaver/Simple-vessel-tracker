@@ -46,6 +46,16 @@ import io.swagger.annotations.ApiModelProperty;
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class AidsToNavigationReport extends AisMessage {
 
+	/**
+	 * The nature and type of AtoN can be indicated with 32 different codes
+	 * <p>
+	 * 0 Default, Type of AtoN not specified <br>
+	 * 1 Reference point <br>
+	 * 2 RACON / Radarantwortbake<br>
+	 * 3 Fixed structures off-shore, such as oil platforms, wind farms.  <br>
+	 * ...  <br>
+	 * 31 Light Vessel/LANBY(Large Automatic Navigation BuoY)/Rigs
+	 */
   public static final String SERIALIZED_NAME_TYPE = "Type";
   @SerializedName(SERIALIZED_NAME_TYPE)
   private Integer type;
