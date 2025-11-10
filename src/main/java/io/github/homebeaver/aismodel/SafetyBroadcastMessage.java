@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -53,172 +41,58 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class SafetyBroadcastMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
-  public static final String SERIALIZED_NAME_SPARE = "Spare";
-  @SerializedName(SERIALIZED_NAME_SPARE)
-  private Integer spare;
+	public static final String SERIALIZED_NAME_SPARE = "Spare";
+	@SerializedName(SERIALIZED_NAME_SPARE)
+	private Integer spare;
 
-  public static final String SERIALIZED_NAME_TEXT = "Text";
-  @SerializedName(SERIALIZED_NAME_TEXT)
-  private String text;
+	public static final String SERIALIZED_NAME_TEXT = "Text";
+	@SerializedName(SERIALIZED_NAME_TEXT)
+	private String text;
 
 	public SafetyBroadcastMessage() {
 		super();
 	}
 
-//  public SafetyBroadcastMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public SafetyBroadcastMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public SafetyBroadcastMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public SafetyBroadcastMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
-  public SafetyBroadcastMessage spare(Integer spare) {
-    
-    this.spare = spare;
-    return this;
-  }
+	public SafetyBroadcastMessage spare(Integer spare) {
+		this.spare = spare;
+		return this;
+	}
 
-   /**
-   * Get spare
-   * @return spare
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get spare
+	 * 
+	 * @return spare
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getSpare() {
+		return spare;
+	}
 
-  public Integer getSpare() {
-    return spare;
-  }
+	public void setSpare(Integer spare) {
+		this.spare = spare;
+	}
 
+	public SafetyBroadcastMessage text(String text) {
+		this.text = text;
+		return this;
+	}
 
-  public void setSpare(Integer spare) {
-    this.spare = spare;
-  }
+	/**
+	 * Get text
+	 * 
+	 * @return text
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public String getText() {
+		return text;
+	}
 
-
-  public SafetyBroadcastMessage text(String text) {
-    
-    this.text = text;
-    return this;
-  }
-
-   /**
-   * Get text
-   * @return text
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public String getText() {
-    return text;
-  }
-
-
-  public void setText(String text) {
-    this.text = text;
-  }
-
-
+	public void setText(String text) {
+		this.text = text;
+	}
 
   @Override
   public boolean equals(Object o) {
@@ -230,13 +104,9 @@ public class SafetyBroadcastMessage extends AisMessage {
     }
     SafetyBroadcastMessage safetyBroadcastMessage = (SafetyBroadcastMessage) o;
     return Objects.equals(getMessageID(), safetyBroadcastMessage.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), safetyBroadcastMessage.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), safetyBroadcastMessage.getUserID()) &&
-            Objects.equals(getValid(), safetyBroadcastMessage.getValid()) &&
-//    return Objects.equals(this.messageID, safetyBroadcastMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, safetyBroadcastMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, safetyBroadcastMessage.userID) &&
-//        Objects.equals(this.valid, safetyBroadcastMessage.valid) &&
+           Objects.equals(getRepeatIndicator(), safetyBroadcastMessage.getRepeatIndicator()) &&
+           Objects.equals(getUserID(), safetyBroadcastMessage.getUserID()) &&
+           Objects.equals(getValid(), safetyBroadcastMessage.getValid()) &&
         Objects.equals(this.spare, safetyBroadcastMessage.spare) &&
         Objects.equals(this.text, safetyBroadcastMessage.text);
   }
@@ -255,10 +125,6 @@ public class SafetyBroadcastMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare: ").append(toIndentedString(spare)).append("\n");
     sb.append("    text: ").append(toIndentedString(text)).append("\n");
     sb.append("}");
@@ -374,10 +240,8 @@ public class SafetyBroadcastMessage extends AisMessage {
 			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
 			msg = (SafetyBroadcastMessage) res;
 			msg = msg.spare(jo.getInt(SERIALIZED_NAME_SPARE));
-//			JSONObject data = jo.getJSONObject(SERIALIZED_NAME_APPLICATION_I_D);
-//			msg = msg.applicationID(AddressedBinaryMessageApplicationID.fromJson(data));
 			msg = msg.text(jo.getString(SERIALIZED_NAME_TEXT));
-			System.out.println(msg);
+//			System.out.println(msg);
 		} catch (JSONException e) {
 //			logger.error("Error creating SafetyBroadcastMessage", e);
 			System.out.println("Error creating SafetyBroadcastMessage " + e);
