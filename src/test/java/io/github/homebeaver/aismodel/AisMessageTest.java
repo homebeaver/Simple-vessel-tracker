@@ -282,13 +282,6 @@ staticSetup fertig, types#=18
 			// it should always set the repeat indicator to default = 0.
 			Assert.assertEquals(Integer.valueOf(0), amsg.getRepeatIndicator());
 		}
-		String timeUtc = msg.metaData.getTimeUtc();
-		LocalDateTime dt = null;
-		try {
-			dt = MetaData.convertStringToLocalDateTime(timeUtc);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 /*
 habe tatsächlich eine station gefunden, die ein völlig falsches Datum sendet:
 INFORMATION: 11:18:54 2025-11-08 11:18:54.044748621 class BaseStationReport {
@@ -312,6 +305,13 @@ INFORMATION: 11:18:54 2025-11-08 11:18:54.044748621 class BaseStationReport {
     communicationState: 114722
 }
  */
+//		String timeUtc = msg.metaData.getTimeUtc();
+//		LocalDateTime dt = null;
+//		try {
+//			dt = MetaData.convertStringToLocalDateTime(timeUtc);
+//		} catch (ParseException e) {
+//			e.printStackTrace();
+//		}
 //		if (!bsr.getUtcYear().equals(dt.getYear())) {
 //			String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
 //			LOG.info(hms + " "+dt.toLocalDate()+" "+dt.toLocalTime() + " "+bsr);
