@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -53,6 +41,7 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class InterrogationStation2 {
+
   public static final String SERIALIZED_NAME_VALID = "Valid";
   @SerializedName(SERIALIZED_NAME_VALID)
   private Boolean valid;
@@ -81,7 +70,6 @@ public class InterrogationStation2 {
   }
 
   public InterrogationStation2 valid(Boolean valid) {
-    
     this.valid = valid;
     return this;
   }
@@ -92,7 +80,6 @@ public class InterrogationStation2 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getValid() {
     return valid;
   }
@@ -104,7 +91,6 @@ public class InterrogationStation2 {
 
 
   public InterrogationStation2 spare1(Integer spare1) {
-    
     this.spare1 = spare1;
     return this;
   }
@@ -115,7 +101,6 @@ public class InterrogationStation2 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSpare1() {
     return spare1;
   }
@@ -127,7 +112,6 @@ public class InterrogationStation2 {
 
 
   public InterrogationStation2 stationID(Integer stationID) {
-    
     this.stationID = stationID;
     return this;
   }
@@ -138,7 +122,6 @@ public class InterrogationStation2 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getStationID() {
     return stationID;
   }
@@ -150,7 +133,6 @@ public class InterrogationStation2 {
 
 
   public InterrogationStation2 messageID(Integer messageID) {
-    
     this.messageID = messageID;
     return this;
   }
@@ -161,7 +143,6 @@ public class InterrogationStation2 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getMessageID() {
     return messageID;
   }
@@ -173,7 +154,6 @@ public class InterrogationStation2 {
 
 
   public InterrogationStation2 slotOffset(Integer slotOffset) {
-    
     this.slotOffset = slotOffset;
     return this;
   }
@@ -184,7 +164,6 @@ public class InterrogationStation2 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSlotOffset() {
     return slotOffset;
   }
@@ -196,7 +175,6 @@ public class InterrogationStation2 {
 
 
   public InterrogationStation2 spare2(Integer spare2) {
-    
     this.spare2 = spare2;
     return this;
   }
@@ -207,7 +185,6 @@ public class InterrogationStation2 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSpare2() {
     return spare2;
   }

@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -73,7 +61,6 @@ public class InterrogationStation1Msg1 {
   }
 
   public InterrogationStation1Msg1 valid(Boolean valid) {
-    
     this.valid = valid;
     return this;
   }
@@ -84,7 +71,6 @@ public class InterrogationStation1Msg1 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getValid() {
     return valid;
   }
@@ -96,7 +82,6 @@ public class InterrogationStation1Msg1 {
 
 
   public InterrogationStation1Msg1 stationID(Integer stationID) {
-    
     this.stationID = stationID;
     return this;
   }
@@ -107,7 +92,6 @@ public class InterrogationStation1Msg1 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getStationID() {
     return stationID;
   }
@@ -119,7 +103,6 @@ public class InterrogationStation1Msg1 {
 
 
   public InterrogationStation1Msg1 messageID(Integer messageID) {
-    
     this.messageID = messageID;
     return this;
   }
@@ -130,7 +113,6 @@ public class InterrogationStation1Msg1 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getMessageID() {
     return messageID;
   }
@@ -142,7 +124,6 @@ public class InterrogationStation1Msg1 {
 
 
   public InterrogationStation1Msg1 slotOffset(Integer slotOffset) {
-    
     this.slotOffset = slotOffset;
     return this;
   }
@@ -153,7 +134,6 @@ public class InterrogationStation1Msg1 {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSlotOffset() {
     return slotOffset;
   }

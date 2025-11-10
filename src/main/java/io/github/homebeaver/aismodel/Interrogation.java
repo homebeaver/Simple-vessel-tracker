@@ -13,41 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-//import org.openapitools.client.model.InterrogationStation1Msg1;
-//import org.openapitools.client.model.InterrogationStation1Msg2;
-//import org.openapitools.client.model.InterrogationStation2;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -56,226 +41,106 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class Interrogation extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
-  public static final String SERIALIZED_NAME_SPARE = "Spare";
-  @SerializedName(SERIALIZED_NAME_SPARE)
-  private Integer spare;
+	public static final String SERIALIZED_NAME_SPARE = "Spare";
+	@SerializedName(SERIALIZED_NAME_SPARE)
+	private Integer spare;
 
-  public static final String SERIALIZED_NAME_STATION1_MSG1 = "Station1Msg1";
-  @SerializedName(SERIALIZED_NAME_STATION1_MSG1)
-  private InterrogationStation1Msg1 station1Msg1;
+	public static final String SERIALIZED_NAME_STATION1_MSG1 = "Station1Msg1";
+	@SerializedName(SERIALIZED_NAME_STATION1_MSG1)
+	private InterrogationStation1Msg1 station1Msg1;
 
-  public static final String SERIALIZED_NAME_STATION1_MSG2 = "Station1Msg2";
-  @SerializedName(SERIALIZED_NAME_STATION1_MSG2)
-  private InterrogationStation1Msg2 station1Msg2;
+	public static final String SERIALIZED_NAME_STATION1_MSG2 = "Station1Msg2";
+	@SerializedName(SERIALIZED_NAME_STATION1_MSG2)
+	private InterrogationStation1Msg2 station1Msg2;
 
-  public static final String SERIALIZED_NAME_STATION2 = "Station2";
-  @SerializedName(SERIALIZED_NAME_STATION2)
-  private InterrogationStation2 station2;
+	public static final String SERIALIZED_NAME_STATION2 = "Station2";
+	@SerializedName(SERIALIZED_NAME_STATION2)
+	private InterrogationStation2 station2;
 
 	public Interrogation() {
 		super();
 	}
 
-//  public Interrogation messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public Interrogation repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public Interrogation userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public Interrogation valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
+	public Interrogation spare(Integer spare) {
+		this.spare = spare;
+		return this;
+	}
 
-  public Interrogation spare(Integer spare) {
-    
-    this.spare = spare;
-    return this;
-  }
+	/**
+	 * Get spare
+	 * 
+	 * @return spare
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getSpare() {
+		return spare;
+	}
 
-   /**
-   * Get spare
-   * @return spare
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	public void setSpare(Integer spare) {
+		this.spare = spare;
+	}
 
-  public Integer getSpare() {
-    return spare;
-  }
+	public Interrogation station1Msg1(InterrogationStation1Msg1 station1Msg1) {
+		this.station1Msg1 = station1Msg1;
+		return this;
+	}
 
+	/**
+	 * Get station1Msg1
+	 * 
+	 * @return station1Msg1
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public InterrogationStation1Msg1 getStation1Msg1() {
+		return station1Msg1;
+	}
 
-  public void setSpare(Integer spare) {
-    this.spare = spare;
-  }
+	public void setStation1Msg1(InterrogationStation1Msg1 station1Msg1) {
+		this.station1Msg1 = station1Msg1;
+	}
 
+	public Interrogation station1Msg2(InterrogationStation1Msg2 station1Msg2) {
+		this.station1Msg2 = station1Msg2;
+		return this;
+	}
 
-  public Interrogation station1Msg1(InterrogationStation1Msg1 station1Msg1) {
-    
-    this.station1Msg1 = station1Msg1;
-    return this;
-  }
+	/**
+	 * Get station1Msg2
+	 * 
+	 * @return station1Msg2
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public InterrogationStation1Msg2 getStation1Msg2() {
+		return station1Msg2;
+	}
 
-   /**
-   * Get station1Msg1
-   * @return station1Msg1
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	public void setStation1Msg2(InterrogationStation1Msg2 station1Msg2) {
+		this.station1Msg2 = station1Msg2;
+	}
 
-  public InterrogationStation1Msg1 getStation1Msg1() {
-    return station1Msg1;
-  }
+	public Interrogation station2(InterrogationStation2 station2) {
+		this.station2 = station2;
+		return this;
+	}
 
+	/**
+	 * Get station2
+	 * 
+	 * @return station2
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public InterrogationStation2 getStation2() {
+		return station2;
+	}
 
-  public void setStation1Msg1(InterrogationStation1Msg1 station1Msg1) {
-    this.station1Msg1 = station1Msg1;
-  }
-
-
-  public Interrogation station1Msg2(InterrogationStation1Msg2 station1Msg2) {
-    
-    this.station1Msg2 = station1Msg2;
-    return this;
-  }
-
-   /**
-   * Get station1Msg2
-   * @return station1Msg2
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public InterrogationStation1Msg2 getStation1Msg2() {
-    return station1Msg2;
-  }
-
-
-  public void setStation1Msg2(InterrogationStation1Msg2 station1Msg2) {
-    this.station1Msg2 = station1Msg2;
-  }
-
-
-  public Interrogation station2(InterrogationStation2 station2) {
-    
-    this.station2 = station2;
-    return this;
-  }
-
-   /**
-   * Get station2
-   * @return station2
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public InterrogationStation2 getStation2() {
-    return station2;
-  }
-
-
-  public void setStation2(InterrogationStation2 station2) {
-    this.station2 = station2;
-  }
-
-
+	public void setStation2(InterrogationStation2 station2) {
+		this.station2 = station2;
+	}
 
   @Override
   public boolean equals(Object o) {
@@ -290,10 +155,6 @@ public class Interrogation extends AisMessage {
            Objects.equals(getRepeatIndicator(), interrogation.getRepeatIndicator()) &&
            Objects.equals(getUserID(), interrogation.getUserID()) &&
            Objects.equals(getValid(), interrogation.getValid()) &&
-//    return Objects.equals(this.messageID, interrogation.messageID) &&
-//        Objects.equals(this.repeatIndicator, interrogation.repeatIndicator) &&
-//        Objects.equals(this.userID, interrogation.userID) &&
-//        Objects.equals(this.valid, interrogation.valid) &&
         Objects.equals(this.spare, interrogation.spare) &&
         Objects.equals(this.station1Msg1, interrogation.station1Msg1) &&
         Objects.equals(this.station1Msg2, interrogation.station1Msg2) &&
@@ -314,10 +175,6 @@ public class Interrogation extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare: ").append(toIndentedString(spare)).append("\n");
     sb.append("    station1Msg1: ").append(toIndentedString(station1Msg1)).append("\n");
     sb.append("    station1Msg2: ").append(toIndentedString(station1Msg2)).append("\n");
@@ -454,7 +311,7 @@ public class Interrogation extends AisMessage {
 			res = res.station1Msg2(InterrogationStation1Msg2.fromJson(m2));
 			JSONObject s2 = jo.getJSONObject(SERIALIZED_NAME_STATION2);
 			res = res.station2(InterrogationStation2.fromJson(s2));
-			System.out.println(res);
+//			System.out.println(res);
 		} catch (JSONException e) {
 //			logger.error("Error creating Interrogation", e);
 			System.out.println("Error creating Interrogation " + e);
