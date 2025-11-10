@@ -53,21 +53,6 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class GnssBroadcastBinaryMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_SPARE1 = "Spare1";
   @SerializedName(SERIALIZED_NAME_SPARE1)
@@ -92,98 +77,6 @@ public class GnssBroadcastBinaryMessage extends AisMessage {
 	public GnssBroadcastBinaryMessage() {
 		super();
 	}
-
-//  public GnssBroadcastBinaryMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public GnssBroadcastBinaryMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public GnssBroadcastBinaryMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public GnssBroadcastBinaryMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
 
   public GnssBroadcastBinaryMessage spare1(Integer spare1) {
     this.spare1 = spare1;
@@ -313,10 +206,6 @@ public class GnssBroadcastBinaryMessage extends AisMessage {
            Objects.equals(getRepeatIndicator(), gnssBroadcastBinaryMessage.getRepeatIndicator()) &&
            Objects.equals(getUserID(), gnssBroadcastBinaryMessage.getUserID()) &&
            Objects.equals(getValid(), gnssBroadcastBinaryMessage.getValid()) &&
-//    return Objects.equals(this.messageID, gnssBroadcastBinaryMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, gnssBroadcastBinaryMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, gnssBroadcastBinaryMessage.userID) &&
-//        Objects.equals(this.valid, gnssBroadcastBinaryMessage.valid) &&
         Objects.equals(this.spare1, gnssBroadcastBinaryMessage.spare1) &&
         Objects.equals(this.longitude, gnssBroadcastBinaryMessage.longitude) &&
         Objects.equals(this.latitude, gnssBroadcastBinaryMessage.latitude) &&
@@ -338,10 +227,6 @@ public class GnssBroadcastBinaryMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare1: ").append(toIndentedString(spare1)).append("\n");
     sb.append("    longitude: ").append(toIndentedString(longitude)).append("\n");
     sb.append("    latitude: ").append(toIndentedString(latitude)).append("\n");
@@ -470,10 +355,10 @@ public class GnssBroadcastBinaryMessage extends AisMessage {
 			msg = msg.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
 			msg = msg.spare2(jo.getInt(SERIALIZED_NAME_SPARE2));
 			msg = msg.data(jo.getString(SERIALIZED_NAME_DATA));
-			System.out.println(msg);
+//			System.out.println(msg);
 		} catch (JSONException e) {
-//			logger.error("Error creating DataLinkManagementMessage", e);
-			System.out.println("Error creating DataLinkManagementMessage " + e);
+//			logger.error("Error creating GnssBroadcastBinaryMessage", e);
+			System.out.println("Error creating GnssBroadcastBinaryMessage " + e);
 		}
 		return msg;
 	}
