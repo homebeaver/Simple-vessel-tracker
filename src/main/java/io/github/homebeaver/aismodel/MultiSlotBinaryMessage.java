@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -53,21 +41,6 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class MultiSlotBinaryMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_DESTINATION_I_D_VALID = "DestinationIDValid";
   @SerializedName(SERIALIZED_NAME_DESTINATION_I_D_VALID)
@@ -109,100 +82,7 @@ public class MultiSlotBinaryMessage extends AisMessage {
 		super();
 	}
 
-//  public MultiSlotBinaryMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public MultiSlotBinaryMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public MultiSlotBinaryMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public MultiSlotBinaryMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-
   public MultiSlotBinaryMessage destinationIDValid(Boolean destinationIDValid) {
-    
     this.destinationIDValid = destinationIDValid;
     return this;
   }
@@ -213,7 +93,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getDestinationIDValid() {
     return destinationIDValid;
   }
@@ -225,7 +104,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage applicationIDValid(Boolean applicationIDValid) {
-    
     this.applicationIDValid = applicationIDValid;
     return this;
   }
@@ -236,7 +114,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getApplicationIDValid() {
     return applicationIDValid;
   }
@@ -248,7 +125,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage destinationID(Integer destinationID) {
-    
     this.destinationID = destinationID;
     return this;
   }
@@ -259,7 +135,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getDestinationID() {
     return destinationID;
   }
@@ -271,7 +146,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage spare1(Integer spare1) {
-    
     this.spare1 = spare1;
     return this;
   }
@@ -282,7 +156,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSpare1() {
     return spare1;
   }
@@ -294,7 +167,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage applicationID(AddressedBinaryMessageApplicationID applicationID) {
-    
     this.applicationID = applicationID;
     return this;
   }
@@ -305,7 +177,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public AddressedBinaryMessageApplicationID getApplicationID() {
     return applicationID;
   }
@@ -317,7 +188,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage payload(String payload) {
-    
     this.payload = payload;
     return this;
   }
@@ -328,7 +198,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public String getPayload() {
     return payload;
   }
@@ -340,7 +209,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage spare2(Integer spare2) {
-    
     this.spare2 = spare2;
     return this;
   }
@@ -351,7 +219,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSpare2() {
     return spare2;
   }
@@ -363,7 +230,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage communicationStateIsItdma(Boolean communicationStateIsItdma) {
-    
     this.communicationStateIsItdma = communicationStateIsItdma;
     return this;
   }
@@ -374,7 +240,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getCommunicationStateIsItdma() {
     return communicationStateIsItdma;
   }
@@ -386,7 +251,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
 
 
   public MultiSlotBinaryMessage communicationState(Integer communicationState) {
-    
     this.communicationState = communicationState;
     return this;
   }
@@ -397,7 +261,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getCommunicationState() {
     return communicationState;
   }
@@ -422,10 +285,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
            Objects.equals(getRepeatIndicator(), multiSlotBinaryMessage.getRepeatIndicator()) &&
            Objects.equals(getUserID(), multiSlotBinaryMessage.getUserID()) &&
            Objects.equals(getValid(), multiSlotBinaryMessage.getValid()) &&
-//    return Objects.equals(this.messageID, multiSlotBinaryMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, multiSlotBinaryMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, multiSlotBinaryMessage.userID) &&
-//        Objects.equals(this.valid, multiSlotBinaryMessage.valid) &&
         Objects.equals(this.destinationIDValid, multiSlotBinaryMessage.destinationIDValid) &&
         Objects.equals(this.applicationIDValid, multiSlotBinaryMessage.applicationIDValid) &&
         Objects.equals(this.destinationID, multiSlotBinaryMessage.destinationID) &&
@@ -451,10 +310,6 @@ public class MultiSlotBinaryMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    destinationIDValid: ").append(toIndentedString(destinationIDValid)).append("\n");
     sb.append("    applicationIDValid: ").append(toIndentedString(applicationIDValid)).append("\n");
     sb.append("    destinationID: ").append(toIndentedString(destinationID)).append("\n");
@@ -604,7 +459,7 @@ public class MultiSlotBinaryMessage extends AisMessage {
 			// XXX spare
 			sbm = sbm.communicationStateIsItdma(jo.getBoolean(SERIALIZED_NAME_COMMUNICATION_STATE_IS_ITDMA));
 			sbm = sbm.communicationState(jo.getInt(SERIALIZED_NAME_COMMUNICATION_STATE));
-			System.out.println(sbm);
+//			System.out.println(sbm);
 		} catch (JSONException e) {
 //			logger.error("Error creating MultiSlotBinaryMessage", e);
 			System.out.println("Error creating MultiSlotBinaryMessage " + e);
