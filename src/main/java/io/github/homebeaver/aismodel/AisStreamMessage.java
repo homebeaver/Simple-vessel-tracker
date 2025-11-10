@@ -133,7 +133,7 @@ public class AisStreamMessage {
 //	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case LONGRANGEAISBROADCASTMESSAGE: // messageType 27
-//	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = LongRangeAisBroadcastMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case UNKNOWNMESSAGE:
 //            	handleUnknownMessage(message.getJSONObject("Message"), metaData);

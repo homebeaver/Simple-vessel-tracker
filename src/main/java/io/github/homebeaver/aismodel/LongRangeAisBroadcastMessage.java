@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -58,21 +46,6 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class LongRangeAisBroadcastMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_POSITION_ACCURACY = "PositionAccuracy";
   @SerializedName(SERIALIZED_NAME_POSITION_ACCURACY)
@@ -114,98 +87,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 		super();
   }
 
-//  public LongRangeAisBroadcastMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public LongRangeAisBroadcastMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public LongRangeAisBroadcastMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public LongRangeAisBroadcastMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
   public LongRangeAisBroadcastMessage positionAccuracy(Boolean positionAccuracy) {
     this.positionAccuracy = positionAccuracy;
     return this;
@@ -217,7 +98,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getPositionAccuracy() {
     return positionAccuracy;
   }
@@ -229,7 +109,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage raim(Boolean raim) {
-    
     this.raim = raim;
     return this;
   }
@@ -240,7 +119,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getRaim() {
     return raim;
   }
@@ -252,7 +130,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage navigationalStatus(Integer navigationalStatus) {
-    
     this.navigationalStatus = navigationalStatus;
     return this;
   }
@@ -263,7 +140,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getNavigationalStatus() {
     return navigationalStatus;
   }
@@ -275,7 +151,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage longitude(Double longitude) {
-    
     this.longitude = longitude;
     return this;
   }
@@ -298,7 +173,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage latitude(Double latitude) {
-    
     this.latitude = latitude;
     return this;
   }
@@ -309,7 +183,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Double getLatitude() {
     return latitude;
   }
@@ -321,7 +194,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage sog(Double sog) {
-    
     this.sog = sog;
     return this;
   }
@@ -332,7 +204,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Double getSog() {
     return sog;
   }
@@ -344,7 +215,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage cog(Double cog) {
-    
     this.cog = cog;
     return this;
   }
@@ -355,7 +225,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Double getCog() {
     return cog;
   }
@@ -367,7 +236,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage positionLatency(Boolean positionLatency) {
-    
     this.positionLatency = positionLatency;
     return this;
   }
@@ -378,7 +246,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getPositionLatency() {
     return positionLatency;
   }
@@ -390,7 +257,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 
   public LongRangeAisBroadcastMessage spare(Boolean spare) {
-    
     this.spare = spare;
     return this;
   }
@@ -401,7 +267,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getSpare() {
     return spare;
   }
@@ -423,13 +288,9 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
     }
     LongRangeAisBroadcastMessage longRangeAisBroadcastMessage = (LongRangeAisBroadcastMessage) o;
     return Objects.equals(getMessageID(), longRangeAisBroadcastMessage.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), longRangeAisBroadcastMessage.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), longRangeAisBroadcastMessage.getUserID()) &&
-            Objects.equals(getValid(), longRangeAisBroadcastMessage.getValid()) &&
-//    return Objects.equals(this.messageID, longRangeAisBroadcastMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, longRangeAisBroadcastMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, longRangeAisBroadcastMessage.userID) &&
-//        Objects.equals(this.valid, longRangeAisBroadcastMessage.valid) &&
+           Objects.equals(getRepeatIndicator(), longRangeAisBroadcastMessage.getRepeatIndicator()) &&
+           Objects.equals(getUserID(), longRangeAisBroadcastMessage.getUserID()) &&
+           Objects.equals(getValid(), longRangeAisBroadcastMessage.getValid()) &&
         Objects.equals(this.positionAccuracy, longRangeAisBroadcastMessage.positionAccuracy) &&
         Objects.equals(this.raim, longRangeAisBroadcastMessage.raim) &&
         Objects.equals(this.navigationalStatus, longRangeAisBroadcastMessage.navigationalStatus) &&
@@ -455,10 +316,6 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    positionAccuracy: ").append(toIndentedString(positionAccuracy)).append("\n");
     sb.append("    raim: ").append(toIndentedString(raim)).append("\n");
     sb.append("    navigationalStatus: ").append(toIndentedString(navigationalStatus)).append("\n");
@@ -583,29 +440,29 @@ public class LongRangeAisBroadcastMessage extends AisMessage {
 
 	public static LongRangeAisBroadcastMessage fromJson(JSONObject jo) {
 		AisMessage res = new LongRangeAisBroadcastMessage();
-		LongRangeAisBroadcastMessage bsr = null;
+		LongRangeAisBroadcastMessage lrm = null;
 		// Extract individual fields from JSONObject
 		try {
 			res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
 			res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
 			res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
 			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-			bsr = (LongRangeAisBroadcastMessage) res;
-			bsr = bsr.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
-			bsr = bsr.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
-			bsr = bsr.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
-			bsr = bsr.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
-			bsr = bsr.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
-			bsr = bsr.sog(jo.getDouble(SERIALIZED_NAME_SOG));
-			bsr = bsr.cog(jo.getDouble(SERIALIZED_NAME_COG));
-			bsr = bsr.positionLatency(jo.getBoolean(SERIALIZED_NAME_POSITION_LATENCY));
+			lrm = (LongRangeAisBroadcastMessage) res;
+			lrm = lrm.positionAccuracy(jo.getBoolean(SERIALIZED_NAME_POSITION_ACCURACY));
+			lrm = lrm.raim(jo.getBoolean(SERIALIZED_NAME_RAIM));
+			lrm = lrm.navigationalStatus(jo.getInt(SERIALIZED_NAME_NAVIGATIONAL_STATUS));
+			lrm = lrm.longitude(jo.getDouble(SERIALIZED_NAME_LONGITUDE));
+			lrm = lrm.latitude(jo.getDouble(SERIALIZED_NAME_LATITUDE));
+			lrm = lrm.sog(jo.getDouble(SERIALIZED_NAME_SOG));
+			lrm = lrm.cog(jo.getDouble(SERIALIZED_NAME_COG));
+			lrm = lrm.positionLatency(jo.getBoolean(SERIALIZED_NAME_POSITION_LATENCY));
 			// XXX spare
-			System.out.println(bsr);
+			System.out.println(lrm);
 		} catch (JSONException e) {
 //			logger.error("Error creating LongRangeAisBroadcastMessage", e);
 			System.out.println("Error creating LongRangeAisBroadcastMessage " + e);
 		}
-		return bsr;
+		return lrm;
 	}
 
 }
