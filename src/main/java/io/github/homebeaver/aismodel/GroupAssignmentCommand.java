@@ -13,38 +13,26 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
 
 //import org.openapitools.client.JSON;
 
@@ -53,21 +41,6 @@ import java.util.Set;
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class GroupAssignmentCommand extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_SPARE1 = "Spare1";
   @SerializedName(SERIALIZED_NAME_SPARE1)
@@ -121,98 +94,6 @@ public class GroupAssignmentCommand extends AisMessage {
 		super();
 	}
 
-//  public GroupAssignmentCommand messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public GroupAssignmentCommand repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public GroupAssignmentCommand userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public GroupAssignmentCommand valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
   public GroupAssignmentCommand spare1(Integer spare1) {
     this.spare1 = spare1;
     return this;
@@ -502,10 +383,6 @@ public class GroupAssignmentCommand extends AisMessage {
             Objects.equals(getRepeatIndicator(), groupAssignmentCommand.getRepeatIndicator()) &&
             Objects.equals(getUserID(), groupAssignmentCommand.getUserID()) &&
             Objects.equals(getValid(), groupAssignmentCommand.getValid()) &&
-//    return Objects.equals(this.messageID, groupAssignmentCommand.messageID) &&
-//        Objects.equals(this.repeatIndicator, groupAssignmentCommand.repeatIndicator) &&
-//        Objects.equals(this.userID, groupAssignmentCommand.userID) &&
-//        Objects.equals(this.valid, groupAssignmentCommand.valid) &&
         Objects.equals(this.spare1, groupAssignmentCommand.spare1) &&
         Objects.equals(this.longitude1, groupAssignmentCommand.longitude1) &&
         Objects.equals(this.latitude1, groupAssignmentCommand.latitude1) &&
@@ -534,10 +411,6 @@ public class GroupAssignmentCommand extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    spare1: ").append(toIndentedString(spare1)).append("\n");
     sb.append("    longitude1: ").append(toIndentedString(longitude1)).append("\n");
     sb.append("    latitude1: ").append(toIndentedString(latitude1)).append("\n");
@@ -671,32 +544,32 @@ public class GroupAssignmentCommand extends AisMessage {
 
 	public static GroupAssignmentCommand fromJson(JSONObject jo) {
 		AisMessage res = new GroupAssignmentCommand();
-		GroupAssignmentCommand chm = null;
+		GroupAssignmentCommand gac = null;
 		// Extract individual fields from JSONObject
 		try {
 			res = res.messageID(jo.getInt(SERIALIZED_NAME_MESSAGE_I_D));
 			res = res.repeatIndicator(jo.getInt(SERIALIZED_NAME_REPEAT_INDICATOR));
 			res = res.userID(jo.getInt(SERIALIZED_NAME_USER_I_D));
 			res = res.valid(jo.getBoolean(SERIALIZED_NAME_VALID));
-			chm = (GroupAssignmentCommand) res;
+			gac = (GroupAssignmentCommand) res;
 			// spare1
-			chm = chm.longitude1(jo.getDouble(SERIALIZED_NAME_LONGITUDE1));
-			chm = chm.latitude1(jo.getDouble(SERIALIZED_NAME_LATITUDE1));
-			chm = chm.longitude2(jo.getDouble(SERIALIZED_NAME_LONGITUDE2));
-			chm = chm.latitude2(jo.getDouble(SERIALIZED_NAME_LATITUDE2));
-			chm = chm.stationType(jo.getInt(SERIALIZED_NAME_STATION_TYPE));
-			chm = chm.shipType(jo.getInt(SERIALIZED_NAME_SHIP_TYPE));
+			gac = gac.longitude1(jo.getDouble(SERIALIZED_NAME_LONGITUDE1));
+			gac = gac.latitude1(jo.getDouble(SERIALIZED_NAME_LATITUDE1));
+			gac = gac.longitude2(jo.getDouble(SERIALIZED_NAME_LONGITUDE2));
+			gac = gac.latitude2(jo.getDouble(SERIALIZED_NAME_LATITUDE2));
+			gac = gac.stationType(jo.getInt(SERIALIZED_NAME_STATION_TYPE));
+			gac = gac.shipType(jo.getInt(SERIALIZED_NAME_SHIP_TYPE));
 			// XXX spare
-			chm = chm.txRxMode(jo.getInt(SERIALIZED_NAME_TX_RX_MODE));
-			chm = chm.reportingInterval(jo.getInt(SERIALIZED_NAME_REPORTING_INTERVAL));
-			chm = chm.quietTime(jo.getInt(SERIALIZED_NAME_QUIET_TIME));
+			gac = gac.txRxMode(jo.getInt(SERIALIZED_NAME_TX_RX_MODE));
+			gac = gac.reportingInterval(jo.getInt(SERIALIZED_NAME_REPORTING_INTERVAL));
+			gac = gac.quietTime(jo.getInt(SERIALIZED_NAME_QUIET_TIME));
 			// XXX spare
-			System.out.println(chm);
+			System.out.println(gac);
 		} catch (JSONException e) {
 //			logger.error("Error creating GroupAssignmentCommand", e);
 			System.out.println("Error creating GroupAssignmentCommand " + e);
 		}
-		return chm;
+		return gac;
 	}
 
 }
