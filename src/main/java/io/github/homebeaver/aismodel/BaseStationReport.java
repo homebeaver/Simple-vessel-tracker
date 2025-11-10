@@ -37,7 +37,16 @@ import io.swagger.annotations.ApiModelProperty;
 //import org.openapitools.client.JSON;
 
 /**
- * BaseStationReport Message ID 4 or 11 Position, UTC, date and current slot number of base station
+ * BaseStationReport Message ID 4 or 11 : Position, UTC, date and current slot number of base station
+ * <p>
+ * Message 4: Base station report, Message 11: UTC and date response
+ * <p>
+ * Should be used for reporting UTC time and date and, at the same time, position. 
+ * A base station should use Message 4 in its periodical transmissions. 
+ * A mobile station should output Message 11 only in response to interrogation by Message 10.
+ * Message 11 is only transmitted as a result of a UTC request message (Message 10). 
+ * The UTC and date response should be transmitted on the channel, 
+ * where the UTC request message was received.
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class BaseStationReport extends AisMessage {
@@ -103,6 +112,13 @@ Use of differential corrections is defined by field position accuracy above:
   @SerializedName(SERIALIZED_NAME_FIX_TYPE)
   private Integer fixType;
 
+  /**
+   * Transmission control for long-range broadcast message
+   * <p>
+   * 0 = default – Class-A AIS station stops transmission of Message 27 (Long-range AIS broadcast message) 
+   * 	within an AIS base station coverage area.
+   * 1 (TRUE) = Request Class-A station to transmit Message 27 within an AIS base station coverage area.
+   */
   public static final String SERIALIZED_NAME_LONG_RANGE_ENABLE = "LongRangeEnable";
   @SerializedName(SERIALIZED_NAME_LONG_RANGE_ENABLE)
   private Boolean longRangeEnable;
@@ -130,146 +146,127 @@ Use of differential corrections is defined by field position accuracy above:
 		super();
 	}
 
-  public BaseStationReport utcYear(Integer utcYear) {
-    
-    this.utcYear = utcYear;
-    return this;
-  }
+	public BaseStationReport utcYear(Integer utcYear) {
+		this.utcYear = utcYear;
+		return this;
+	}
 
-   /**
-   * Get utcYear
-   * @return utcYear
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get utcYear
+	 * 
+	 * @return utcYear
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getUtcYear() {
+		return utcYear;
+	}
 
-  public Integer getUtcYear() {
-    return utcYear;
-  }
+	public void setUtcYear(Integer utcYear) {
+		this.utcYear = utcYear;
+	}
 
+	public BaseStationReport utcMonth(Integer utcMonth) {
+		this.utcMonth = utcMonth;
+		return this;
+	}
 
-  public void setUtcYear(Integer utcYear) {
-    this.utcYear = utcYear;
-  }
+	/**
+	 * Get utcMonth
+	 * 
+	 * @return utcMonth
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getUtcMonth() {
+		return utcMonth;
+	}
 
+	public void setUtcMonth(Integer utcMonth) {
+		this.utcMonth = utcMonth;
+	}
 
-  public BaseStationReport utcMonth(Integer utcMonth) {
-    
-    this.utcMonth = utcMonth;
-    return this;
-  }
+	public BaseStationReport utcDay(Integer utcDay) {
+		this.utcDay = utcDay;
+		return this;
+	}
 
-   /**
-   * Get utcMonth
-   * @return utcMonth
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get utcDay
+	 * 
+	 * @return utcDay
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getUtcDay() {
+		return utcDay;
+	}
 
-  public Integer getUtcMonth() {
-    return utcMonth;
-  }
+	public void setUtcDay(Integer utcDay) {
+		this.utcDay = utcDay;
+	}
 
+	public BaseStationReport utcHour(Integer utcHour) {
+		this.utcHour = utcHour;
+		return this;
+	}
 
-  public void setUtcMonth(Integer utcMonth) {
-    this.utcMonth = utcMonth;
-  }
+	/**
+	 * Get utcHour
+	 * 
+	 * @return utcHour
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getUtcHour() {
+		return utcHour;
+	}
 
+	public void setUtcHour(Integer utcHour) {
+		this.utcHour = utcHour;
+	}
 
-  public BaseStationReport utcDay(Integer utcDay) {
-    
-    this.utcDay = utcDay;
-    return this;
-  }
+	public BaseStationReport utcMinute(Integer utcMinute) {
+		this.utcMinute = utcMinute;
+		return this;
+	}
 
-   /**
-   * Get utcDay
-   * @return utcDay
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
+	/**
+	 * Get utcMinute
+	 * 
+	 * @return utcMinute
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getUtcMinute() {
+		return utcMinute;
+	}
 
-  public Integer getUtcDay() {
-    return utcDay;
-  }
+	public void setUtcMinute(Integer utcMinute) {
+		this.utcMinute = utcMinute;
+	}
 
+	public BaseStationReport utcSecond(Integer utcSecond) {
+		this.utcSecond = utcSecond;
+		return this;
+	}
 
-  public void setUtcDay(Integer utcDay) {
-    this.utcDay = utcDay;
-  }
+	/**
+	 * Get utcSecond
+	 * 
+	 * @return utcSecond
+	 **/
+	@javax.annotation.Nonnull
+	@ApiModelProperty(required = true, value = "")
+	public Integer getUtcSecond() {
+		return utcSecond;
+	}
 
-
-  public BaseStationReport utcHour(Integer utcHour) {
-    
-    this.utcHour = utcHour;
-    return this;
-  }
-
-   /**
-   * Get utcHour
-   * @return utcHour
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getUtcHour() {
-    return utcHour;
-  }
-
-
-  public void setUtcHour(Integer utcHour) {
-    this.utcHour = utcHour;
-  }
-
-
-  public BaseStationReport utcMinute(Integer utcMinute) {
-    
-    this.utcMinute = utcMinute;
-    return this;
-  }
-
-   /**
-   * Get utcMinute
-   * @return utcMinute
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getUtcMinute() {
-    return utcMinute;
-  }
-
-
-  public void setUtcMinute(Integer utcMinute) {
-    this.utcMinute = utcMinute;
-  }
-
-
-  public BaseStationReport utcSecond(Integer utcSecond) {
-    
-    this.utcSecond = utcSecond;
-    return this;
-  }
-
-   /**
-   * Get utcSecond
-   * @return utcSecond
-  **/
-  @javax.annotation.Nonnull
-  @ApiModelProperty(required = true, value = "")
-
-  public Integer getUtcSecond() {
-    return utcSecond;
-  }
-
-
-  public void setUtcSecond(Integer utcSecond) {
-    this.utcSecond = utcSecond;
-  }
-
+	public void setUtcSecond(Integer utcSecond) {
+		this.utcSecond = utcSecond;
+	}
 
   public BaseStationReport positionAccuracy(Boolean positionAccuracy) {
-    
     this.positionAccuracy = positionAccuracy;
     return this;
   }
@@ -673,4 +670,3 @@ Use of differential corrections is defined by field position accuracy above:
 	}
 
 }
-
