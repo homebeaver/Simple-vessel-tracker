@@ -115,11 +115,11 @@ staticSetup fertig, types#=18
 
 	@Test
 	public void testCounter() {
-		LOG.info("I expect 31 messages, one per line...");
-		Assert.assertEquals(31, asmt.lines);
+		LOG.info("I expect 33 messages, one per line...");
+		Assert.assertEquals(33, asmt.lines);
 		Assert.assertEquals(2, asmt.msgNull);
-		Assert.assertEquals(22, asmt.msgByMessageID.size());
-		Assert.assertEquals(18, asmt.msgByType.size());
+		Assert.assertEquals(24, asmt.msgByMessageID.size());
+		Assert.assertEquals(20, asmt.msgByType.size());
 
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(1)); // PositionReport 3x
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(2));
@@ -145,11 +145,12 @@ staticSetup fertig, types#=18
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(22));
 		// 23 GROUPASSIGNMENTCOMMAND - noch keine gefunden
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(24)); // StaticDataReport
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(25));
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(26));
+		// 27 LONGRANGEAISBROADCASTMESSAGE - noch keine gefunden
 		// welche MessageID fehlen
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(8));
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(23));
-		Assert.assertFalse(asmt.msgByMessageID.containsKey(25));
-		Assert.assertFalse(asmt.msgByMessageID.containsKey(26));
 		Assert.assertFalse(asmt.msgByMessageID.containsKey(27));
 	}
 

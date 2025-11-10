@@ -127,10 +127,10 @@ public class AisStreamMessage {
 				res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case SINGLESLOTBINARYMESSAGE: // messageType 25
-//	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = SingleSlotBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case MULTISLOTBINARYMESSAGE: // messageType 26
-//	TODO			res.message = StaticDataReport.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				res.message = MultiSlotBinaryMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case LONGRANGEAISBROADCASTMESSAGE: // messageType 27
 				res.message = LongRangeAisBroadcastMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
