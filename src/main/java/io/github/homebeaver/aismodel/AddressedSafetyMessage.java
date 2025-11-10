@@ -13,64 +13,41 @@
 
 package io.github.homebeaver.aismodel;
 
-import java.util.Objects;
-import java.util.Arrays;
-import com.google.gson.TypeAdapter;
-import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import java.io.IOException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 //import org.openapitools.client.JSON;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * AddressedSafetyMessage Message ID 12
  */
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaClientCodegen", date = "2023-06-27T20:57:25.293422-07:00[America/Vancouver]")
 public class AddressedSafetyMessage extends AisMessage {
-//  public static final String SERIALIZED_NAME_MESSAGE_I_D = "MessageID";
-//  @SerializedName(SERIALIZED_NAME_MESSAGE_I_D)
-//  private Integer messageID;
-//
-//  public static final String SERIALIZED_NAME_REPEAT_INDICATOR = "RepeatIndicator";
-//  @SerializedName(SERIALIZED_NAME_REPEAT_INDICATOR)
-//  private Integer repeatIndicator;
-//
-//  public static final String SERIALIZED_NAME_USER_I_D = "UserID";
-//  @SerializedName(SERIALIZED_NAME_USER_I_D)
-//  private Integer userID;
-//
-//  public static final String SERIALIZED_NAME_VALID = "Valid";
-//  @SerializedName(SERIALIZED_NAME_VALID)
-//  private Boolean valid;
 
   public static final String SERIALIZED_NAME_SEQUENCEINTEGER = "Sequenceinteger";
   @SerializedName(SERIALIZED_NAME_SEQUENCEINTEGER)
   private Integer sequenceinteger;
 
+  /**
+   * MMSI number of station which is the destination of the message
+   */
   public static final String SERIALIZED_NAME_DESTINATION_I_D = "DestinationID";
   @SerializedName(SERIALIZED_NAME_DESTINATION_I_D)
   private Integer destinationID;
@@ -83,6 +60,9 @@ public class AddressedSafetyMessage extends AisMessage {
   @SerializedName(SERIALIZED_NAME_SPARE)
   private Boolean spare;
 
+  /*
+   * Safety related text, Maximum 936 bits, 6-bit ASCII ==> 156 chars
+   */
   public static final String SERIALIZED_NAME_TEXT = "Text";
   @SerializedName(SERIALIZED_NAME_TEXT)
   private String text;
@@ -91,100 +71,7 @@ public class AddressedSafetyMessage extends AisMessage {
 		super();
 	}
 
-//  public AddressedSafetyMessage messageID(Integer messageID) {
-//    
-//    this.messageID = messageID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get messageID
-//   * @return messageID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getMessageID() {
-//    return messageID;
-//  }
-//
-//
-//  public void setMessageID(Integer messageID) {
-//    this.messageID = messageID;
-//  }
-//
-//
-//  public AddressedSafetyMessage repeatIndicator(Integer repeatIndicator) {
-//    
-//    this.repeatIndicator = repeatIndicator;
-//    return this;
-//  }
-//
-//   /**
-//   * Get repeatIndicator
-//   * @return repeatIndicator
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getRepeatIndicator() {
-//    return repeatIndicator;
-//  }
-//
-//
-//  public void setRepeatIndicator(Integer repeatIndicator) {
-//    this.repeatIndicator = repeatIndicator;
-//  }
-//
-//
-//  public AddressedSafetyMessage userID(Integer userID) {
-//    
-//    this.userID = userID;
-//    return this;
-//  }
-//
-//   /**
-//   * Get userID
-//   * @return userID
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Integer getUserID() {
-//    return userID;
-//  }
-//
-//
-//  public void setUserID(Integer userID) {
-//    this.userID = userID;
-//  }
-//
-//
-//  public AddressedSafetyMessage valid(Boolean valid) {
-//    
-//    this.valid = valid;
-//    return this;
-//  }
-//
-//   /**
-//   * Get valid
-//   * @return valid
-//  **/
-//  @javax.annotation.Nonnull
-//  @ApiModelProperty(required = true, value = "")
-//
-//  public Boolean getValid() {
-//    return valid;
-//  }
-//
-//
-//  public void setValid(Boolean valid) {
-//    this.valid = valid;
-//  }
-//
-//
   public AddressedSafetyMessage sequenceinteger(Integer sequenceinteger) {
-    
     this.sequenceinteger = sequenceinteger;
     return this;
   }
@@ -195,7 +82,6 @@ public class AddressedSafetyMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getSequenceinteger() {
     return sequenceinteger;
   }
@@ -207,7 +93,6 @@ public class AddressedSafetyMessage extends AisMessage {
 
 
   public AddressedSafetyMessage destinationID(Integer destinationID) {
-    
     this.destinationID = destinationID;
     return this;
   }
@@ -218,7 +103,6 @@ public class AddressedSafetyMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Integer getDestinationID() {
     return destinationID;
   }
@@ -230,7 +114,6 @@ public class AddressedSafetyMessage extends AisMessage {
 
 
   public AddressedSafetyMessage retransmission(Boolean retransmission) {
-    
     this.retransmission = retransmission;
     return this;
   }
@@ -241,7 +124,6 @@ public class AddressedSafetyMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getRetransmission() {
     return retransmission;
   }
@@ -253,7 +135,6 @@ public class AddressedSafetyMessage extends AisMessage {
 
 
   public AddressedSafetyMessage spare(Boolean spare) {
-    
     this.spare = spare;
     return this;
   }
@@ -264,7 +145,6 @@ public class AddressedSafetyMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public Boolean getSpare() {
     return spare;
   }
@@ -276,7 +156,6 @@ public class AddressedSafetyMessage extends AisMessage {
 
 
   public AddressedSafetyMessage text(String text) {
-    
     this.text = text;
     return this;
   }
@@ -287,7 +166,6 @@ public class AddressedSafetyMessage extends AisMessage {
   **/
   @javax.annotation.Nonnull
   @ApiModelProperty(required = true, value = "")
-
   public String getText() {
     return text;
   }
@@ -309,13 +187,9 @@ public class AddressedSafetyMessage extends AisMessage {
     }
     AddressedSafetyMessage addressedSafetyMessage = (AddressedSafetyMessage) o;
     return Objects.equals(getMessageID(), addressedSafetyMessage.getMessageID()) &&
-            Objects.equals(getRepeatIndicator(), addressedSafetyMessage.getRepeatIndicator()) &&
-            Objects.equals(getUserID(), addressedSafetyMessage.getUserID()) &&
-            Objects.equals(getValid(), addressedSafetyMessage.getValid()) &&
-//    return Objects.equals(this.messageID, addressedSafetyMessage.messageID) &&
-//        Objects.equals(this.repeatIndicator, addressedSafetyMessage.repeatIndicator) &&
-//        Objects.equals(this.userID, addressedSafetyMessage.userID) &&
-//        Objects.equals(this.valid, addressedSafetyMessage.valid) &&
+           Objects.equals(getRepeatIndicator(), addressedSafetyMessage.getRepeatIndicator()) &&
+           Objects.equals(getUserID(), addressedSafetyMessage.getUserID()) &&
+           Objects.equals(getValid(), addressedSafetyMessage.getValid()) &&
         Objects.equals(this.sequenceinteger, addressedSafetyMessage.sequenceinteger) &&
         Objects.equals(this.destinationID, addressedSafetyMessage.destinationID) &&
         Objects.equals(this.retransmission, addressedSafetyMessage.retransmission) &&
@@ -337,10 +211,6 @@ public class AddressedSafetyMessage extends AisMessage {
     sb.append("    repeatIndicator: ").append(toIndentedString(getRepeatIndicator())).append("\n");
     sb.append("    userID: ").append(toIndentedString(getUserID())).append("\n");
     sb.append("    valid: ").append(toIndentedString(getValid())).append("\n");
-//    sb.append("    messageID: ").append(toIndentedString(messageID)).append("\n");
-//    sb.append("    repeatIndicator: ").append(toIndentedString(repeatIndicator)).append("\n");
-//    sb.append("    userID: ").append(toIndentedString(userID)).append("\n");
-//    sb.append("    valid: ").append(toIndentedString(valid)).append("\n");
     sb.append("    sequenceinteger: ").append(toIndentedString(sequenceinteger)).append("\n");
     sb.append("    destinationID: ").append(toIndentedString(destinationID)).append("\n");
     sb.append("    retransmission: ").append(toIndentedString(retransmission)).append("\n");
@@ -469,7 +339,7 @@ public class AddressedSafetyMessage extends AisMessage {
 			asm = asm.retransmission(jo.getBoolean(SERIALIZED_NAME_RETRANSMISSION));
 			// XXX spare
 			asm = asm.text(jo.getString(SERIALIZED_NAME_TEXT));
-			System.out.println(asm);
+//			System.out.println(asm);
 		} catch (JSONException e) {
 	//        logger.error("Error creating AddressedSafetyMessage", e);
 			System.out.println("Error creating AddressedSafetyMessage " + e);
