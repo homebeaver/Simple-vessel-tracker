@@ -181,7 +181,6 @@ staticSetup fertig, types#=18
 		try {
 			dt = MetaData.convertStringToLocalDateTime(timeUtc);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
@@ -256,13 +255,6 @@ staticSetup fertig, types#=18
 			// 4 = UTC and position report from base station
 			// 11= UTC and position report from mobile station
 			Assert.assertEquals(AisMessageTypes.BASESTATIONREPORT, msg.messageType);
-			// station is not a ship:
-			Assert.assertEquals("", msg.metaData.getShipName());
-			if (k==11) {
-				// When mobile station is transmitting a message, 
-				// it should always set the repeat indicator to default = 0.
-				Assert.assertEquals(Integer.valueOf(0), msg.message.getRepeatIndicator());
-			}
 			testBaseStationReport(msg);
 		});
 		asmt.msgByType.forEach((k, msgList) -> {
@@ -272,6 +264,12 @@ staticSetup fertig, types#=18
 		});
 	}
 	private void testBaseStationReport(AisStreamMessage msg) {
+		// base station is not a ship: TODO diese Annahme ist nicht korrekt
+//		Assert.assertEquals("", msg.metaData.getShipName());
+//		if(!msg.metaData.getShipName().isEmpty()) {
+//			System.out.println("##"+msg.metaData + msg.message); // ShipName trotzdem vorhanden
+//		}
+		// Longitude+Latitude equals to MetaData
 		Double lo = msg.metaData.getLongitude();
 		Double la = msg.metaData.getLatitude();
 		AisMessage amsg = msg.message;
@@ -279,8 +277,59 @@ staticSetup fertig, types#=18
 		Assert.assertEquals(lo, bsr.getLongitude());
 		Assert.assertEquals(la, bsr.getLatitude());
 		if (amsg.getMessageID()==11) {
+			// When mobile station (11) is transmitting a message, 
+			// it should always set the repeat indicator to default = 0.
 			Assert.assertEquals(Integer.valueOf(0), amsg.getRepeatIndicator());
 		}
+		String timeUtc = msg.metaData.getTimeUtc();
+		LocalDateTime dt = null;
+		try {
+			dt = MetaData.convertStringToLocalDateTime(timeUtc);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+//		String hms = String.format("%02d:%02d:%02d", dt.getHour(), dt.getMinute(), dt.getSecond());
+//		LOG.info(hms + " "+dt.toLocalTime() + " "+bsr);
+		Assert.assertEquals(Integer.valueOf(dt.getYear()), bsr.getUtcYear());
+		Assert.assertEquals(Integer.valueOf(dt.getMonthValue()), bsr.getUtcMonth());
+		Assert.assertEquals(Integer.valueOf(dt.getDayOfMonth()), bsr.getUtcDay());
+		Assert.assertEquals(Integer.valueOf(dt.getHour()), bsr.getUtcHour());
+		Assert.assertEquals(Integer.valueOf(dt.getMinute()), bsr.getUtcMinute());
+		if (amsg.getMessageID()==4) {
+			// nur base station, bei mobile können sekunden abweichen TODO warum?
+			Assert.assertEquals(Integer.valueOf(dt.getSecond()), bsr.getUtcSecond());
+		}
+	}
+
+	@Test
+	public void testAidsToNavigationReport() {
+		LOG.info("Longitude+Latitude equals to MetaData and AtoN AIS station is not a ship...");
+		asmt.msgByMessageID.forEach((k, msg) -> {
+			if(k!=21) return;
+			Assert.assertEquals(AisMessageTypes.AIDSTONAVIGATIONREPORT, msg.messageType);
+			testAidsToNavigationReport(msg);
+		});
+		asmt.msgByType.forEach((k, msgList) -> {
+			if (k==AisMessageTypes.AIDSTONAVIGATIONREPORT) {
+				msgList.forEach( msg -> testAidsToNavigationReport(msg) );
+			}
+		});
+	}
+	private void testAidsToNavigationReport(AisStreamMessage msg) {
+		// AtoN AIS station is not a ship:
+//		Assert.assertEquals("", msg.metaData.getShipName());
+		// Longitude+Latitude equals to MetaData
+		Double lo = msg.metaData.getLongitude();
+		Double la = msg.metaData.getLatitude();
+		AisMessage amsg = msg.message;
+		AidsToNavigationReport atN = (AidsToNavigationReport)amsg;
+		Assert.assertEquals(lo, atN.getLongitude());
+		Assert.assertEquals(la, atN.getLatitude());
+//		Assert.assertNotEquals("", atN.getName());
+		// XXX der atN.getName() kann leer sein und nicht mit ShipName übereinstimmen
+//		if(!msg.metaData.getShipName().isEmpty()) {
+//			System.out.println("##"+msg.metaData + msg.message); // hat trotzdem einen Namen
+//		}
 	}
 
 	@Test
