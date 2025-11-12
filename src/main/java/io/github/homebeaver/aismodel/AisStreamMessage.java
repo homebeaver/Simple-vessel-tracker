@@ -136,8 +136,9 @@ public class AisStreamMessage {
 				res.message = LongRangeAisBroadcastMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
 				break;
 			case UNKNOWNMESSAGE:
-//            	handleUnknownMessage(message.getJSONObject("Message"), metaData);
-				break;
+				UnknownMessage.fromJson(joMsg.getJSONObject(res.messageType.getValue()));
+				return res;
+				//break;
 			default:
 				System.out.println("Unhandled message type: " + res.messageType);
 			}
