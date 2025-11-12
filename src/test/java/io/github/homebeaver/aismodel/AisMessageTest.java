@@ -40,8 +40,8 @@ public class AisMessageTest {
 				msgNull++;
 			} else {
 				assert listOfMsg.add(msg);
-				Integer mid = msg.message.getMessageID();
-				LOG.info("MessageID=" + mid + ", messageType:" + msg.messageType);
+				Integer mid = msg.message==null ? 0 : msg.message.getMessageID();
+				LOG.fine("MessageID=" + mid + ", messageType:" + msg.messageType);
 				AisStreamMessage old = msgByMessageID.put(mid, msg);
 				if (old != null) {
 					// msg überschreibt old
@@ -117,10 +117,11 @@ staticSetup fertig, types#=18
 	public void testCounter() {
 		LOG.info("I expect 33 messages, one per line...");
 		Assert.assertEquals(33, asmt.lines);
-		Assert.assertEquals(2, asmt.msgNull);
-		Assert.assertEquals(24, asmt.msgByMessageID.size());
-		Assert.assertEquals(20, asmt.msgByType.size());
+		Assert.assertEquals(0, asmt.msgNull);
+		Assert.assertEquals(25, asmt.msgByMessageID.size());
+		Assert.assertEquals(21, asmt.msgByType.size());
 
+		Assert.assertTrue(asmt.msgByMessageID.containsKey(0)); // UnknownMessage 2x
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(1)); // PositionReport 3x
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(2));
 		Assert.assertTrue(asmt.msgByMessageID.containsKey(3));
@@ -164,6 +165,7 @@ staticSetup fertig, types#=18
 	}
 	private void testUserId(AisStreamMessage msg) {
 		Integer mmsi = msg.metaData.getMMSI();
+		if(msg.messageType == AisMessageTypes.UNKNOWNMESSAGE) return;
 		Integer userId =  msg.message.getUserID();
 		Assert.assertEquals(mmsi, userId);
 	}
