@@ -31,6 +31,8 @@ public class AisMessageTest {
 		Map<Integer, AisStreamMessage> msgByMessageID = new HashMap<>();
 		List<AisStreamMessage> listOfMsg = new Vector<>();
 		Map<AisMessageTypes, List<AisStreamMessage>> msgByType = new HashMap<>();
+		Map<Integer, MessageIdCounter> msgIDCounterByMMSI = new HashMap<>();
+		Map<String, MessageIdCounter> msgIDCounterByType = new HashMap<>();
 
 		@Override
 		public void outMessage(AisStreamMessage msg) {
@@ -64,11 +66,42 @@ public class AisMessageTest {
 			e.printStackTrace();
 		}
 		for (AisStreamMessage m : asmt.listOfMsg) {
-			asmt.msgByType.computeIfAbsent(m.getAisMessageType(), k -> new ArrayList<>()).add(m);
+			asmt.msgByType.computeIfAbsent(m.getAisMessageType(), v -> new ArrayList<>()).add(m);
+			int mmsi = m.metaData.getMMSI();
+			Integer msgID = m.getAisMessageType() == AisMessageTypes.UNKNOWNMESSAGE ? 0 : m.message.getMessageID();
+			MessageIdCounter counter = asmt.msgIDCounterByMMSI.get(mmsi);
+			if (counter==null) {
+				asmt.msgIDCounterByMMSI.put(mmsi, new MessageIdCounter(msgID));
+			} else {
+				asmt.msgIDCounterByMMSI.put(mmsi, counter.count(msgID));
+			}
 		}
 		asmt.listOfMsg.clear();
 		asmt.msgByType.forEach( (type, v) -> {
 			System.out.println("#"+v.size() + "\t "+type);
+		});
+		asmt.msgIDCounterByType.forEach( (k, v) -> {
+			System.out.println(v + "\t "+v);
+		});
+		asmt.msgIDCounterByMMSI.forEach( (mmsi, v) -> {
+			if (v.containsKey(4)) { // BASESTATION
+				System.out.println("BASESTATION:\t"+mmsi + " "+v);
+				mergeMsgIDCounterByType("BASESTATION", v);
+			} else if (v.containsKey(11)) { // BASESTATION
+				System.out.println("mobile BASE:\t"+mmsi + " "+v);
+				mergeMsgIDCounterByType("mobile BASE", v);
+			} else if (v.containsKey(5)) { // SHIPSTATICDATA
+				System.out.println("SHIP classA:\t"+mmsi + " "+v);
+				mergeMsgIDCounterByType("SHIP classA", v);
+			} else if (v.containsKey(24)) { // STATICDATAREPORT
+				System.out.println("SHIP classB:\t"+mmsi + " "+v);
+				mergeMsgIDCounterByType("SHIP classB", v);
+			} else {
+				System.out.println("      sonst:\t"+mmsi + " "+v);
+			}
+		});
+		asmt.msgIDCounterByType.forEach( (k, v) -> {
+			System.out.println(k + "\t "+v);
 		});
 		System.out.println("staticSetup fertig, types#="+asmt.msgByType.size());
 /* Dover:
@@ -108,6 +141,15 @@ staticSetup fertig, types#=18
  */
 	}
 
+	private static void mergeMsgIDCounterByType(String type, MessageIdCounter v) {
+		MessageIdCounter counter = asmt.msgIDCounterByType.get(type);
+		if (counter==null) {
+			asmt.msgIDCounterByType.put(type, new MessageIdCounter(v));
+		} else {
+			asmt.msgIDCounterByType.put(type, counter.merge(v));
+		}
+	}
+	
 	@Before
 	public void setup() {
 		LOG.fine("setup fertig");
