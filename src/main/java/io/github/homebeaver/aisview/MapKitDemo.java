@@ -158,7 +158,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		// Setup JXMapKit TODO RadianceIcons in JXMapKit verwenden
 		mapKit = new AisMapKit();
 		mapKit.setName("mapKit");
-//		mapKit.setZoomSliderVisible(false); TODO ==> Control JCheckBox
+//		mapKit.setZoomSliderVisible(true); // this is the default
 		mapKit.setTileFactory(tileFactory);
 
 		// threads in parallel to load the tiles
@@ -488,6 +488,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return centerControls;
 	}
 	
+    private JCheckBox showZoomSlider;
     private JCheckBox drawTileBorder;
     private JCheckBox miniMapVisible;
 
@@ -521,30 +522,42 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		controls.add(positionChooserCombo);
 		selectLabel.setLabelFor(positionChooserCombo);
 		
-	    drawTileBorder = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
-	    drawTileBorder.setAlignmentX(LEFT_ALIGNMENT);
-	    drawTileBorder.setBorder(BorderFactory.createEmptyBorder(10,50,10,10));
-	    drawTileBorder.setSelected(false);
-	    mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
-	    drawTileBorder.setName("drawTileBorder");
-	    drawTileBorder.setText(getBundleString("drawTileBorder.text"));
-	    drawTileBorder.addActionListener( ae -> {
-	    	mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
-	    });
-	    controls.add(drawTileBorder);
-	    
-	    miniMapVisible = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
-	    miniMapVisible.setAlignmentX(LEFT_ALIGNMENT);
-	    miniMapVisible.setBorder(BorderFactory.createEmptyBorder(10,50,10,10));
-	    miniMapVisible.setSelected(true);
-	    mapKit.setMiniMapVisible(miniMapVisible.isSelected());
-	    miniMapVisible.setName("miniMapVisible");
-	    miniMapVisible.setText(getBundleString("miniMapVisible.text"));
-	    miniMapVisible.addActionListener( ae -> {
-	        mapKit.setMiniMapVisible(miniMapVisible.isSelected());
-	    });
-	    controls.add(miniMapVisible);
-	    
+		showZoomSlider = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+		showZoomSlider.setAlignmentX(LEFT_ALIGNMENT);
+		showZoomSlider.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
+		showZoomSlider.setSelected(true);
+		mapKit.setZoomSliderVisible(showZoomSlider.isSelected());
+		showZoomSlider.setName("showZoomSlider");
+		showZoomSlider.setText(getBundleString("showZoomSlider.text"));
+		showZoomSlider.addActionListener(ae -> {
+			mapKit.setZoomSliderVisible(showZoomSlider.isSelected());
+		});
+		controls.add(showZoomSlider);
+		
+		drawTileBorder = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+		drawTileBorder.setAlignmentX(LEFT_ALIGNMENT);
+		drawTileBorder.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
+		drawTileBorder.setSelected(false);
+		mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+		drawTileBorder.setName("drawTileBorder");
+		drawTileBorder.setText(getBundleString("drawTileBorder.text"));
+		drawTileBorder.addActionListener(ae -> {
+			mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+		});
+		controls.add(drawTileBorder);
+
+		miniMapVisible = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+		miniMapVisible.setAlignmentX(LEFT_ALIGNMENT);
+		miniMapVisible.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
+		miniMapVisible.setSelected(true);
+		mapKit.setMiniMapVisible(miniMapVisible.isSelected());
+		miniMapVisible.setName("miniMapVisible");
+		miniMapVisible.setText(getBundleString("miniMapVisible.text"));
+		miniMapVisible.addActionListener(ae -> {
+			mapKit.setMiniMapVisible(miniMapVisible.isSelected());
+		});
+		controls.add(miniMapVisible);
+
 		return controls;
 	}
 
