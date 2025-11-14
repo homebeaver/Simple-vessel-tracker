@@ -59,6 +59,7 @@ public class AisMessageTest {
 		LOG.fine("AisStreamMessageTest:" + asmt);
 		try {
 			// in liesUrl wird outMessage gerufen
+//			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/aisstream.txt"), asmt);
 //			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/global.txt"), asmt);
 			AisStreamMessage.liesUrl(new FileInputStream("src/test/java/aisstream2.txt"), asmt);
 		} catch (FileNotFoundException e) {
@@ -90,12 +91,17 @@ public class AisMessageTest {
 			} else if (v.containsKey(11)) { // BASESTATION
 				System.out.println("mobile BASE:\t"+mmsi + " "+v);
 				mergeMsgIDCounterByType("mobile BASE", v);
-			} else if (v.containsKey(5)) { // SHIPSTATICDATA
+			} else if (v.containsKey(1) || v.containsKey(2) || v.containsKey(3) // POSITIONREPORT
+				|| v.containsKey(5)) { // SHIPSTATICDATA
 				System.out.println("SHIP classA:\t"+mmsi + " "+v);
 				mergeMsgIDCounterByType("SHIP classA", v);
-			} else if (v.containsKey(24)) { // STATICDATAREPORT
+			} else if (v.containsKey(18) || v.containsKey(19) // *CLASSBPOSITIONREPORT
+				|| v.containsKey(24)) { // STATICDATAREPORT
 				System.out.println("SHIP classB:\t"+mmsi + " "+v);
 				mergeMsgIDCounterByType("SHIP classB", v);
+			} else if (v.containsKey(21)) { // AIDSTONAVIGATIONREPORT
+				System.out.println("AIDSTONAVIG:\t"+mmsi + " "+v);
+				mergeMsgIDCounterByType("AIDSTONAVIG", v);
 			} else {
 				System.out.println("      sonst:\t"+mmsi + " "+v);
 			}
