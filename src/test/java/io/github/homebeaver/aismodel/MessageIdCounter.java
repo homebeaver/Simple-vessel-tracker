@@ -1,12 +1,13 @@
 package io.github.homebeaver.aismodel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * counts different MessageIds
  */
 @SuppressWarnings("serial")
-public class MessageIdCounter extends HashMap<Integer, Integer> {
+public class MessageIdCounter extends HashMap<Integer, Integer> implements Map<Integer, Integer> {
 
 	public MessageIdCounter() {
 		super(28); // there are 28 different MessageIds (including UNKNOWNMESSAGE)
