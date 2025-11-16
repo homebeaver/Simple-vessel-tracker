@@ -87,7 +87,11 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 //			if (isClassAShip(m)) ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData)m.message;
-				return ssd.getName();
+				if (ssd.getName().isEmpty()) {
+//					LOG.warning( ... TODO // expected not empty!
+				} else {
+					return ssd.getName();
+				}
 			} else if (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) {
 				StaticDataReport sdr = (StaticDataReport)m.message;
 				if (sdr.getReportA().getValid()) {  // ReportA existiert

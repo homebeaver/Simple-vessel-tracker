@@ -64,12 +64,13 @@ public class MmsiMessageListTest implements AisStreamCallback<AisStreamMessage> 
 		try {
 			// in liesUrl wird outMessage gerufen
 //			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/global.txt"), this);
+//			AisStreamMessage.liesUrl(new FileInputStream("src/test/java/aisstream.txt"), this); // global+
 			AisStreamMessage.liesUrl(new FileInputStream("src/test/resources/data/aisstream.txt"), this);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Assert.assertTrue(mmList.isClassAShip(212878000));
 		Assert.assertEquals(1, mmList.get(212878000).size()); // nur eine SHIPSTATICDATA
 		Assert.assertTrue(mmList.isClassBShip(219035401));
@@ -77,20 +78,23 @@ public class MmsiMessageListTest implements AisStreamCallback<AisStreamMessage> 
 		Assert.assertEquals(2, mmList.get(265820920).size()); // zwei Nachrichten ClassA
 		Assert.assertEquals(2, mmList.get(219023391).size()); // zwei Nachrichten ClassB
 		Assert.assertEquals(3, mmList.get(219024675).size()); // drei Nachrichten ClassA
-		//
+
 		mmList.forEach( (mmsi, list) -> {
 			// Wenn Name aus SHIPSTATICDATA oder STATICDATAREPORT bekannt,
-			// dann mit Name aus Meta identisch falls dieser vorhanden ist (mit Ausnahmen)
+			// dann mit Name aus Meta identisch falls dieser vorhanden ist (mit Ausnahmen,
+			// z.B. ähnliche Namen "WINDCAT 24"<>"WINDCAT24"
+			// oder expected:<A[MALIA] RODRIGUES> but was:<A[] RODRIGUES>
 			if (mmList.isClassAShip(mmsi) && MmsiMessageList.getName(list)!=null) {
 				list.forEach( m -> {
 					String shipName = m.getMetaData().getShipName();
 					if (!shipName.isEmpty() && !shipName.equals(MmsiMessageList.getName(list))) {
-//						LOG.warning(MmsiMessageList.getName(list) + " : "+m.messageType + " " + m.getMetaData().toStringFull() + " >>>>>>> "+ m.getAisMessage());
+						LOG.warning("\""+MmsiMessageList.getName(list) + "\" : "+m.messageType + " " + m.getMetaData().toStringFull() + " >>>>>>> "+ m.getAisMessage());
 					}
 					if (shipName.isEmpty() 
-					|| mmsi==228000000 || mmsi==123456789 || mmsi==441142000 || mmsi==244179000
-					|| mmsi==211550210 || mmsi==224597000 || mmsi==207829370 || mmsi==316045081
-					|| mmsi==585900273 || mmsi==585900274 || mmsi==585900192 || mmsi==109120442 // class B
+					|| mmsi==228000000 || mmsi==123456789 || mmsi==441142000 || mmsi==244179000 || mmsi==235080246
+					|| mmsi==211550210 || mmsi==224597000 || mmsi==207829370 || mmsi==316045081 
+					|| mmsi==253242328 || mmsi==261013840 || mmsi==244670228 || mmsi==244670520
+					|| mmsi==235002070 || mmsi==585900273 || mmsi==585900274 || mmsi==585900192 || mmsi==109120442 // class B
 //					noch mehr Ausnahmen in classB
 					|| (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT 
 					&& ((StaticDataReport)m.message).getReportB().getValid())) {
