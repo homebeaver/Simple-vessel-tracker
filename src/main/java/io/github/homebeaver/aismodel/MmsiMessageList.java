@@ -87,13 +87,11 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 //			if (isClassAShip(m)) ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData)m.message;
-				// TODO in ReportA strip einbauen
-				return ssd.getName().strip();
+				return ssd.getName();
 			} else if (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) {
 				StaticDataReport sdr = (StaticDataReport)m.message;
 				if (sdr.getReportA().getValid()) {  // ReportA existiert
-					// TODO in ReportA strip einbauen
-					return sdr.getReportA().getName().strip();
+					return sdr.getReportA().getName();
 				}
 			}
 		}

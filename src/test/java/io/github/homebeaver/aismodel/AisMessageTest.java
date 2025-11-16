@@ -480,8 +480,7 @@ INFORMATION: 11:18:54 2025-11-08 11:18:54.044748621 class BaseStationReport {
 			//Assert.assertFalse(sdr.getReportB().getShipType()==0); // 0 = not available or no ship = default
 		} else {
 			Assert.assertTrue(sdr.getReportA().getValid());  // ReportA existiert
-			// TODO in ReportA strip einbauen
-			Assert.assertEquals(sdr.getReportA().getName().strip(), msg.getMetaData().getShipName());
+			Assert.assertEquals(sdr.getReportA().getName(), msg.getMetaData().getShipName());
 			Assert.assertFalse(sdr.getReportB().getValid());
 			Assert.assertTrue(sdr.getReportB().getShipType()==0);
 		}

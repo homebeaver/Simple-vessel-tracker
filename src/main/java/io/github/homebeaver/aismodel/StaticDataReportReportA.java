@@ -91,7 +91,7 @@ public class StaticDataReportReportA {
   @ApiModelProperty(required = true, value = "")
 
   public String getName() {
-    return name;
+    return name.strip();
   }
 
 
