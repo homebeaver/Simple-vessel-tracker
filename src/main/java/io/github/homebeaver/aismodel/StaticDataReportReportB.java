@@ -45,6 +45,15 @@ public class StaticDataReportReportB {
   @SerializedName(SERIALIZED_NAME_VALID)
   private Boolean valid;
 
+  /**
+   * Type of ship and cargo type
+   * 8 0 = not available or no ship = default
+   * 1-99 = as defined in § 3.3.2
+   * 100-199 = reserved, for regional use
+   * 200-255 = reserved, for future use
+   * Not applicable to SAR aircraft
+   * see ShipStaticData.SERIALIZED_NAME_TYPE
+   */
   public static final String SERIALIZED_NAME_SHIP_TYPE = "ShipType";
   @SerializedName(SERIALIZED_NAME_SHIP_TYPE)
   private Integer shipType;
