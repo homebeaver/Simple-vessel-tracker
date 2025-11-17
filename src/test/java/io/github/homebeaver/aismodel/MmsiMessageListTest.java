@@ -2,8 +2,6 @@ package io.github.homebeaver.aismodel;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import org.junit.Assert;
@@ -121,6 +119,43 @@ public class MmsiMessageListTest implements AisStreamCallback<AisStreamMessage> 
 								LOG.warning("shipType="+shipType + " : "+m.messageType + " " + m.getMetaData().toStringFull() + " >>>>>>> "+ m.getAisMessage());
 							}
 							Assert.assertEquals(shipType, sdr.getReportB().getShipType());
+						}
+					}
+				});
+			}
+			// ShipLength sollte sich nicht ändern (passiert aber doch, warum? Tippfehler?)
+			if (mmList.isShip(mmsi) && MmsiMessageList.getShipLength(list)!=null) {
+				list.forEach( m -> {
+					Integer shipLength = MmsiMessageList.getShipLength(list);
+					if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
+						ShipStaticData ssd = (ShipStaticData)m.message;
+						if (shipLength != ssd.getDimension().getLength()) {
+							LOG.warning("shipLength="+shipLength + " ("+list.indexOf(m)+"/"+list.size()+"): "+m.getMetaData().toStringFull() + "\n"+ssd);
+						}
+						if (mmsi==211550210 // "ALEXANDER HUMBOLDT" aka "PINGUIN"
+						 || mmsi==227000000 || mmsi==228999999 // "FRENCH WARSHIP "
+						 || mmsi==441495000 // "108EUNHAE"
+						 || mmsi==244710557 // "RIEJANNE"
+						 || mmsi==271050376 // "TCA7080"
+						 || mmsi==235081002 // "ORION"
+						 || mmsi==244615505 // "SPES"
+						 || mmsi==205391390 // "OMERTA"
+						 || mmsi==244720321 // "BONTEKOE II"
+						 || mmsi==244660923 // "CADENZA"
+						 || mmsi==244670228 // "RES NOVA" aka "TIDALIS TEST"
+						 // ... und andere
+						) {
+							// Ausnahmmen
+						} else {
+							//Assert.assertEquals(shipLength, Integer.valueOf(ssd.getDimension().getLength()));
+						}
+					} else if (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) {
+						StaticDataReport sdr = (StaticDataReport)m.message;
+						if (sdr.getReportB().getValid()) {  // ReportB existiert
+							if (shipLength != sdr.getReportB().getDimension().getLength()) {
+								LOG.warning("shipLength="+shipLength + " ("+list.indexOf(m)+"/"+list.size()+"): "+m.getMetaData().toStringFull() + "\n"+sdr);
+							}
+							Assert.assertEquals(shipLength, Integer.valueOf(sdr.getReportB().getDimension().getLength()));
 						}
 					}
 				});
