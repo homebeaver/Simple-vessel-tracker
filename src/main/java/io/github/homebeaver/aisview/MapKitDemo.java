@@ -11,11 +11,8 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -32,7 +29,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.MutableComboBoxModel;
-import javax.swing.Painter;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -51,8 +47,6 @@ import org.jdesktop.swingx.binding.LabelHandler;
 import org.jdesktop.swingx.icon.PauseIcon;
 import org.jdesktop.swingx.icon.PlayIcon;
 import org.jdesktop.swingx.icon.RadianceIcon;
-import org.jdesktop.swingx.icon.SizingConstants;
-import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.cache.FileBasedLocalCache;
 import org.jxmapviewer.input.CenterMapListener;
@@ -60,12 +54,7 @@ import org.jxmapviewer.input.PanKeyListener;
 import org.jxmapviewer.input.PanMouseInputListener;
 import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
 import org.jxmapviewer.viewer.DefaultTileFactory;
-import org.jxmapviewer.viewer.DefaultWaypoint;
-import org.jxmapviewer.viewer.DefaultWaypointRenderer;
-import org.jxmapviewer.viewer.GeoPosition;
 import org.jxmapviewer.viewer.TileFactoryInfo;
-import org.jxmapviewer.viewer.Waypoint;
-import org.jxmapviewer.viewer.WaypointPainter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -80,8 +69,6 @@ import io.github.homebeaver.aismodel.MetaData;
 import io.github.homebeaver.aismodel.PositionReport;
 import io.github.homebeaver.aismodel.ShipStaticData;
 import io.github.homebeaver.icon.Crosshair;
-//import io.github.homebeaver.icon.Map;
-import io.github.homebeaver.icon.MapPin;
 import swingset.AbstractDemo;
 
 /**
@@ -95,11 +82,11 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	private static final Logger LOG = Logger.getLogger(MapKitDemo.class.getName());
 	private static final String DESCRIPTION = "JXMapKit with a vessel tracker";
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
+
 	static final URL GITHUB_URL() {
 		try {
 			return new URL(GITHUB_URL);
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -193,27 +180,9 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 		mapKit.getMainMap().addKeyListener(new PanKeyListener(mapKit.getMainMap()));
 
-		// Add painters:
-		SelectionAdapter sa = new SelectionAdapter(mapKit);
-		mapKit.getMainMap().addMouseMotionListener(sa); // SelectionAdapter to get the selected Rectangle
-		mapKit.getMainMap().addMouseListener(sa);
-		SelectionPainter<JXMapViewer> selectionPainter = new SelectionPainter<>(sa);
-		
-		addressLocationPainter.setRenderer(new DefaultWaypointRenderer(MapPin.of(SizingConstants.M, SizingConstants.M)));
-
 		add(mapKit, BorderLayout.CENTER);
 //		add(createStatusBar(), BorderLayout.SOUTH); // Alternativ JXStatusBar im frame
 
-//		mapKit.addPropertyChangeListener("zoom", pce -> {
-//			LOG.info("zoom ---------------------pce:" + pce);
-//			getPosAndZoom();
-//		});
-//		mapKit.addPropertyChangeListener("center", pce -> {
-//			LOG.info("center ---------------------pce:" + pce);
-//			GeoPosition pos = getPosAndZoom();
-//			mapKit.setCenterPosition(pos);
-//		});
-		
 		mapKit.addPropertyChangeListener("candidatesToTrack", pce -> {
 			@SuppressWarnings("unchecked")
 			Vector<MetaData> v = (Vector<MetaData>)pce.getNewValue();
@@ -224,43 +193,12 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			// TODO BUG in JXComboBox: beim zweiten Aufklappen ist die Klappliste zu klein
 		});
 		
-		List<Painter<JXMapViewer>> painters = new ArrayList<>();
-//		mapViewer.addMouseListener(new AddNavigationIcon(mapViewer, painters));
-		painters.add(addressLocationPainter);
-		painters.add(selectionPainter);
-		painters.add(mapKit.getDataProviderCreditPainter());
-		CompoundPainter<JXMapViewer> overlayPainter = new CompoundPainter<JXMapViewer>();
-		overlayPainter.setPainters(painters);
-		mapKit.setOverlayPainter(overlayPainter);
 	}
 	
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
 		setShipStaticDataFields(ls);
-	}
-
-
-    // from JXMapKit
-	private WaypointPainter<Waypoint> addressLocationPainter = new WaypointPainter<Waypoint>() {
-		@Override
-		public Set<Waypoint> getWaypoints() {
-			Set<Waypoint> set = new HashSet<Waypoint>();
-			if (mapKit.getAddressLocation() != null) {
-				set.add(new DefaultWaypoint(mapKit.getAddressLocation()));
-			} else {
-				set.add(new DefaultWaypoint(0, 0));
-			}
-			return set;
-		}
-	};
-
-	private GeoPosition getPosAndZoom() {
-		double lat = mapKit.getMainMap().getCenterPosition().getLatitude();
-		double lon = mapKit.getMainMap().getCenterPosition().getLongitude();
-		int zoom = mapKit.getMainMap().getZoom();
-		LOG.info(String.format("Lat/Lon=(%.2f / %.2f) - Zoom: %d", lat, lon, zoom));
-		return new GeoPosition(lat, lon);
 	}
 
 	SwingWorker<?, ?> swingWorker; // MessageLoader

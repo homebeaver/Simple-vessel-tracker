@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,10 +84,23 @@ import io.github.homebeaver.icon.Vessel;
 public class AisMapKit extends JPanel {
 
 	private static final long serialVersionUID = -8366577998349912380L;
-	private static final Logger LOG = Logger.getLogger(JYMapKit.class.getName());
+	private static final Logger LOG = Logger.getLogger(AisMapKit.class.getName());
 	private static final int MINIMAP_ZOOMDIFF = 4;
 
 // >> AisMapKit extension -----------------------------------------------<<
+	private static final String MMSITOTRACK_PROPNAME = "mmsiToTrack";
+	private static final String CANDIDATESTOTRACK_PROPNAME = "candidatesToTrack";
+
+	/**
+	 * there is one vessel to track (or nothing)
+	 */
+	private Integer mmsiToTrack = null;
+	private RoutePainter routePainter;
+	private WaypointPainter<Waypoint> crosshairPainter;
+
+	SelectionAdapter selectionAdapter;
+	SelectionPainter<JXMapViewer> selectionPainter;
+
 	// a list of messages per vessel with MMSI as vessel key
 	MmsiMessageList mmsiList = new MmsiMessageList(); // TODO init in ctor
 	public int getNoOfVessels() {
@@ -108,7 +122,7 @@ public class AisMapKit extends JPanel {
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			overlayPainter.removePainter(crosshairPainter);
 			crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
-			crosshairPainter.setRenderer(new VesselWaypointRenderer(Crosshair.of(SizingConstants.L, SizingConstants.L)));
+			crosshairPainter.setRenderer(new VesselWaypointRenderer(Crosshair.of(Crosshair.L, Crosshair.L)));
 			overlayPainter.addPainter(crosshairPainter);
 		} else {
 			// neuer routePainter, evtl neuer listener
@@ -129,7 +143,7 @@ public class AisMapKit extends JPanel {
 		}
 		return ret;
 	}
-	CompoundPainter<JXMapViewer> overlayPainter;
+	private CompoundPainter<JXMapViewer> overlayPainter;
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
 		overlayPainter = p;
 		this.getMainMap().setOverlayPainter(p);
@@ -144,7 +158,10 @@ public class AisMapKit extends JPanel {
 		if(mmsiToTrack!=null && mmsi==mmsiToTrack) {
 			old = List.copyOf(mmsiList.get(mmsi));
 		}
-		if (!mmsiList.addShip(msg)) return;
+		if (!mmsiList.addShip(msg)) {
+			// mmsiList is unchanged (msg is not send by a ship)
+			return;
+		}
 		List<AisStreamMessage> msgList = mmsiList.get(mmsi);
 		// msg send by vessel with mmsi
 		if (msgList.size()==1) {
@@ -157,8 +174,7 @@ public class AisMapKit extends JPanel {
 //				Integer shipLenght = map.getShipLength(mmsi);
 //				LOG.info("type="+msg.getAisMessageType()+" "+mmsi+": #=1 NavigationalStatus=?, cog=null, shipType="+shipType 
 //						+ ", shipLenght="+shipLenght);
-				int iconsize = SizingConstants.XS;
-				RadianceIcon icon = Circle.of(iconsize, iconsize);
+				RadianceIcon icon = Circle.of(Circle.XS, Circle.XS);
 				if (shipType!=null) {
 					icon.setColorFilter(color -> ColorLegend.typeToColor(shipType)); // ShipType => java Color
 				}
@@ -170,8 +186,7 @@ public class AisMapKit extends JPanel {
 					|| amsg instanceof StandardClassBPositionReport
 					|| amsg instanceof ExtendedClassBPositionReport) {
 				// Vessel ohne color, fixed size
-				int iconsize = SizingConstants.S;
-				RadianceIcon icon = Vessel.of(iconsize, iconsize);
+				RadianceIcon icon = Vessel.of(Vessel.S, Vessel.S);
 				icon.setRotation(Math.toRadians(mmsiList.getLastCog(mmsi))); // Kurs in rad
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
@@ -186,11 +201,10 @@ public class AisMapKit extends JPanel {
 			RadianceIcon icon;
 			// cog == null ==> nur SHIPSTATICDATAs
 			if(cog==null) {
-				int iconsize = SizingConstants.XS;
-				icon = Circle.of(iconsize, iconsize);
+				icon = Circle.of(Circle.XS, Circle.XS);
 			} else {
-				int iconsize = shipLenght==null ? SizingConstants.S : shipLenght/9;
-				if (iconsize<SizingConstants.S) iconsize = SizingConstants.S;
+				int iconsize = shipLenght==null ? Vessel.S : shipLenght/9;
+				if (iconsize<Vessel.S) iconsize = Vessel.S;
 				icon = Vessel.of(iconsize, iconsize);
 				icon.setRotation(Math.toRadians(cog)); // Kurs in rad
 				if (shipType!=null) {
@@ -225,7 +239,6 @@ public class AisMapKit extends JPanel {
 	 * 	 overlayPainter.addPainter(shipLocationPainter);
 	 */
 	Map<Integer, WaypointPainter<Waypoint>> locationPainters = new HashMap<>();
-	private static final String CANDIDATESTOTRACK_PROPNAME = "candidatesToTrack";
 	/**
 	 * there are a couple vessels as candidates to track (can be empty)
 	 */
@@ -239,13 +252,6 @@ public class AisMapKit extends JPanel {
 		this.candidatesToTrack = neu;
 		firePropertyChange(CANDIDATESTOTRACK_PROPNAME, old, neu);
 	}
-	private static final String MMSITOTRACK_PROPNAME = "mmsiToTrack";
-	/**
-	 * there is one vessel to track (or nothing)
-	 */
-	private Integer mmsiToTrack = null;
-	RoutePainter routePainter;
-	WaypointPainter<Waypoint> crosshairPainter;
 // << End of AisMapKit extension -----------------------------------------------<<
 
 	private boolean miniMapVisible = true;
@@ -307,6 +313,11 @@ public class AisMapKit extends JPanel {
 		mainMap.setRestrictOutsidePanning(true);
 		miniMap.setRestrictOutsidePanning(true);
 
+		this.selectionAdapter = new SelectionAdapter(this);
+		getMainMap().addMouseMotionListener(selectionAdapter); // to get the selected Rectangle
+		getMainMap().addMouseListener(selectionAdapter);
+		selectionPainter = new SelectionPainter<>(selectionAdapter);
+		addressLocationPainter.setRenderer(new DefaultWaypointRenderer(MapPin.of(MapPin.M, MapPin.M)));
 		rebuildMainMapOverlay();
 
 // nicht notwendig:
@@ -774,11 +785,20 @@ public class AisMapKit extends JPanel {
 
 	private void rebuildMainMapOverlay() {
 		CompoundPainter<JXMapViewer> cp = new CompoundPainter<JXMapViewer>();
-		cp.setCacheable(false);
-		addressLocationPainter.setRenderer(new DefaultWaypointRenderer(MapPin.of(MapPin.M, MapPin.M)));
-		cp.setPainters(dataProviderCreditPainter, addressLocationPainter);
-		// TODO add selectionPainter, routePainter + crosshairPainter, viele shipLocationPainter
-		mainMap.setOverlayPainter(cp);
+
+		// setOverlayPainter will einen painter; das kann ein CompoundPainter painter sein
+		// den wir mit allen notwendigen paintern befüllen (kein painter darf null sein => NPE):
+//		cp.setPainters(dataProviderCreditPainter, addressLocationPainter, selectionPainter);
+// das führt zu UnsupportedOperationException bei overlayPainter.addPainter(shipLocationPainter) XXX ?
+
+		// Alternativ statt CompoundPainter eine Liste von Paintern, die sich erweitern lässt:
+		List<Painter<JXMapViewer>> painters = new ArrayList<>();
+		painters.add(dataProviderCreditPainter);
+		painters.add(addressLocationPainter);
+		painters.add(selectionPainter);
+		cp.setPainters(painters);
+
+		setOverlayPainter(cp);
 	}
 
 	/**
@@ -832,8 +852,5 @@ public class AisMapKit extends JPanel {
 			return set;
 		}
 	};
-
-//    SelectionAdapter sa = new SelectionAdapter(aisMapKit);
-//    private SelectionPainter<JXMapViewer> selectionPainter = new SelectionPainter<>(sa);
 
 }
