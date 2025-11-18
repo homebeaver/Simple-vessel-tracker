@@ -90,6 +90,10 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		return getShipLength(get(mmsi));
 	}
 
+	public Double getLastCog(int mmsi) {
+		return getLastCog(get(mmsi));
+	}
+
 	public boolean isBaseStation(int mmsi) {
 		return isBaseStation(get(mmsi));
 	}
@@ -157,6 +161,29 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 				if (sdr.getReportB().getValid()) {  // ReportB existiert
 					return sdr.getReportB().getDimension().getLength();
 				}
+			}
+		}
+		return null;
+	}
+
+	static Double getLastCog(List<AisStreamMessage> list) {
+		if (list==null) return null; // XXX oder exception
+//		for (AisStreamMessage m : list) {
+// iterate backwards:
+		AisStreamMessage m;
+		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
+		while (listIterator.hasPrevious()) {
+			m = listIterator.previous();
+			// ClassAShip ...
+			if (m.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
+				PositionReport pr = (PositionReport)m.message;
+				return pr.getCog();
+			} else if (m.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
+				StandardClassBPositionReport pr = (StandardClassBPositionReport)m.message;
+				return pr.getCog();
+			} else if (m.getAisMessageType() == AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT) {
+				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)m.message;
+				return pr.getCog();
 			}
 		}
 		return null;
