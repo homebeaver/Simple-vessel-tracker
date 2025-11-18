@@ -62,6 +62,7 @@ import io.github.homebeaver.icon.Plus;
  * @author joshy (JXMapKit)
  * @author EUG https://github.com/homebeaver
  */
+@Deprecated
 public class JYMapKit extends JPanel {
 
 	private static final long serialVersionUID = -8366577998349912380L;
