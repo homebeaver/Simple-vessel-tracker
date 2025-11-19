@@ -62,17 +62,40 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		LOG.fine("Not a ship MMSI="+mmsi + " / "+msg.getAisMessageType());
 		return false;
 	}
-	
-	public boolean isClassAShip(int mmsi) {
-		return isClassAShip(get(mmsi));
+
+	/**
+	 * Adds AisStreamMessage to list if msg identified as a ship od ClassA
+	 * @param msg
+	 * @return true if list collection changed as a result of the call
+	 */
+	public boolean addShipClassA(AisStreamMessage msg) {
+		int mmsi = msg.getMetaData().getMMSI();
+		if (mmsi==0) return false;
+		List<AisStreamMessage> list = get(mmsi);
+		if (isShipClassA(msg)) {
+			if (list==null) {
+				put(mmsi, newList(msg));
+				return true;
+			} else {
+				return list.add(msg);
+			}
+		} else if (isShipClassA(mmsi)) {
+			return list.add(msg);
+		}
+		LOG.fine("Not a ship of ClassA, maybe ClassB MMSI="+mmsi + " / "+msg.getAisMessageType() );
+		return false;
+	}
+
+	public boolean isShipClassA(int mmsi) {
+		return isShipClassA(get(mmsi));
 	}
 	
-	public boolean isClassBShip(int mmsi) {
-		return isClassBShip(get(mmsi));
+	public boolean isShipClassB(int mmsi) {
+		return isShipClassB(get(mmsi));
 	}
 
 	public boolean isShip(int mmsi) {
-		return isClassAShip(get(mmsi)) || isClassBShip(get(mmsi));
+		return isShipClassA(get(mmsi)) || isShipClassB(get(mmsi));
 	}
 
 	/*
@@ -101,7 +124,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	static String getName(List<AisStreamMessage> list) {
 		if (list==null) return null; // XXX oder exception
 		for (AisStreamMessage m : list) {
-//			if (isClassAShip(m)) ...
+			// Ship ClassA ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData)m.message;
 				if (ssd.getName().isEmpty()) {
@@ -130,7 +153,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
 		while (listIterator.hasPrevious()) {
 			m = listIterator.previous();
-//			if (isClassAShip(m)) ...
+			// Ship ClassA ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData)m.message;
 				return ssd.getType();
@@ -152,7 +175,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
 		while (listIterator.hasPrevious()) {
 			m = listIterator.previous();
-			// ClassAShip ...
+			// Ship ClassA ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData)m.message;
 				return ssd.getDimension().getLength();
@@ -174,7 +197,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
 		while (listIterator.hasPrevious()) {
 			m = listIterator.previous();
-			// ClassAShip ...
+			// Ship ClassA ...
 			if (m.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
 				PositionReport pr = (PositionReport)m.message;
 				return pr.getCog();
@@ -189,29 +212,29 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		return null;
 	}
 
-	static boolean isClassAShip(List<AisStreamMessage> list) {
+	static boolean isShipClassA(List<AisStreamMessage> list) {
 		if (list==null) return false; // XXX oder exception
 		for (AisStreamMessage m : list) {
-			if (isClassAShip(m)) return true;
+			if (isShipClassA(m)) return true;
 		}
 		return false;
 	}
 
-	static boolean isClassAShip(AisStreamMessage m) {
+	static boolean isShipClassA(AisStreamMessage m) {
 		if (m.getAisMessageType() == AisMessageTypes.POSITIONREPORT 
 		 || m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) return true;
 		return false;
 	}
 
-	private boolean isClassBShip(List<AisStreamMessage> list) {
+	private boolean isShipClassB(List<AisStreamMessage> list) {
 		if (list==null) return false; // XXX oder exception
 		for (AisStreamMessage m : list) {
-			if (isClassBShip(m)) return true;
+			if (isShipClassB(m)) return true;
 		}
 		return false;
 	}
 
-	static boolean isClassBShip(AisStreamMessage m) {
+	static boolean isShipClassB(AisStreamMessage m) {
 		if (m.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT 
 		 || m.getAisMessageType() == AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT
 		 || m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) return true;
@@ -219,7 +242,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	}
 
 	static boolean isShip(AisStreamMessage m) {
-		return isClassAShip(m) || isClassBShip(m);
+		return isShipClassA(m) || isShipClassB(m);
 	}
 
 	private boolean isBaseStation(List<AisStreamMessage> list) {

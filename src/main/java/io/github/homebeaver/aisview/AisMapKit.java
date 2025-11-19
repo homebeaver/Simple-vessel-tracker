@@ -101,10 +101,14 @@ public class AisMapKit extends JPanel {
 	SelectionAdapter selectionAdapter;
 	SelectionPainter<JXMapViewer> selectionPainter;
 
+	private int noOfVesselsClassA = 0;
 	// a list of messages per vessel with MMSI as vessel key
 	MmsiMessageList mmsiList = new MmsiMessageList(); // TODO init in ctor
 	public int getNoOfVessels() {
 		return mmsiList.size();
+	}
+	public int getNoOfVesselsClassA() {
+		return noOfVesselsClassA;
 	}
 	// +register for mmsiToTrack
 	public List<AisStreamMessage> getVesselTrace(Integer mmsi, PropertyChangeListener listener) {
@@ -158,9 +162,14 @@ public class AisMapKit extends JPanel {
 		if(mmsiToTrack!=null && mmsi==mmsiToTrack) {
 			old = List.copyOf(mmsiList.get(mmsi));
 		}
-		if (!mmsiList.addShip(msg)) {
-			// mmsiList is unchanged (msg is not send by a ship)
-			return;
+		int oldNoOfVessels = getNoOfVessels();
+		if (mmsiList.addShipClassA(msg)) {
+			// mmsiList is changed - msg was send by a commercial ship (ClassA)
+			noOfVesselsClassA = noOfVesselsClassA + getNoOfVessels() - oldNoOfVessels;
+		} else {
+			if (!isShowAllVessels()) return;
+			// to show all vessels (classA and classB) ships:
+			if (!mmsiList.addShip(msg)) return;
 		}
 		List<AisStreamMessage> msgList = mmsiList.get(mmsi);
 		// msg send by vessel with mmsi
@@ -251,6 +260,20 @@ public class AisMapKit extends JPanel {
 		});
 		this.candidatesToTrack = neu;
 		firePropertyChange(CANDIDATESTOTRACK_PROPNAME, old, neu);
+	}
+	private boolean showAllVessels = false;
+	boolean isShowAllVessels() {
+		return showAllVessels;
+	}
+	/**
+	 * Sets if only ClassA vessels (commercial) are shown (this is the default).
+	 * 
+	 * @param true to show all vessels, false to show large commercial vessels only 
+	 */
+	public void setShowAllVessels(boolean showAllVessels) {
+		boolean old = this.isShowAllVessels();
+		this.showAllVessels = showAllVessels;
+		firePropertyChange("showAllVessels", old, this.isShowAllVessels());
 	}
 // << End of AisMapKit extension -----------------------------------------------<<
 

@@ -193,7 +193,7 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		});
 		if(amv==null) return;
 		LOG.fine("chunks#:" + chunks.size()+"/"+cnt+"/"+amv.getNoOfVessels());
-		if (counter!=null) counter.setText(""+amv.getNoOfVessels());
+		if (counter!=null) counter.setText(""+amv.getNoOfVesselsClassA()+"/"+amv.getNoOfVessels());
 	}
 
 }

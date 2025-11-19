@@ -69,9 +69,9 @@ public class MmsiMessageListTest implements AisStreamCallback<AisStreamMessage> 
 			e.printStackTrace();
 		}
 
-		Assert.assertTrue(mmList.isClassAShip(212878000));
+		Assert.assertTrue(mmList.isShipClassA(212878000));
 		Assert.assertEquals(1, mmList.get(212878000).size()); // nur eine SHIPSTATICDATA
-		Assert.assertTrue(mmList.isClassBShip(219035401));
+		Assert.assertTrue(mmList.isShipClassB(219035401));
 		Assert.assertEquals(1, mmList.get(219035401).size()); // nur eine STATICDATAREPORT
 		Assert.assertEquals(2, mmList.get(265820920).size()); // zwei Nachrichten ClassA
 		Assert.assertEquals(2, mmList.get(219023391).size()); // zwei Nachrichten ClassB
@@ -82,7 +82,7 @@ public class MmsiMessageListTest implements AisStreamCallback<AisStreamMessage> 
 			// dann mit Name aus Meta identisch falls dieser vorhanden ist (mit Ausnahmen,
 			// z.B. ähnliche Namen "WINDCAT 24"<>"WINDCAT24"
 			// oder expected:<A[MALIA] RODRIGUES> but was:<A[] RODRIGUES>
-			if (mmList.isClassAShip(mmsi) && MmsiMessageList.getName(list)!=null) {
+			if (mmList.isShipClassA(mmsi) && MmsiMessageList.getName(list)!=null) {
 				list.forEach( m -> {
 					String shipName = m.getMetaData().getShipName();
 					if (!shipName.isEmpty() && !shipName.equals(MmsiMessageList.getName(list))) {

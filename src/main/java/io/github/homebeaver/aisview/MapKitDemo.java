@@ -426,10 +426,11 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		return centerControls;
 	}
 	
+    private JCheckBox showAllVessels;
     private JCheckBox showZoomSlider;
     private JCheckBox drawTileBorder;
     private JCheckBox miniMapVisible;
-
+    
 	protected Container createMapSelector() {
 		JXPanel controls = new JXPanel(true);
 		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
@@ -460,6 +461,18 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		controls.add(positionChooserCombo);
 		selectLabel.setLabelFor(positionChooserCombo);
 		
+		showAllVessels = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+		showAllVessels.setAlignmentX(LEFT_ALIGNMENT);
+		showAllVessels.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
+		showAllVessels.setSelected(false);
+		mapKit.setShowAllVessels(showAllVessels.isSelected());
+		showAllVessels.setName("showAllVessels");
+		showAllVessels.setText(getBundleString("showAllVessels.text"));
+		showAllVessels.addActionListener(ae -> {
+			mapKit.setShowAllVessels(showAllVessels.isSelected());
+		});
+		controls.add(showAllVessels);
+
 		showZoomSlider = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
 		showZoomSlider.setAlignmentX(LEFT_ALIGNMENT);
 		showZoomSlider.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
