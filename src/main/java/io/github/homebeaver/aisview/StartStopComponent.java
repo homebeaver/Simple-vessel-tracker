@@ -8,23 +8,19 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.geom.RoundRectangle2D;
-import java.util.Arrays;
-import java.util.List;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXButton;
-import org.jdesktop.swingx.JXFrame;
-import org.jdesktop.swingx.JXFrame.StartPosition;
 import org.jdesktop.swingx.JXPanel;
+import org.jdesktop.swingx.binding.DisplayInfo;
 import org.jdesktop.swingx.icon.RadianceIcon;
 import org.jdesktop.swingx.painter.AlphaPainter;
 import org.jdesktop.swingx.painter.BusyPainter;
@@ -94,30 +90,6 @@ im MapKit ein unsichtbarer Panel mit
 public class StartStopComponent extends JXPanel {
 
 	private static final long serialVersionUID = 9141987064436884464L;
-	protected static final boolean exitOnClose = true; // used in JXFrame of the demo
-
-	public static void main(String[] args) {
-		if (args.length > 0) {
-			List<String> a = Arrays.asList(args);
-			LaFUtils.setLAFandTheme(a);
-		}
-		SwingUtilities.invokeLater(() -> {
-			StartStopComponent panel = new StartStopComponent(null);
-			 //panel.add(new JButton("Push Me"));
-			 panel.setAlpha(.5f); // halb durchsichtig
-//			 panel.setAlpha(.05f); // ContentPane (schwarz) scheint fast voll durch (full opaqueness)
-			 //panel.setAlpha(.95f); // fast wie JPanel mit Opaque==false
-			 panel.setSwingWorker(new MessageLoader("src/test/java/aisstream.txt", (AisMapKit)null, (JLabel)null),
-					 new MessageLoader("src/test/java/aisstream.txt", (AisMapKit)null, (JLabel)null));
-
-			JXFrame frame = new JXFrame("xxxxxxxxxxxxxxxx", exitOnClose);
-			frame.setStartPosition(StartPosition.CenterInScreen);
-			frame.getContentPane().setBackground(Color.BLACK);
-			frame.getContentPane().add(panel);
-			frame.pack();
-			frame.setVisible(true);
-		});
-	}
 
 	static private RadianceIcon start = startA();
 	static private RadianceIcon stop = stopA();
@@ -184,10 +156,12 @@ public class StartStopComponent extends JXPanel {
 	}
 	
 	SwingWorker<?, ?> swingWorker;
-	SwingWorker<?, ?> swingWorker1;
+	MessageLoader swingWorker1;
+	ComboBoxModel<?> cbmWithRegions;
 	SwingWorker<?, ?> swingWorker2; // alternativer swingWorker ohne key
-	public void setSwingWorker(SwingWorker<?, ?> sw1, SwingWorker<?, ?> sw2) {
+	public void setSwingWorker(MessageLoader sw1, ComboBoxModel<?> regions, SwingWorker<?, ?> sw2) {
 		swingWorker1 = sw1;
+		this.cbmWithRegions = regions;
 		swingWorker2 = sw2;
 	}
 	private void liveButtonActionPerformed(ActionEvent evt) {
@@ -198,6 +172,13 @@ public class StartStopComponent extends JXPanel {
 				String result = showInputDialog();
 				if ((result != null) && (result.length() > 0)) {
 					keyProvider.setKey(result);
+					Object o = cbmWithRegions.getSelectedItem();
+					if (o instanceof DisplayInfo di) {
+						Object r = di.getValue();
+						if (r instanceof Regions.Region region) {
+							swingWorker1.setBoundingBox(region.getBoundingBox());
+						}
+					}
 					swingWorker = swingWorker1;
 					busyLabel.setVisible(true); // initially not visible, busyLabel nur bei live
 				} else {

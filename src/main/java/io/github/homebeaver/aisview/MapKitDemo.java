@@ -31,7 +31,6 @@ import javax.swing.JToolBar;
 import javax.swing.MutableComboBoxModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.MouseInputListener;
 
@@ -153,12 +152,14 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 		JPanel ss = mapKit.getStartStop();
 		if(ss instanceof StartStopComponent startStop) {
-//			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
-//			swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
-			swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), null);
+			createPositionChooserCombo();
+			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+			// Zu diesem Zeitpunkt ist noch nichts selektiert: item = København - Øresund
+			LOG.info("noch nichts selektiert : DisplayInfo<Regions.Region> item = "+item);
+			swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
 			MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
 			ml.setSleep(50);
-			startStop.setSwingWorker(swingWorker, ml);
+			startStop.setSwingWorker(swingWorker, positionChooserCombo.getModel(), ml);
 		}
 		// Set the zoom and focus to Øresund
 		mapKit.setZoom(Regions.getInstance().getZoom(DEFAULT_REGION));
@@ -194,14 +195,36 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		});
 		
 	}
-	
+
+	JComponent createPositionChooserCombo() {
+		if (positionChooserCombo!=null) return positionChooserCombo;
+		positionChooserCombo = new JXComboBox<DisplayInfo<Regions.Region>>();
+		positionChooserCombo.setName("positionChooserCombo");
+		positionChooserCombo.setModel(createCBM());
+		positionChooserCombo.setAlignmentX(LEFT_ALIGNMENT);
+		positionChooserCombo.setComboBoxIcon(map);
+		positionChooserCombo.setBorder(BorderFactory.createEmptyBorder(5, 50, 10, 50));
+
+		positionChooserCombo.addActionListener(ae -> {
+			int index = positionChooserCombo.getSelectedIndex();
+			@SuppressWarnings("unchecked")
+			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+			LOG.info("Combo.SelectedItem=" + item.getDescription());
+			mapKit.setAddressLocation(item.getValue().getGeoPosition());
+			mapKit.setZoom(item.getValue().getZoom());
+			positionChooserCombo.setSelectedIndex(index);
+		});
+		return positionChooserCombo;
+//		controls.add(positionChooserCombo);
+	}
+
 	@Override
 	public void propertyChange(PropertyChangeEvent pce) {
 		List<AisStreamMessage> ls = (List<AisStreamMessage>)pce.getNewValue();
 		setShipStaticDataFields(ls);
 	}
 
-	SwingWorker<?, ?> swingWorker; // MessageLoader
+	/*SwingWorker<?, ?>*/ MessageLoader swingWorker;
 	
 	// controller:
 	private JXComboBox<DisplayInfo<Regions.Region>> positionChooserCombo;
@@ -441,24 +464,8 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		selectLabel.setBorder(BorderFactory.createEmptyBorder(10,50,0,50));
 		controls.add(selectLabel);
 
-		// Create the combo chooser box:
-		positionChooserCombo = new JXComboBox<DisplayInfo<Regions.Region>>();
-		positionChooserCombo.setName("positionChooserCombo");
-		positionChooserCombo.setModel(createCBM());
-		positionChooserCombo.setAlignmentX(LEFT_ALIGNMENT);
-		positionChooserCombo.setComboBoxIcon(map);
-		positionChooserCombo.setBorder(BorderFactory.createEmptyBorder(5,50,10,50));
-
-		positionChooserCombo.addActionListener(ae -> {
-			int index = positionChooserCombo.getSelectedIndex();
-			@SuppressWarnings("unchecked")
-			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
-			LOG.info("Combo.SelectedItem=" + item.getDescription());
-			mapKit.setAddressLocation(item.getValue().getGeoPosition());
-			mapKit.setZoom(item.getValue().getZoom());
-			positionChooserCombo.setSelectedIndex(index);
-		});
-		controls.add(positionChooserCombo);
+		// Create and add the positionChooser combo chooser box:
+		controls.add(createPositionChooserCombo());
 		selectLabel.setLabelFor(positionChooserCombo);
 		
 		showAllVessels = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
@@ -554,12 +561,13 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		buttonGrid.add(fileDemoButton);
 
 		StartStopComponent startStop = new StartStopComponent(getBundleString("liveButton.text"));
-//		DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
-//		SwingWorker swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
+		DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+		MessageLoader swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
 		MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
 		ml.setSleep(50);
-		startStop.setSwingWorker(swingWorker, ml);
-		buttonGrid.add(startStop);
+		startStop.setSwingWorker(swingWorker, positionChooserCombo.getModel(), ml);
+		buttonGrid.add(startStop); // remove <== busyLabel an falscher Stelle TODO
+
 		toolBar.add(buttonGrid);
 		toolBar.add(Box.createVerticalStrut(10));
 
