@@ -46,6 +46,7 @@ import org.jxmapviewer.viewer.TileFactory;
 import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
+import org.jxmapviewer.viewer.WaypointRenderer;
 
 import io.github.homebeaver.aismodel.AisMessage;
 import io.github.homebeaver.aismodel.AisStreamMessage;
@@ -97,6 +98,12 @@ public class AisMapKit extends JPanel {
 	private Integer mmsiToTrack = null;
 	private RoutePainter routePainter;
 	private WaypointPainter<Waypoint> crosshairPainter;
+	// a large, semi-transparent (alpha=160) gray Crosshair Icon
+	private WaypointRenderer<Waypoint> crosshairRenderer() {
+		RadianceIcon crosshair = Crosshair.of(Crosshair.L, Crosshair.L);
+		crosshair.setColorFilter(color -> new Color(128, 128, 128, 160));
+		return new VesselWaypointRenderer(crosshair);
+	}
 
 	SelectionAdapter selectionAdapter;
 	SelectionPainter<JXMapViewer> selectionPainter;
@@ -126,7 +133,7 @@ public class AisMapKit extends JPanel {
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			overlayPainter.removePainter(crosshairPainter);
 			crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
-			crosshairPainter.setRenderer(new VesselWaypointRenderer(Crosshair.of(Crosshair.L, Crosshair.L)));
+			crosshairPainter.setRenderer(crosshairRenderer());
 			overlayPainter.addPainter(crosshairPainter);
 		} else {
 			// neuer routePainter, evtl neuer listener
@@ -138,7 +145,7 @@ public class AisMapKit extends JPanel {
 			if(ret!=null) {
 				overlayPainter.removePainter(crosshairPainter);
 				crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
-				crosshairPainter.setRenderer(new VesselWaypointRenderer(Crosshair.of(SizingConstants.L, SizingConstants.L)));
+				crosshairPainter.setRenderer(crosshairRenderer());
 				overlayPainter.addPainter(crosshairPainter);
 			}
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
