@@ -38,6 +38,7 @@ import io.github.homebeaver.aismodel.AisStreamWebsocketClient;
  * @param <V> the type used for carrying out intermediate results by this
  *        {@code SwingWorker's} {@code publish} and {@code process} methods
  */
+// TODO rework this
 public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 
 	private static final Logger LOG = Logger.getLogger(MessageLoader.class.getName());
@@ -46,7 +47,7 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 	private URL url;
 	private final AisMapKit amv;
 	private final JLabel counter;
-	private long millis = -1;
+	private long millis = -1; // to slow down
 	private int cnt = 0;
 
 	public MessageLoader(String fileUrl, AisMapKit amv, JLabel counter) {
@@ -66,8 +67,17 @@ public class MessageLoader extends SwingWorker<Boolean, AisStreamMessage> {
 		this.cnt = 0; // zählt auch die null-Nachrichten
 	}
 
+	/**
+	 * slow down
+	 * @param millis
+	 */
 	public void setSleep(long millis) {
 		this.millis = millis;
+	}
+
+	public void setBoundingBox(String boundingBox) {
+//		LOG.info("-------------->"+boundingBox);
+		this.boundingBox = boundingBox;
 	}
 
 	/*
