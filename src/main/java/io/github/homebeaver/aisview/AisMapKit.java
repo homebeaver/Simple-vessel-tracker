@@ -190,7 +190,8 @@ public class AisMapKit extends JPanel {
 //				Integer shipLenght = map.getShipLength(mmsi);
 //				LOG.info("type="+msg.getAisMessageType()+" "+mmsi+": #=1 NavigationalStatus=?, cog=null, shipType="+shipType 
 //						+ ", shipLenght="+shipLenght);
-				RadianceIcon icon = Circle.of(Circle.XS, Circle.XS);
+				int iconsize = amsg instanceof ShipStaticData ? Circle.XS : 7;
+				RadianceIcon icon = Circle.of(iconsize, iconsize);
 				if (shipType!=null) {
 					icon.setColorFilter(color -> ColorLegend.typeToColor(shipType)); // ShipType => java Color
 				}
@@ -202,7 +203,8 @@ public class AisMapKit extends JPanel {
 					|| amsg instanceof StandardClassBPositionReport
 					|| amsg instanceof ExtendedClassBPositionReport) {
 				// Vessel ohne color, fixed size
-				RadianceIcon icon = Vessel.of(Vessel.S, Vessel.S);
+				int iconsize = amsg instanceof PositionReport ? Vessel.S : Vessel.XS;
+				RadianceIcon icon = Vessel.of(iconsize, iconsize);
 				icon.setRotation(Math.toRadians(mmsiList.getLastCog(mmsi))); // Kurs in rad
 				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
@@ -219,9 +221,12 @@ public class AisMapKit extends JPanel {
 			if(cog==null) {
 				icon = Circle.of(Circle.XS, Circle.XS);
 			} else {
-				int iconsize = shipLenght==null ? Vessel.S : shipLenght/10; // TODO iconsize bis zoom 10 OK
-				// wenn grösser dann durch 20 teilen oder constant S, für classB XS
-				if (iconsize<Vessel.S) iconsize = Vessel.S;
+				int iconsize = shipLenght==null ? Vessel.XS : shipLenght/10; 
+				// TODO iconsize bis zoom 10 OK 
+				// würde man statt const 10 den Wert von mainMap.getZoom(), so müssten bei zoomänderung
+				// alle shipLocationPainter neu berechnet werden
+				if (mmsiList.isShipClassB(mmsi) && iconsize<Vessel.XS) iconsize = Vessel.XS;
+				if (mmsiList.isShipClassA(mmsi) && iconsize<Vessel.S) iconsize = Vessel.S;
 				icon = Vessel.of(iconsize, iconsize);
 				icon.setRotation(Math.toRadians(cog)); // Kurs in rad
 				if (shipType!=null) {
