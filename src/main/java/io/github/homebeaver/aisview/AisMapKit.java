@@ -242,7 +242,7 @@ public class AisMapKit extends JPanel {
 			routePainter.setTrack(l);
 			overlayPainter.removePainter(crosshairPainter);
 			crosshairPainter = new VesselWaypointPainter(l.get(l.size()-1));
-			crosshairPainter.setRenderer(new VesselWaypointRenderer(Crosshair.of(SizingConstants.L, SizingConstants.L)));
+			crosshairPainter.setRenderer(crosshairRenderer());
 			overlayPainter.addPainter(crosshairPainter);
 		}
 		setOverlayPainter(overlayPainter);
