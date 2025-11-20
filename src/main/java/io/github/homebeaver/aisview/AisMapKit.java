@@ -30,7 +30,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.MouseInputListener;
 
 import org.jdesktop.swingx.icon.RadianceIcon;
-import org.jdesktop.swingx.icon.SizingConstants;
 import org.jdesktop.swingx.painter.AbstractPainter;
 //import org.jdesktop.swingx.painter.CompoundPainter;
 import org.jxmapviewer.JXMapViewer;
@@ -138,8 +137,9 @@ public class AisMapKit extends JPanel {
 		} else {
 			// neuer routePainter, evtl neuer listener
 			overlayPainter.removePainter(routePainter);
-			Integer shipType = mmsiList.getType(mmsi); // color of track
-			routePainter = new RoutePainter(shipType==null ? Color.GRAY : ColorLegend.typeToColor(shipType));
+//			Integer shipType = mmsiList.getType(mmsi); // color of track ==> BLACK ist besser
+//			routePainter = new RoutePainter(shipType==null ? Color.GRAY : ColorLegend.typeToColor(shipType));
+			routePainter = new RoutePainter(Color.BLACK);
 			routePainter.setTrack(ret);
 			overlayPainter.addPainter(routePainter);
 			if(ret!=null) {
@@ -219,7 +219,8 @@ public class AisMapKit extends JPanel {
 			if(cog==null) {
 				icon = Circle.of(Circle.XS, Circle.XS);
 			} else {
-				int iconsize = shipLenght==null ? Vessel.S : shipLenght/9;
+				int iconsize = shipLenght==null ? Vessel.S : shipLenght/10; // TODO iconsize bis zoom 10 OK
+				// wenn grösser dann durch 20 teilen oder constant S, für classB XS
 				if (iconsize<Vessel.S) iconsize = Vessel.S;
 				icon = Vessel.of(iconsize, iconsize);
 				icon.setRotation(Math.toRadians(cog)); // Kurs in rad
