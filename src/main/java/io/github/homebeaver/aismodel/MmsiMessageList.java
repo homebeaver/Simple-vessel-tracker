@@ -121,8 +121,14 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 		return isBaseStation(get(mmsi));
 	}
 
-	static String getName(List<AisStreamMessage> list) {
-		if (list==null) return null; // XXX oder exception
+	/**
+	 * Get ship name from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last name entered (can be empty)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static String getName(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
 		for (AisStreamMessage m : list) {
 			// Ship ClassA ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
@@ -135,20 +141,77 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 				}
 			} else if (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) {
 				StaticDataReport sdr = (StaticDataReport)m.message;
-				if (sdr.getReportA().getValid()) {  // ReportA existiert
+				if (sdr.getReportA().getValid()) {  // ReportA exists
 					return sdr.getReportA().getName();
+				}
+			}
+		}
+		// not found any static data, get name from MetaData
+		return list.get(0).getMetaData().getShipName();
+	}
+
+	/**
+	 * Get CallSign of the vessel from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last sign entered (can be empty)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static String getCallSign(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+		for (AisStreamMessage m : list) {
+			// Ship ClassA ...
+			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
+				ShipStaticData ssd = (ShipStaticData)m.message;
+				if (ssd.getCallSign().isEmpty()) {
+					LOG.warning("CallSign is empty ("+list.indexOf(m)+"/"+list.size()+"): "+m.getMetaData().toStringFull()
+						+ "\n"+ssd); // expected not empty!
+				} else {
+					return ssd.getCallSign();
+				}
+			} else if (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) {
+				StaticDataReport sdr = (StaticDataReport)m.message;
+				if (sdr.getReportB().getValid()) { // ReportB with CallSign exists
+					return sdr.getReportB().getCallSign();
 				}
 			}
 		}
 		return null;
 	}
 
+	/**
+	 * Get ships IMO number from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last number entered (can be empty f.i. for ClassB vessels)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static Integer getImoNumber(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // iterate backwards:
+		AisStreamMessage m;
+		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
+		while (listIterator.hasPrevious()) {
+			m = listIterator.previous();
+			// Ship ClassA ...
+			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
+				ShipStaticData ssd = (ShipStaticData)m.message;
+				return ssd.getImoNumber();
+			} 
+		}
+		return null;
+	}
+
+	/**
+	 * Get ships Type from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last type entered (can be null f.i. there is no ReportB in the list TODO )
+	 * @throws NullPointerException if the specified list is null
+	 */
 	/*
 	 * der Schifftyp wird rückwärts bestimmt, die neueste (letzte) Eingabe gilt
 	 */
-	static Integer getType(List<AisStreamMessage> list) {
-		if (list==null) return null; // XXX oder exception
-//		for (AisStreamMessage m : list) // iterate backwards:
+	public static Integer getType(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // No - iterate backwards:
 		AisStreamMessage m;
 		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
 		while (listIterator.hasPrevious()) {
@@ -164,13 +227,12 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 				}
 			}
 		}
-		return null;
+		return null; // XXX or Integer.valueOf(0) == 0 	Not available
 	}
 
-	static Integer getShipLength(List<AisStreamMessage> list) {
-		if (list==null) return null; // XXX oder exception
-//		for (AisStreamMessage m : list) {
-// iterate backwards:
+	static ShipStaticDataDimension getShipDimension(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // No - iterate backwards:
 		AisStreamMessage m;
 		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
 		while (listIterator.hasPrevious()) {
@@ -178,21 +240,80 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 			// Ship ClassA ...
 			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
 				ShipStaticData ssd = (ShipStaticData)m.message;
-				return ssd.getDimension().getLength();
+				return ssd.getDimension();
 			} else if (m.getAisMessageType() == AisMessageTypes.STATICDATAREPORT) {
 				StaticDataReport sdr = (StaticDataReport)m.message;
 				if (sdr.getReportB().getValid()) {  // ReportB existiert
-					return sdr.getReportB().getDimension().getLength();
+					return sdr.getReportB().getDimension();
 				}
 			}
 		}
 		return null;
 	}
 
-	static Double getLastCog(List<AisStreamMessage> list) {
-		if (list==null) return null; // XXX oder exception
-//		for (AisStreamMessage m : list) {
-// iterate backwards:
+	public static int getShipLength(List<AisStreamMessage> list) {
+		ShipStaticDataDimension dim = MmsiMessageList.getShipDimension(list);
+		return dim == null ? 0 : dim.getLength();
+	}
+
+	public static int getShipWidth(List<AisStreamMessage> list) {
+		ShipStaticDataDimension dim = MmsiMessageList.getShipDimension(list);
+		return dim == null ? 0 : dim.getWidth();
+	}
+
+	/**
+	 * Get Maximum present draught from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last static draught entered in 1/10 m (can be null f.i. for ClassB vessels)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static Double getMaximumStaticDraught(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // iterate backwards:
+		AisStreamMessage m;
+		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
+		while (listIterator.hasPrevious()) {
+			m = listIterator.previous();
+			// Ship ClassA ...
+			if (m.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
+				ShipStaticData ssd = (ShipStaticData)m.message;
+				return ssd.getMaximumStaticDraught();
+			} 
+		}
+		return null;
+	}
+
+	/**
+	 * Get Navigational status of the vessel from a trace list
+	 * @param list a trace list for a vessel
+	 * @return status (can be null f.i. for ClassB vessels)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static Integer getNavigationalStatus(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // iterate backwards:
+		AisStreamMessage m;
+		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
+		while (listIterator.hasPrevious()) {
+			m = listIterator.previous();
+			// Ship ClassA ...
+			if (m.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
+				PositionReport pr = (PositionReport)m.message;
+				return pr.getNavigationalStatus();
+			} 
+		}
+		return null;
+	}
+
+	/**
+	 * Get COG (Course Over Ground) from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last COG in 1/10 degrees (null if not present)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static Double getLastCog(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // iterate backwards:
 		AisStreamMessage m;
 		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
 		while (listIterator.hasPrevious()) {
@@ -207,6 +328,34 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 			} else if (m.getAisMessageType() == AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT) {
 				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)m.message;
 				return pr.getCog();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get SOG (Speed Over Ground) from a trace list
+	 * @param list a trace list for a vessel
+	 * @return the last SOG in 1/10 knots (null if not present)
+	 * @throws NullPointerException if the specified list is null
+	 */
+	public static Double getLastSog(List<AisStreamMessage> list) {
+		if (list==null) throw new NullPointerException();
+//		for (AisStreamMessage m : list) // iterate backwards:
+		AisStreamMessage m;
+		ListIterator<AisStreamMessage> listIterator = list.listIterator(list.size());
+		while (listIterator.hasPrevious()) {
+			m = listIterator.previous();
+			// Ship ClassA ...
+			if (m.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
+				PositionReport pr = (PositionReport)m.message;
+				return pr.getSog();
+			} else if (m.getAisMessageType() == AisMessageTypes.STANDARDCLASSBPOSITIONREPORT) {
+				StandardClassBPositionReport pr = (StandardClassBPositionReport)m.message;
+				return pr.getSog();
+			} else if (m.getAisMessageType() == AisMessageTypes.EXTENDEDCLASSBPOSITIONREPORT) {
+				ExtendedClassBPositionReport pr = (ExtendedClassBPositionReport)m.message;
+				return pr.getSog();
 			}
 		}
 		return null;
