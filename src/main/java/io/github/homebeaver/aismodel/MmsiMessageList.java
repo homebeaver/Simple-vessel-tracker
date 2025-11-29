@@ -87,15 +87,27 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	}
 
 	public boolean isShipClassA(int mmsi) {
-		return isShipClassA(get(mmsi));
+		try {
+			return isShipClassA(get(mmsi));
+		} catch (NullPointerException e) {
+			return false;
+		}
 	}
 	
 	public boolean isShipClassB(int mmsi) {
-		return isShipClassB(get(mmsi));
+		try {
+			return isShipClassB(get(mmsi));
+		} catch (NullPointerException e) {
+			return false;
+		}
 	}
 
 	public boolean isShip(int mmsi) {
-		return isShipClassA(get(mmsi)) || isShipClassB(get(mmsi));
+		try {
+			return isShipClassA(get(mmsi)) || isShipClassB(get(mmsi));
+		} catch (NullPointerException e) {
+			return false;
+		}
 	}
 
 	/*
@@ -103,6 +115,10 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	 */
 	public String getName(int mmsi) {
 		return getName(get(mmsi));
+	}
+
+	public String getCallSign(int mmsi) {
+		return getCallSign(get(mmsi));
 	}
 
 	public Integer getType(int mmsi) {
@@ -227,7 +243,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 				}
 			}
 		}
-		return null; // XXX or Integer.valueOf(0) == 0 	Not available
+		return Integer.valueOf(0); // == 0 : Not available
 	}
 
 	static ShipStaticDataDimension getShipDimension(List<AisStreamMessage> list) {
@@ -362,7 +378,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	}
 
 	static boolean isShipClassA(List<AisStreamMessage> list) {
-		if (list==null) return false; // XXX oder exception
+		if (list==null) throw new NullPointerException();
 		for (AisStreamMessage m : list) {
 			if (isShipClassA(m)) return true;
 		}
@@ -376,7 +392,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	}
 
 	private boolean isShipClassB(List<AisStreamMessage> list) {
-		if (list==null) return false; // XXX oder exception
+		if (list==null) throw new NullPointerException();
 		for (AisStreamMessage m : list) {
 			if (isShipClassB(m)) return true;
 		}
@@ -395,7 +411,7 @@ public class MmsiMessageList extends HashMap<Integer, List<AisStreamMessage>>
 	}
 
 	private boolean isBaseStation(List<AisStreamMessage> list) {
-		if (list==null) return false; // XXX oder exception
+		if (list==null) throw new NullPointerException();
 		for (AisStreamMessage m : list) {
 			if (m.getAisMessageType() == AisMessageTypes.BASESTATIONREPORT) return true;
 		}
