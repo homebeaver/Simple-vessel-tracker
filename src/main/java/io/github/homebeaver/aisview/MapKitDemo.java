@@ -62,11 +62,9 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import dk.dma.ais.message.NavigationalStatus;
 import dk.dma.ais.message.ShipTypeCargo;
-import io.github.homebeaver.aismodel.AisMessageTypes;
 import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.MetaData;
-import io.github.homebeaver.aismodel.PositionReport;
-import io.github.homebeaver.aismodel.ShipStaticData;
+import io.github.homebeaver.aismodel.MmsiMessageList;
 import io.github.homebeaver.icon.Crosshair;
 import swingset.AbstractDemo;
 
@@ -99,7 +97,52 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	public static void main(String[] args) {
 		if (args.length > 0) {
 			List<String> a = Arrays.asList(args);
-			LaFUtils.setLAFandTheme(a);
+			if (a.get(0).startsWith("key=")) {
+				LOG.info("------------------"+a.get(1)+"<");
+//				AisStreamKeyProvider.getInstance().setKey(a.get(0).substring(4)); //BUG XXX ?
+/* 
+java.lang.NullPointerException: Cannot invoke "javax.swing.SwingWorker.execute()" because "this.swingWorker" is null
+	at io.github.homebeaver.aisview.StartStopComponent.liveButtonActionPerformed(StartStopComponent.java:190)
+	at io.github.homebeaver.aisview.StartStopComponent.lambda$2(StartStopComponent.java:150)
+	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
+	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2313)
+	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
+	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
+	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
+	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6626)
+	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3389)
+	at java.desktop/java.awt.Component.processEvent(Component.java:6391)
+	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
+	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5001)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4833)
+	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
+	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
+	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
+	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
+	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
+	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4833)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:97)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
+	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+ */
+				LaFUtils.setLAFandTheme(a, 1);
+			}
 		}
 		SwingUtilities.invokeLater(() -> {
 			JXFrame controller = new JXFrame("controller", exitOnClose);
@@ -278,33 +321,33 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	private JTextField positionField;
 	private JTextField navStatusField;
 
-	private void setShipStaticDataFields(List<AisStreamMessage> ls) {
-		ls.forEach(asm -> {
-			// aus MetaData name und position (ohne Kurs)
-			nameField.setText(asm.getMetaData().getShipName());
-			double lat = asm.getMetaData().getLatitude();
-			double lon = asm.getMetaData().getLongitude();
-			positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon));
-			if (asm.getAisMessageType() == AisMessageTypes.SHIPSTATICDATA) {
-				ShipStaticData ssd = (ShipStaticData) (asm.getAisMessage());
-				nameField.setText(ssd.getName());
-				imoField.setText(ssd.getImoNumber().toString());
-				callSignField.setText(ssd.getCallSign());
-				ShipTypeCargo stype = new ShipTypeCargo(ssd.getType());
-				typeField.setText(stype.toString());
-				dimensionField.setText("" + ssd.getDimension().getLength() 
-						+ " / " + ssd.getDimension().getWidth()
-						+ " / " + ssd.getMaximumStaticDraught() + " m"
-						);
-				destinationField.setText(ssd.getDestination());
-			} else if (asm.getAisMessageType() == AisMessageTypes.POSITIONREPORT) {
-				PositionReport pr = (PositionReport) (asm.getAisMessage());
-				positionField.setText(String.format("Lat/Lon=(%.2f / %.2f) Cog=%.1f°", lat, lon, pr.getCog()));
-				navStatusField.setText(NavigationalStatus.get(pr.getNavigationalStatus()).toString()+String.format(", Sog=%.1fkn", pr.getSog()));
-			} else {
-//				System.out.println(""+asm.getMetaData());
-			}
-		});
+	private void setShipStaticDataFields(List<AisStreamMessage> mmsiMessageList) {
+		LOG.info("??????? size="+mmsiMessageList.size());
+		AisStreamMessage asm = mmsiMessageList.get(mmsiMessageList.size()-1); // last element
+		LOG.info("??????? size="+mmsiMessageList.size() + " "+asm.getAisMessageType());
+//		int mmsi = asm.getMetaData().getMMSI();
+		double lat = asm.getMetaData().getLatitude();
+		double lon = asm.getMetaData().getLongitude();
+//		positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon));
+		nameField.setText(MmsiMessageList.getName(mmsiMessageList));
+		Integer imo = MmsiMessageList.getImoNumber(mmsiMessageList);
+		imoField.setText(imo == null ? "" : imo.toString());
+		callSignField.setText(MmsiMessageList.getCallSign(mmsiMessageList));
+		Integer type = MmsiMessageList.getType(mmsiMessageList);
+		ShipTypeCargo stype = new ShipTypeCargo(type == null ? 0 : type);
+		typeField.setText(stype.toString());
+		Double maxDraught = MmsiMessageList.getMaximumStaticDraught(mmsiMessageList);
+		dimensionField.setText("" + MmsiMessageList.getShipLength(mmsiMessageList) 
+				+ " / " + MmsiMessageList.getShipWidth(mmsiMessageList) 
+				+ (maxDraught == null ? "" : " / " + maxDraught + " m")
+				);
+		Double cog = MmsiMessageList.getLastCog(mmsiMessageList);
+		positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon)
+			+ (cog == null ? "" : String.format(" Cog=%.1f°", cog)));
+		Double sog = MmsiMessageList.getLastSog(mmsiMessageList);
+		Integer navStatus = MmsiMessageList.getNavigationalStatus(mmsiMessageList);
+		navStatusField.setText(NavigationalStatus.get(navStatus == null ? 15 : navStatus).toString()
+			+ (sog == null ? "" : String.format(" Sog=%.1fkn", sog)));
 	}
 
 	protected Container createCenter() {
@@ -351,11 +394,11 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 				MetaData item = (MetaData) mmsiCombo.getSelectedItem();
 				LOG.info("Combo.SelectedItem=" + item.getMMSI() + " " + item.getShipName());
 				mmsiCombo.setSelectedIndex(index);
-				List<AisStreamMessage> v = mapKit.getVesselTrace(item.getMMSI(), MapKitDemo.this);
-				if(v!=null) {
-					setShipStaticDataFields(v);
+				List<AisStreamMessage> traceList = mapKit.getVesselTrace(item.getMMSI(), MapKitDemo.this);
+				if(traceList!=null) {
+					setShipStaticDataFields(traceList);
 				} else {
-					System.out.println("nix gefunden für "+item.getMMSI()+" SelectedItem");
+					LOG.warning("No MmsiMessageList found for selected item "+item.getMMSI());
 				}
 			}
 		});
