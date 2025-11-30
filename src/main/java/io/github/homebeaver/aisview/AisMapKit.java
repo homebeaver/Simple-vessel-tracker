@@ -278,7 +278,7 @@ public class AisMapKit extends JPanel {
 	/**
 	 * Sets if only ClassA vessels (commercial) are shown (this is the default).
 	 * 
-	 * @param true to show all vessels, false to show large commercial vessels only 
+	 * @param showAllVessels true to show all vessels, false to show large commercial vessels only
 	 */
 	public void setShowAllVessels(boolean showAllVessels) {
 		boolean old = this.isShowAllVessels();
