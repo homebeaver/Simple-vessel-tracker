@@ -3,7 +3,6 @@ package io.github.homebeaver.aisview;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
@@ -16,36 +15,31 @@ import io.github.homebeaver.aismodel.MetaData;
 // der Painter kennt seine Instanzen nicht, ==> List painters
 public class VesselWaypointPainter extends WaypointPainter<Waypoint> {
 
-//	AisStreamMessage msg;
 	List<AisStreamMessage> msgList;
 	
-    public VesselWaypointPainter(AisStreamMessage msg) {
-    	this(null, msg);
-    }
-    public VesselWaypointPainter(List<AisStreamMessage> list, AisStreamMessage msg) {
-    	super();
-    	this.msgList = list==null ? new Vector<AisStreamMessage>() : list;
-    	msgList.add(msg);
-    }
+	public VesselWaypointPainter(List<AisStreamMessage> list) {
+		super();
+		setMsgList(list);
+	}
 
-//	private Set<Waypoint> getWaypoints(MetaData md) {
-//		Set<Waypoint> set = new HashSet<Waypoint>();
-//		set.add(new DefaultWaypoint(new GeoPosition(md.getLatitude(), md.getLongitude())));
-//		setWaypoints(set);
-//		return set;
-//	}
-//	private Set<Waypoint> getWaypoints(PositionReport pr) {
-//		Set<Waypoint> set = new HashSet<Waypoint>();
-//		set.add(new DefaultWaypoint(new GeoPosition(pr.getLatitude(), pr.getLongitude())));
-//		setWaypoints(set);
-//		return set;
-//	}
+	public void setMsgList(List<AisStreamMessage> list) {
+		msgList = list;
+	}
+	public void setRenderer(VesselWaypointRenderer r) {
+		super.setRenderer(r);
+	}
+	public Waypoint getLastWaypoint() {
+		AisStreamMessage msg = msgList.get(msgList.size()-1);
+		MetaData md = msg.getMetaData();
+		return new DefaultWaypoint(new GeoPosition(md.getLatitude(), md.getLongitude()));
+	}
 	public Set<Waypoint> getWaypoints() {
 		Set<Waypoint> set = new HashSet<Waypoint>();
-		msgList.forEach( m -> {
-			MetaData md = m.getMetaData();
-			set.add(new DefaultWaypoint(new GeoPosition(md.getLatitude(), md.getLongitude())));
-		});
+//		msgList.forEach( m -> {
+//			MetaData md = m.getMetaData();
+//			set.add(new DefaultWaypoint(new GeoPosition(md.getLatitude(), md.getLongitude())));
+//		});
+		set.add(getLastWaypoint());
 		setWaypoints(set);
 		return set;
 	}
