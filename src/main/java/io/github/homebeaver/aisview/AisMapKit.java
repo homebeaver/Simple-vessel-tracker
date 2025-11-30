@@ -131,7 +131,7 @@ public class AisMapKit extends JPanel {
 			super.removePropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			super.addPropertyChangeListener(MMSITOTRACK_PROPNAME, listener);
 			overlayPainter.removePainter(crosshairPainter);
-			crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
+			crosshairPainter = new VesselWaypointPainter(ret);
 			crosshairPainter.setRenderer(crosshairRenderer());
 			overlayPainter.addPainter(crosshairPainter);
 		} else {
@@ -144,7 +144,7 @@ public class AisMapKit extends JPanel {
 			overlayPainter.addPainter(routePainter);
 			if(ret!=null) {
 				overlayPainter.removePainter(crosshairPainter);
-				crosshairPainter = new VesselWaypointPainter(ret.get(ret.size()-1));
+				crosshairPainter = new VesselWaypointPainter(ret);
 				crosshairPainter.setRenderer(crosshairRenderer());
 				overlayPainter.addPainter(crosshairPainter);
 			}
@@ -154,6 +154,14 @@ public class AisMapKit extends JPanel {
 		}
 		return ret;
 	}
+	/*
+	 * pro Schiff (MMSI) den letzen shipLocationPainter merken, damit kann man in overlayPainter
+	 * den letzten shipLocationPainter löschen:
+	 *   overlayPainter.removePainter(painters.get(key));
+	 * bevor man für die neue Position einen neuen erstellt:
+	 * 	 overlayPainter.addPainter(shipLocationPainter);
+	 */
+	Map<Integer, VesselWaypointPainter> locationPainters = new HashMap<>();
 	private CompoundPainter<JXMapViewer> overlayPainter;
 	void setOverlayPainter(CompoundPainter<JXMapViewer> p) {
 		overlayPainter = p;
@@ -183,8 +191,7 @@ public class AisMapKit extends JPanel {
 		if (msgList.size()==1) {
 			// erste Nachricht
 			AisMessage amsg = msg.getAisMessage();
-			if (amsg instanceof ShipStaticData
-			 || amsg instanceof StaticDataReport) {
+			if (amsg instanceof ShipStaticData || amsg instanceof StaticDataReport) {
 				// colored circle, bei StaticDataReport Part A ohne Color
 				Integer shipType = mmsiList.getType(mmsi);
 //				Integer shipLenght = map.getShipLength(mmsi);
@@ -195,10 +202,10 @@ public class AisMapKit extends JPanel {
 				if (shipType!=null) {
 					icon.setColorFilter(color -> ColorLegend.typeToColor(shipType)); // ShipType => java Color
 				}
-				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
+				VesselWaypointPainter shipLocationPainter = new VesselWaypointPainter(msgList);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				locationPainters.put(mmsi, shipLocationPainter);
-				overlayPainter.addPainter(shipLocationPainter);
+				overlayPainter.addOrReplacePainter(shipLocationPainter);
 			} else if (amsg instanceof PositionReport
 					|| amsg instanceof StandardClassBPositionReport
 					|| amsg instanceof ExtendedClassBPositionReport) {
@@ -206,15 +213,14 @@ public class AisMapKit extends JPanel {
 				int iconsize = amsg instanceof PositionReport ? Vessel.S : Vessel.XS;
 				RadianceIcon icon = Vessel.of(iconsize, iconsize);
 				icon.setRotation(Math.toRadians(mmsiList.getLastCog(mmsi))); // Kurs in rad
-				WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
+				VesselWaypointPainter shipLocationPainter = new VesselWaypointPainter(msgList);
 				shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
 				locationPainters.put(mmsi, shipLocationPainter);
-				overlayPainter.addPainter(shipLocationPainter);
+				overlayPainter.addOrReplacePainter(shipLocationPainter);
 			}
 		} else {
 			// mindestens zweite (kann aber UNKNOWNMESSAGE oder anders sein ... TODO
 			Double cog = mmsiList.getLastCog(mmsi); // Kurs
-			Integer shipType = mmsiList.getType(mmsi);
 			Integer shipLenght = mmsiList.getShipLength(mmsi);
 			RadianceIcon icon;
 			// cog == null ==> nur SHIPSTATICDATAs
@@ -229,16 +235,15 @@ public class AisMapKit extends JPanel {
 				if (mmsiList.isShipClassA(mmsi) && iconsize<Vessel.S) iconsize = Vessel.S;
 				icon = Vessel.of(iconsize, iconsize);
 				icon.setRotation(Math.toRadians(cog)); // Kurs in rad
-				if (shipType!=null) {
-					icon.setColorFilter(color -> ColorLegend.typeToColor(shipType)); // ShipType => java Color
-				}
 			}
-			WaypointPainter<Waypoint> shipLocationPainter = new VesselWaypointPainter(msg);
-			shipLocationPainter.setRenderer(new VesselWaypointRenderer(icon));
-			// den zuletzt erstellten shipLocationPainter löschen in overlayPainter und aus locationPainters
-			overlayPainter.removePainter(locationPainters.get(mmsi));
-			overlayPainter.addPainter(shipLocationPainter);
-			locationPainters.replace(mmsi, shipLocationPainter); // den letzten painter wegwerfen/überschreiben
+			Integer shipType = mmsiList.getType(mmsi);
+			if (shipType!=null) {
+				icon.setColorFilter(color -> ColorLegend.typeToColor(shipType)); // ShipType => java Color
+			}
+			VesselWaypointPainter lp = locationPainters.get(mmsi);
+			lp.setMsgList(msgList);
+			lp.setRenderer(new VesselWaypointRenderer(icon));
+			overlayPainter.addOrReplacePainter(lp);
 		}
 //		if(map.get(key).add(msg) && mmsiToTrack!=null && key==mmsiToTrack) {
 		if(mmsiToTrack!=null && mmsi==mmsiToTrack) {
@@ -247,20 +252,12 @@ public class AisMapKit extends JPanel {
 			firePropertyChange(MMSITOTRACK_PROPNAME, old, l);
 			routePainter.setTrack(l);
 			overlayPainter.removePainter(crosshairPainter);
-			crosshairPainter = new VesselWaypointPainter(l.get(l.size()-1));
+			crosshairPainter = new VesselWaypointPainter(l);
 			crosshairPainter.setRenderer(crosshairRenderer());
 			overlayPainter.addPainter(crosshairPainter);
 		}
 		setOverlayPainter(overlayPainter);
 	}
-	/*
-	 * pro Schiff (MMSI) den letzen shipLocationPainter merken, damit kann man in overlayPainter
-	 * den letzten shipLocationPainter löschen:
-	 *   overlayPainter.removePainter(painters.get(key));
-	 * bevor man für die neue Position einen neuen erstellt:
-	 * 	 overlayPainter.addPainter(shipLocationPainter);
-	 */
-	Map<Integer, WaypointPainter<Waypoint>> locationPainters = new HashMap<>();
 	/**
 	 * there are a couple vessels as candidates to track (can be empty)
 	 */

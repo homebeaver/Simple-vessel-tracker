@@ -68,15 +68,13 @@ public class SelectionAdapter extends MouseAdapter {
 	}
 
 	private List<Integer> findVesselsInSelectedRectangle() {
-		Waypoint[] w = new Waypoint[1];
 		List<Integer> mmsiList = new ArrayList<Integer>();
-		viewer.locationPainters.forEach( (k,v) -> {
-			assert v.getWaypoints().size()==1;
-			v.getWaypoints().toArray(w);
-			Point2D p = viewer.getMainMap().convertGeoPositionToPoint(w[0].getPosition());
+		viewer.locationPainters.forEach( (mmsi, vesselWaypointPainter) -> {
+			Waypoint wp = vesselWaypointPainter.getLastWaypoint();
+			Point2D p = viewer.getMainMap().convertGeoPositionToPoint(wp.getPosition());
 			if (getRectangle().contains(p)) {
-				LOG.fine("ausgewählt ist "+k);
-				mmsiList.add(k);
+				LOG.fine("ausgewählt ist "+mmsi);
+				mmsiList.add(mmsi);
 			}
 		});
 		return mmsiList;
