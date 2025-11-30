@@ -193,6 +193,20 @@ public class CompoundPainter<T> extends AbstractPainter<T> {
 	}
     
     // XXX neu DONE 
+    public void addOrReplacePainter(Painter<T> painter) {
+        Collection<Painter<T>> old = new ArrayList<Painter<T>>(getPainters());
+        if (this.painters.contains(painter)) {
+            LOG.fine("No add - painters contains "+painter);
+        } else {
+            this.painters.add(painter);
+        }
+        if (painter instanceof AbstractPainter ap) {
+            ap.addPropertyChangeListener(handler);
+        }
+
+        setDirty(true);
+        firePropertyChange("painters", old, getPainters());
+    }
     public void addPainter(Painter<T> painter) {
         Collection<Painter<T>> old = new ArrayList<Painter<T>>(getPainters());
         LOG.fine("painters.size="+painters.size() + " addPainter "+painter);
