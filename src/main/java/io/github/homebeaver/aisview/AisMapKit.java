@@ -167,6 +167,11 @@ public class AisMapKit extends JPanel {
 		overlayPainter = p;
 		this.getMainMap().setOverlayPainter(p);
 	}
+	private boolean isInsidePanel(MetaData md) {
+		Rectangle r = new Rectangle(0, 0, getWidth(), getHeight());
+		Point2D p = getMainMap().convertGeoPositionToPoint(new GeoPosition(md.getLatitude(), md.getLongitude()));
+		return r.contains(p);
+	}
 	/**
 	 * called in SwingWorker MessageLoader.process for every data chunks message received
 	 * @param msg the new ais message received
@@ -187,8 +192,24 @@ public class AisMapKit extends JPanel {
 			if (!mmsiList.addShip(msg)) return;
 		}
 		List<AisStreamMessage> msgList = mmsiList.get(mmsi);
-		// msg send by vessel with mmsi
+		boolean isInsidePanel = isInsidePanel(msg.getMetaData());
+		if (!isInsidePanel) return;
+		// msg send by vessel with MMSI==mmsi, vessel is inside the panel and can be shown
 		if (msgList.size()==1) {
+//			________________ 
+//			Rectangle vpb = this.getMainMap().getViewportBounds();
+//			Rectangle r = new Rectangle(0, 0, getWidth(), getHeight());
+//			//AisStreamMessage msg = msgList.get(msgList.size()-1);
+//			MetaData md = msg.getMetaData();
+//			//new GeoPosition(md.getLatitude(), md.getLongitude());
+//			Point2D p = this.getMainMap().convertGeoPositionToPoint(new GeoPosition(md.getLatitude(), md.getLongitude()));
+//			if (r.contains(p)) {
+//				System.out.println(""+r+" contains "+p + " ViewportBounds:"+vpb);
+//			} else {
+//				System.out.println(""+p+" is NOT in "+r);
+//				//return;
+//			}
+//			________________ 
 			// erste Nachricht
 			AisMessage amsg = msg.getAisMessage();
 			if (amsg instanceof ShipStaticData || amsg instanceof StaticDataReport) {
@@ -241,7 +262,12 @@ public class AisMapKit extends JPanel {
 				icon.setColorFilter(color -> ColorLegend.typeToColor(shipType)); // ShipType => java Color
 			}
 			VesselWaypointPainter lp = locationPainters.get(mmsi);
-			lp.setMsgList(msgList);
+			if (lp==null) {
+				lp = new VesselWaypointPainter(msgList);
+				locationPainters.put(mmsi, lp);
+			} else {
+				lp.setMsgList(msgList);
+			}
 			lp.setRenderer(new VesselWaypointRenderer(icon));
 			overlayPainter.addOrReplacePainter(lp);
 		}
