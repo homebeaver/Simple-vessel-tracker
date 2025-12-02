@@ -737,11 +737,11 @@ public class AisMapKit extends JPanel {
 	}
 
 	/**
-	 * Returns a reference to the main embedded JXMapViewer component
+	 * Returns a reference to the main embedded SeaMapViewer component
 	 * 
 	 * @return the main map
 	 */
-	public JXMapViewer getMainMap() {
+	public SeaMapViewer getMainMap() {
 		return this.mainMap;
 	}
 
@@ -863,7 +863,7 @@ public class AisMapKit extends JPanel {
 		@Override
 		protected void doPaint(Graphics2D g, JXMapViewer map, int width, int height) {
 			g.setPaint(Color.BLACK);
-			g.drawString("Map data from OpenStreetMap", 50, map.getHeight() - 10);
+			g.drawString("\u00A9 OpenStreetMap, OpenSeaMap contributors", 50, map.getHeight() - 10);
 		}
 	};
 

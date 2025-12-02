@@ -496,11 +496,12 @@ java.lang.NullPointerException: Cannot invoke "javax.swing.SwingWorker.execute()
 		return centerControls;
 	}
 	
-    private JCheckBox showAllVessels;
-    private JCheckBox showZoomSlider;
-    private JCheckBox drawTileBorder;
-    private JCheckBox miniMapVisible;
-    
+//	private JCheckBox drawTileBorder; // borders between tiles used for visual testing
+	private JCheckBox drawSeaOverlay;
+	private JCheckBox showAllVessels;
+	private JCheckBox showZoomSlider;
+	private JCheckBox miniMapVisible;
+
 	protected Container createMapSelector() {
 		JXPanel controls = new JXPanel(true);
 		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
@@ -539,17 +540,29 @@ java.lang.NullPointerException: Cannot invoke "javax.swing.SwingWorker.execute()
 		});
 		controls.add(showZoomSlider);
 		
-		drawTileBorder = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
-		drawTileBorder.setAlignmentX(LEFT_ALIGNMENT);
-		drawTileBorder.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
-		drawTileBorder.setSelected(false);
-		mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
-		drawTileBorder.setName("drawTileBorder");
-		drawTileBorder.setText(getBundleString("drawTileBorder.text"));
-		drawTileBorder.addActionListener(ae -> {
-			mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+		drawSeaOverlay = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+		drawSeaOverlay.setAlignmentX(LEFT_ALIGNMENT);
+		drawSeaOverlay.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
+		drawSeaOverlay.setSelected(true);
+		mapKit.getMainMap().setDrawSeaMapOverlays(drawSeaOverlay.isSelected());
+		drawSeaOverlay.setName("drawSeaOverlay");
+		drawSeaOverlay.setText(getBundleString("drawSeaOverlay.text"));
+		drawSeaOverlay.addActionListener(ae -> {
+			mapKit.getMainMap().setDrawSeaMapOverlays(drawSeaOverlay.isSelected());
 		});
-		controls.add(drawTileBorder);
+		controls.add(drawSeaOverlay);
+
+//		drawTileBorder = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
+//		drawTileBorder.setAlignmentX(LEFT_ALIGNMENT);
+//		drawTileBorder.setBorder(BorderFactory.createEmptyBorder(10, 50, 10, 10));
+//		drawTileBorder.setSelected(false);
+//		mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+//		drawTileBorder.setName("drawTileBorder");
+//		drawTileBorder.setText(getBundleString("drawTileBorder.text"));
+//		drawTileBorder.addActionListener(ae -> {
+//			mapKit.getMainMap().setDrawTileBorders(drawTileBorder.isSelected());
+//		});
+//		controls.add(drawTileBorder);
 
 		miniMapVisible = new JCheckBox(); // JCheckBox extends JToggleButton, JToggleButton extends AbstractButton
 		miniMapVisible.setAlignmentX(LEFT_ALIGNMENT);

@@ -20,6 +20,7 @@ public class SeaMapViewer extends JXMapViewer {
 
 	private TileFactory factory;
 	private TileFactory factorySea;
+	private boolean drawSeaMapOverlays = true;
 
 	public SeaMapViewer() {
 		super();
@@ -33,6 +34,17 @@ public class SeaMapViewer extends JXMapViewer {
 
 	public TileFactory getTileFactorySea() {
 		return factorySea;
+	}
+
+	public boolean isDrawSeaMapOverlays() {
+		return drawSeaMapOverlays;
+	}
+
+	public void setDrawSeaMapOverlays(boolean drawSeaMapOverlays) {
+		boolean old = isDrawSeaMapOverlays();
+		this.drawSeaMapOverlays = drawSeaMapOverlays;
+		firePropertyChange("drawSeaMapOverlays", old, isDrawSeaMapOverlays());
+		repaint();
 	}
 
 	protected void drawMapTiles(final Graphics g, final int zoom, Rectangle viewportBounds) {
@@ -75,7 +87,7 @@ public class SeaMapViewer extends JXMapViewer {
 						}
 					} else if (tile.isLoaded()) {
 						g.drawImage(tile.getImage(), ox, oy, null);
-						if (tileSea.isLoaded()) {
+						if (tileSea.isLoaded() && isDrawSeaMapOverlays()) {
 							g.drawImage(tileSea.getImage(), ox, oy, null);
 						}
 					} else {
