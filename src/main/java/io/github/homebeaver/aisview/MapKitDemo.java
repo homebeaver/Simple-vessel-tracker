@@ -162,6 +162,7 @@ java.lang.NullPointerException: Cannot invoke "javax.swing.SwingWorker.execute()
 
 	private static final String DEFAULT_REGION = Regions.DEFAULT_REGION;
 	private TileFactoryInfo info;
+	private TileFactoryInfo infoSea;
 	private AisMapKit mapKit;
 
 	/**
@@ -177,18 +178,21 @@ java.lang.NullPointerException: Cannot invoke "javax.swing.SwingWorker.execute()
 
 		// Create a TileFactoryInfo for OpenStreetMap TODO in swingx 
 		info = new OSMTileFactoryInfo("OpenStreetMap", "https://tile.openstreetmap.org");
-		// Overlay tiles https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png
+		infoSea = new OpenSeaMapTileFactoryInfo();
 		DefaultTileFactory tileFactory = new DefaultTileFactory(info);
+		DefaultTileFactory seaTFactory = new DefaultTileFactory(infoSea);
 
 		// Setup local file cache
-		File cacheDir = new File(System.getProperty("user.home") + File.separator + ".jxmapviewer2");
-		tileFactory.setLocalCache(new FileBasedLocalCache(cacheDir, false));
+		File cacheDir1 = new File(System.getProperty("user.home") + File.separator + ".jxmapviewer2");
+		tileFactory.setLocalCache(new FileBasedLocalCache(cacheDir1, false));
+		File cacheDir2 = new File(System.getProperty("user.home") + File.separator + ".jxseaviewer2");
+		seaTFactory.setLocalCache(new FileBasedLocalCache(cacheDir2, false));
 
 		// Setup JXMapKit TODO RadianceIcons in JXMapKit verwenden
 		mapKit = new AisMapKit();
 		mapKit.setName("mapKit");
 //		mapKit.setZoomSliderVisible(true); // this is the default
-		mapKit.setTileFactory(tileFactory);
+		mapKit.setTileFactories(tileFactory, seaTFactory);
 
 		// threads in parallel to load the tiles
 		tileFactory.setThreadPoolSize(2);

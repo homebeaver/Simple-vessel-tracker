@@ -337,9 +337,10 @@ public class AisMapKit extends JPanel {
 		zoomSlider.setOpaque(false);
 		initZoomButtons();
 
-		TileFactoryInfo info = new OSMTileFactoryInfo();
+		// Create a TileFactoryInfo for OpenStreetMap TODO in swingx 
+		TileFactoryInfo info = new OSMTileFactoryInfo("OpenStreetMap", "https://tile.openstreetmap.org");
 		TileFactory tileFactory = new DefaultTileFactory(info);
-		setTileFactory(tileFactory);
+		setTileFactories(tileFactory, null);
 
 		mainMap.setCenterPosition(new GeoPosition(0, 0));
 		miniMap.setCenterPosition(new GeoPosition(0, 0));
@@ -489,7 +490,7 @@ public class AisMapKit extends JPanel {
 	private void initComponents() {
 		GridBagConstraints gridBagConstraints;
 
-		mainMap = new JXMapViewer();
+		mainMap = new SeaMapViewer();
 		miniMap = new JXMapViewer();
 		jPanel1 = new JPanel();
 		zoomInButton = new JButton();
@@ -612,7 +613,7 @@ public class AisMapKit extends JPanel {
 
 	private JPanel jPanel1;
 	private JPanel startStop;
-	private JXMapViewer mainMap;
+	private SeaMapViewer mainMap;
 	// in mainMap :   private Painter<? super JXMapViewer> overlay;
 	private JXMapViewer miniMap;
 	private JButton zoomInButton;
@@ -695,8 +696,8 @@ public class AisMapKit extends JPanel {
 	 * 
 	 * @param fact the new TileFactory
 	 */
-	public void setTileFactory(TileFactory fact) {
-		mainMap.setTileFactory(fact);
+	public void setTileFactories(TileFactory fact, TileFactory factSea) {
+		mainMap.setTileFactories(fact, factSea);
 		mainMap.setZoom(fact.getInfo().getDefaultZoomLevel());
 		mainMap.setCenterPosition(new GeoPosition(0, 0));
 		miniMap.setTileFactory(fact);
@@ -843,7 +844,7 @@ public class AisMapKit extends JPanel {
 		if (prov == DefaultProviders.OpenStreetMaps) {
 			TileFactoryInfo info = new OSMTileFactoryInfo();
 			TileFactory tf = new DefaultTileFactory(info);
-			setTileFactory(tf);
+			setTileFactories(tf, null);
 			setZoom(11);
 			setAddressLocation(new GeoPosition(51.5, 0));
 		}
