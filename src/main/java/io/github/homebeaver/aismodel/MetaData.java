@@ -11,7 +11,7 @@ import org.json.JSONObject;
 public class MetaData {
 
 	public static final String MMSI = "MMSI";
-	public static final String MMSI_STRING = "MMSI_String";
+//	public static final String MMSI_STRING = "MMSI_String";
 	public static final String SHIPNAME = "ShipName";
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
@@ -23,11 +23,10 @@ public class MetaData {
 	}
 
 	private int mmsi;
-	private String mmsi_string;
+//	private String mmsi_string;
 	private String shipName;
 	private Double latitude;
 	private Double longitude;
-//	private Position position; // type aus dk.dma.enav.model.geometry.Position
 	private String time_utc;
 
 	public static MetaData fromJson(JSONObject jo) {
@@ -35,9 +34,8 @@ public class MetaData {
 		// Extract individual fields from JSONObject
 		try {
 			res = res.mmsi(jo.getInt(MMSI))
-					.mmsi_string(String.valueOf(jo.getLong(MMSI_STRING))) // long => String
+//					.mmsi_string(String.valueOf(jo.getLong(MMSI_STRING))) // long => String
 					.shipName(jo.getString(SHIPNAME).trim())
-//					.position(getPosition(jo))
 					.latitude(jo.getDouble(LATITUDE))
 					.longitude(jo.getDouble(LONGITUDE))
 					.time_utc(jo.getString(TIME_UTC));
@@ -62,9 +60,6 @@ public class MetaData {
 	public Double getLongitude() {
 		return longitude;
 	}
-//	public Position getPosition() {
-//		return position;
-//	}
 	public String getTimeUtc() {
 		return time_utc;
 	}
@@ -73,18 +68,14 @@ public class MetaData {
 		this.mmsi = mmsi;
 		return this;
 	}
-	public MetaData mmsi_string(String mmsi_string) {
-		this.mmsi_string = mmsi_string;
-		return this;
-	}
+//	public MetaData mmsi_string(String mmsi_string) {
+//		this.mmsi_string = mmsi_string;
+//		return this;
+//	}
 	public MetaData shipName(String shipName) {
 		this.shipName = shipName;
 		return this;
 	}
-//	public MetaData position(Position position) {
-//		this.position = position;
-//		return this;
-//	}
 	public MetaData latitude(Double latitude) {
 		this.latitude = latitude;
 		return this;
@@ -111,21 +102,12 @@ public class MetaData {
 		sb.append("class MetaData {");
 		sb.append(TIME_UTC).append(COLON).append(time_utc);
 		sb.append(COMMA).append(MMSI).append(COLON).append(mmsi);
-		sb.append(COMMA).append(MMSI_STRING).append(COLON).append(mmsi_string);
+//		sb.append(COMMA).append(MMSI_STRING).append(COLON).append(mmsi_string);
 		sb.append(COMMA).append(SHIPNAME).append(COLON).append(shipName);
-//		sb.append(COMMA).append("Position").append(COLON).append(position);
 		sb.append(COMMA).append(LATITUDE).append(COLON).append(latitude);
 		sb.append(COMMA).append(LONGITUDE).append(COLON).append(longitude);
 		sb.append("}");
 		return sb.toString();
 	}
-
-//	private static Position getPosition(JSONObject jo) {
-//		return getPosition(jo.getDouble(LATITUDE), jo.getDouble(LONGITUDE));
-//	}
-//
-//	private static Position getPosition(double latitude, double longitude) {
-//		return Position.create(latitude, longitude);
-//	}
 
 }
