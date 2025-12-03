@@ -184,6 +184,17 @@ public class StartStopComponent extends JXPanel {
 				} else {
 					swingWorker = swingWorker2;
 				}
+			} else {
+				// TODO unschön - dupl.code
+				Object o = cbmWithRegions.getSelectedItem();
+				if (o instanceof DisplayInfo di) {
+					Object r = di.getValue();
+					if (r instanceof Regions.Region region) {
+						swingWorker1.setBoundingBox(region.getBoundingBox());
+					}
+				}
+				swingWorker = swingWorker1;
+				busyLabel.setVisible(true); // initially not visible, busyLabel nur bei live
 			}
 			// TODO was wenn key invalid?
 			try {

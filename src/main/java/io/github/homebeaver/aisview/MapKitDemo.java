@@ -97,52 +97,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	public static void main(String[] args) {
 		if (args.length > 0) {
 			List<String> a = Arrays.asList(args);
-			if (a.get(0).startsWith("key=")) {
-				LOG.info("------------------"+a.get(1)+"<");
-//				AisStreamKeyProvider.getInstance().setKey(a.get(0).substring(4)); //BUG XXX ?
-/* 
-java.lang.NullPointerException: Cannot invoke "javax.swing.SwingWorker.execute()" because "this.swingWorker" is null
-	at io.github.homebeaver.aisview.StartStopComponent.liveButtonActionPerformed(StartStopComponent.java:190)
-	at io.github.homebeaver.aisview.StartStopComponent.lambda$2(StartStopComponent.java:150)
-	at java.desktop/javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:1972)
-	at java.desktop/javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2313)
-	at java.desktop/javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:405)
-	at java.desktop/javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:262)
-	at java.desktop/javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:279)
-	at java.desktop/java.awt.Component.processMouseEvent(Component.java:6626)
-	at java.desktop/javax.swing.JComponent.processMouseEvent(JComponent.java:3389)
-	at java.desktop/java.awt.Component.processEvent(Component.java:6391)
-	at java.desktop/java.awt.Container.processEvent(Container.java:2266)
-	at java.desktop/java.awt.Component.dispatchEventImpl(Component.java:5001)
-	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2324)
-	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4833)
-	at java.desktop/java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4948)
-	at java.desktop/java.awt.LightweightDispatcher.processMouseEvent(Container.java:4575)
-	at java.desktop/java.awt.LightweightDispatcher.dispatchEvent(Container.java:4516)
-	at java.desktop/java.awt.Container.dispatchEventImpl(Container.java:2310)
-	at java.desktop/java.awt.Window.dispatchEventImpl(Window.java:2780)
-	at java.desktop/java.awt.Component.dispatchEvent(Component.java:4833)
-	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:775)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
-	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
-	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
-	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
-	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:97)
-	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:747)
-	at java.desktop/java.awt.EventQueue$5.run(EventQueue.java:745)
-	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
-	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
-	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:744)
-	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
-	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
-	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
-	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
-	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
-	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
-
- */
-				LaFUtils.setLAFandTheme(a, 1);
-			}
+			LaFUtils.setLAFandTheme(a);
 		}
 		SwingUtilities.invokeLater(() -> {
 			JXFrame controller = new JXFrame("controller", exitOnClose);

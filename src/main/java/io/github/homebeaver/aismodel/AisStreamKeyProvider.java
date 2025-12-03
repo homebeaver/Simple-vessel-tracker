@@ -18,6 +18,9 @@ public class AisStreamKeyProvider implements AisStreamKey {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	String apikey;
 
+	private AisStreamKeyProvider() {
+		apikey = System.getProperty("AIS_API_KEY");
+	}
 	@Override
 	public String getKey() {
 		return apikey;
@@ -51,8 +54,8 @@ public class AisStreamKeyProvider implements AisStreamKey {
 	}
 
 	public static void main(String[] args) throws Exception {
-		AisStreamKeyProvider.getInstance().run();
-//		System.out.println(AISStreamKeyProvider.getInstance().getKey());
+		if (AisStreamKeyProvider.getInstance().getKey()==null) AisStreamKeyProvider.getInstance().run();
+//		System.out.println(AisStreamKeyProvider.getInstance().getKey());
 	}
 
 }
