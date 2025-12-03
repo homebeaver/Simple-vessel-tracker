@@ -77,7 +77,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 
 	private static final long serialVersionUID = 6899895296763622056L;
 	private static final Logger LOG = Logger.getLogger(MapKitDemo.class.getName());
-	private static final String DESCRIPTION = "JXMapKit with a vessel tracker";
+	private static final String DESCRIPTION = "Sea Map with a vessel tracker";
 	private static final String GITHUB_URL = "https://raw.githubusercontent.com/homebeaver/Simple-vessel-tracker/refs/heads/main/src/test/resources/data/aisstream.txt";
 
 	static final URL GITHUB_URL() {
