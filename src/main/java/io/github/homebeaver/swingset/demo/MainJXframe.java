@@ -116,7 +116,7 @@ public class MainJXframe extends DemoJXFrame {
 		frames = new ArrayList<JXFrame>();
 		frames.add(this);
 		// setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		LOG.info(TITLE + " frame ctor. frames#=" + frames.size());
+		LOG.config(TITLE + " frame ctor. frames#=" + frames.size());
 
 		content = new JXPanel(new BorderLayout());
 

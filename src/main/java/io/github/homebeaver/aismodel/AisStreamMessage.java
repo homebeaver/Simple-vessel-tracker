@@ -157,7 +157,15 @@ public class AisStreamMessage {
 		}
 		return res.message==null ? null : res;
 	}
-	
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(metaData.getTimeUtc().substring(10, 19));
+		sb.append(" ").append(messageType);
+		return sb.toString();
+	}
+
 	/*
 	 * Universelles Interface fuer Callback-Klasse zur Entkopplung der Meldung von
 	 * Zwischenergebnissen waehrend der Verarbeitung, 

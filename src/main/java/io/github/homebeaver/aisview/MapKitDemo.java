@@ -66,6 +66,7 @@ import io.github.homebeaver.aismodel.AisStreamMessage;
 import io.github.homebeaver.aismodel.MetaData;
 import io.github.homebeaver.aismodel.MmsiMessageList;
 import io.github.homebeaver.icon.Crosshair;
+import io.github.homebeaver.icon.Radio;
 import swingset.AbstractDemo;
 
 /**
@@ -157,7 +158,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			createPositionChooserCombo();
 			DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
 			// Zu diesem Zeitpunkt ist noch nichts selektiert: item = København - Øresund
-			LOG.info("noch nichts selektiert : DisplayInfo<Regions.Region> item = "+item);
+			LOG.config("noch nichts selektiert : DisplayInfo<Regions.Region> item = "+item);
 			swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
 			MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
 			ml.setSleep(50);
@@ -193,7 +194,6 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 			if (v.size()>0) {
 				mmsiCombo.setSelectedIndex(0);
 			}
-			// TODO BUG in JXComboBox: beim zweiten Aufklappen ist die Klappliste zu klein
 		});
 		
 	}
@@ -238,6 +238,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	static private RadianceIcon stop = PauseIcon.of(RadianceIcon.M, RadianceIcon.M);
 	static private RadianceIcon play = PlayIcon.of(RadianceIcon.M, RadianceIcon.M);
 	static private RadianceIcon crosshair = Crosshair.of(RadianceIcon.SMALL_ICON, RadianceIcon.SMALL_ICON);
+	static private RadianceIcon radio = Radio.of(RadianceIcon.SMALL_ICON, RadianceIcon.SMALL_ICON);
 	static private RadianceIcon map = io.github.homebeaver.icon.Map.of(RadianceIcon.SMALL_ICON, RadianceIcon.SMALL_ICON);
 
 	static private RadianceIcon playDisabled() {
@@ -279,15 +280,15 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 	private JTextField destinationField;
 	private JTextField positionField;
 	private JTextField navStatusField;
+	private JXComboBox<AisStreamMessage> msgCombo;
 
 	private void setShipStaticDataFields(List<AisStreamMessage> mmsiMessageList) {
-		LOG.info("??????? size="+mmsiMessageList.size());
+		for (AisStreamMessage asm : mmsiMessageList) {
+			msgCombo.addItem(asm);
+		}
 		AisStreamMessage asm = mmsiMessageList.get(mmsiMessageList.size()-1); // last element
-		LOG.info("??????? size="+mmsiMessageList.size() + " "+asm.getAisMessageType());
-//		int mmsi = asm.getMetaData().getMMSI();
 		double lat = asm.getMetaData().getLatitude();
 		double lon = asm.getMetaData().getLongitude();
-//		positionField.setText(String.format("Lat/Lon=(%.2f / %.2f)", lat, lon));
 		nameField.setText(MmsiMessageList.getName(mmsiMessageList));
 		Integer imo = MmsiMessageList.getImoNumber(mmsiMessageList);
 		imoField.setText(imo == null ? "" : imo.toString());
@@ -361,12 +362,27 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 				}
 			}
 		});
-        JLabel mmsiLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1),
-        		mmsiCombo, cc.xywh(widgetColumn, currentRow, 1, 1));
-        mmsiLabel.setName("mmsiLabel");
-        mmsiLabel.setText(getBundleString("mmsiLabel.text", mmsiLabel));
-        currentRow += 2;
-        
+		JLabel mmsiLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1), mmsiCombo,
+				cc.xywh(widgetColumn, currentRow, 1, 1));
+		mmsiLabel.setName("mmsiLabel");
+		mmsiLabel.setText(getBundleString("mmsiLabel.text", mmsiLabel));
+		currentRow += 2;
+
+		msgCombo = new JXComboBox<AisStreamMessage>();
+		msgCombo.setName("mmsiCombo");
+		msgCombo.setComboBoxIcon(radio);
+		msgCombo.setModel(new DefaultComboBoxModel<AisStreamMessage>());
+		msgCombo.setAlignmentX(LEFT_ALIGNMENT);
+		msgCombo.addActionListener(ae -> {
+			AisStreamMessage asm = (AisStreamMessage) msgCombo.getSelectedItem();
+			System.out.println(asm.getMetaData().toStringFull() + "\n" + asm.getAisMessage().toString());
+		});
+		JLabel msgLabel = builder.addLabel("", cl.xywh(labelColumn, currentRow, 1, 1), msgCombo,
+				cc.xywh(widgetColumn, currentRow, 1, 1));
+		msgLabel.setName("msgLabel");
+		msgLabel.setText(getBundleString("msgLabel.text", msgLabel));
+		currentRow += 2;
+
         nameField = new JTextField(20);
         nameField.setName("nameField");
         nameField.setText(getBundleString("nameField.text"));
@@ -549,7 +565,7 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		JToolBar toolBar = new JToolBar(SwingConstants.VERTICAL);
 		// two Demo Buttons
 		toolBar.add(Box.createVerticalStrut(10));
-		JPanel buttonGrid = new JPanel(new GridLayout(3, 1, 10, 10)); // (int rows, int cols, int hgap, int vgap)
+		JPanel buttonGrid = new JPanel(new GridLayout(2, 1, 10, 10)); // (int rows, int cols, int hgap, int vgap)
 		miniDemoButton = fileDemoButton("miniDemoButton", getBundleString("miniDemoButton.text"));
 		miniDemoButton.setDisabledIcon(playDisabled());
 		miniDemoButton.addActionListener(ae -> {
@@ -575,13 +591,13 @@ public class MapKitDemo extends AbstractDemo implements PropertyChangeListener {
 		});
 		buttonGrid.add(fileDemoButton);
 
-		StartStopComponent startStop = new StartStopComponent(getBundleString("liveButton.text"));
-		DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
-		MessageLoader swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
-		MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
-		ml.setSleep(50);
-		startStop.setSwingWorker(swingWorker, positionChooserCombo.getModel(), ml);
-		buttonGrid.add(startStop); // remove <== busyLabel an falscher Stelle TODO
+//		StartStopComponent startStop = new StartStopComponent(getBundleString("liveButton.text"));
+//		DisplayInfo<Regions.Region> item = (DisplayInfo<Regions.Region>) positionChooserCombo.getSelectedItem();
+//		MessageLoader swingWorker = new MessageLoader((URL) null, mapKit, getCounter(), item.getValue().getBoundingBox());
+//		MessageLoader ml = new MessageLoader(GITHUB_URL(), mapKit, getCounter(), null);
+//		ml.setSleep(50);
+//		startStop.setSwingWorker(swingWorker, positionChooserCombo.getModel(), ml);
+//		buttonGrid.add(startStop); // remove <== busyLabel an falscher Stelle
 
 		toolBar.add(buttonGrid);
 		toolBar.add(Box.createVerticalStrut(10));
